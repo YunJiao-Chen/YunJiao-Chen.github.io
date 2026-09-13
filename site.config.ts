@@ -168,11 +168,17 @@ export const siteConfig = {
   /* ------------------------------------------------------------------ */
   comments: {
     /** 'none' 渲染占位说明；'giscus' 启用 GitHub Discussions 评论 */
-    provider: 'none' as 'none' | 'giscus',
+    provider: 'giscus' as 'none' | 'giscus',
     giscus: {
-      repo: 'yourname/my-blog',
-      repoId: '',
+      repo: 'YunJiao-Chen/blog',
+      /** 仓库 node_id，已从 GitHub API 取得 */
+      repoId: 'R_kgDOUY1RCA',
       category: 'Announcements',
+      /**
+       * 还差这一个值：等仓库开启 Discussions 并安装 giscus App 后，
+       * 到 https://giscus.app/zh-CN 选好分类即可拿到（形如 DIC_kwDOUY1RCM4C...）。
+       * 填上之后评论区自动出现，无需再改任何代码。
+       */
       categoryId: '',
       mapping: 'pathname',
       strict: false,

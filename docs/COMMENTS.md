@@ -1,5 +1,31 @@
 # 评论系统接入指南
 
+## 当前状态（YunJiao-Chen/blog）
+
+代码侧已全部就绪，`site.config.ts` 里的值：
+
+| 配置 | 值 | 状态 |
+| --- | --- | --- |
+| `comments.provider` | `giscus` | 已切好 |
+| `comments.giscus.repo` | `YunJiao-Chen/blog` | 已填 |
+| `comments.giscus.repoId` | `R_kgDOUY1RCA` | 已填（取自 GitHub API 的 `node_id`） |
+| `comments.giscus.category` | `Announcements` | 已填 |
+| `comments.giscus.categoryId` | 空 | **待补**，补上后评论区立即出现 |
+
+**还差三步（都需要仓库管理员在网页操作，API 做不了）**：
+
+1. 开启 Discussions：仓库 **Settings → General → Features → 勾选 Discussions**。
+   开启后 GitHub 会自动创建 `Announcements`、`General` 等默认分类。
+2. 安装 giscus App：打开 <https://github.com/apps/giscus> → Install → 选择 `blog` 仓库。
+   （giscus 靠这个 App 以你的仓库身份创建 discussion，不装的话评论区会报 "giscus is not installed"。）
+3. 取 `categoryId`：打开 <https://giscus.app/zh-CN> → 填入 `YunJiao-Chen/blog` →
+   Discussion Category 选 `Announcements` → Mapping 选 **pathname** →
+   在生成的配置片段里复制 `data-category-id`（形如 `DIC_kwDOUY1RCM4C...`），
+   填进 `site.config.ts` 的 `comments.giscus.categoryId`，push 一次即可。
+
+> 在补上 `categoryId` 之前，文章底部显示的是「联系入口」而不是坏掉的评论区，这是刻意设计的降级（代码里 `giscusReady` 同时要求两个 ID 都存在）。
+
+
 本站是纯静态站点（GitHub Pages 托管），没有服务端，因此评论走「托管式无后端方案」。
 代码里已经做好了 **Provider 抽象层**：页面只引用 `src/components/Comments.astro`，切换实现不需要改任何页面。
 

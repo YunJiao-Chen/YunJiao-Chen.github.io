@@ -161,7 +161,7 @@ footer: { since, icp, note }
 
 ## 评论
 
-默认 `provider: 'none'`，页面渲染占位说明，零外部请求。启用 giscus：
+默认 `provider: 'none'`（只显示联系入口）。启用 giscus（本仓库已切到 `provider: 'giscus'` 并填好 `repoId`，只差 `categoryId`）：
 
 1. 仓库 Settings → General → Features 勾选 **Discussions**，并新建分类（如 `Announcements`）；
 2. 到 [giscus.app](https://giscus.app/zh-CN) 填入仓库，复制 `data-repo-id` 与 `data-category-id`；

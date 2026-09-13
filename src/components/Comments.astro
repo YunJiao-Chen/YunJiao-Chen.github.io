@@ -3,29 +3,30 @@
  * 评论 Provider 抽象层
  * ---------------------------------------------------------------------------
  * 页面只引用本组件，不关心具体实现：
- *   provider = 'none'   → 占位说明（默认，零请求）
- *   provider = 'giscus' → 注入 GitHub Discussions 评论（需 repoId / categoryId）
+ *   provider = 'none'   → 只显示联系入口
+ *   provider = 'giscus' → GitHub Discussions 评论（需 repoId 与 categoryId 齐全）
  * 新增实现（Waline / Twikoo）时在这里加一个分支即可。
  */
 import GiscusComments from './GiscusComments.astro';
-import { siteConfig } from '../../site.config.ts';
+import { siteConfig, withBase } from '../../site.config.ts';
 
 const { provider, giscus } = siteConfig.comments;
+/** 两个 ID 都齐全才认为 giscus 就绪，避免渲染出坏掉的 iframe */
 const giscusReady = provider === 'giscus' && Boolean(giscus.repoId) && Boolean(giscus.categoryId);
+const { author } = siteConfig;
+const github = author.socials.find((s) => s.icon === 'github');
 ---
 
 <section class="comments" id="comments" data-wechat-ignore>
   <div class="section-head">
-    <div>
-      <h2 class="section-head__title">评论与讨论</h2>
-      <p class="section-head__desc">
-        {
-          giscusReady
-            ? '评论由 GitHub Discussions 托管，使用 GitHub 账号即可参与。'
-            : '评论暂未开启：本站是纯静态站点，采用无后端方案，不需要服务器与数据库。'
-        }
-      </p>
-    </div>
+    <h2 class="section-head__title">评论与讨论</h2>
+    <p class="section-head__desc">
+      {
+        giscusReady
+          ? '评论由 GitHub Discussions 托管，用 GitHub 账号即可参与，不需要注册新账号。'
+          : '评论区还没有开放。想讨论文章里的问题，欢迎直接找我。'
+      }
+    </p>
   </div>
 
   {
@@ -33,19 +34,14 @@ const giscusReady = provider === 'giscus' && Boolean(giscus.repoId) && Boolean(g
       <GiscusComments />
     ) : (
       <div class="comments__placeholder">
-        <p>开启只需三步（配置项在 <code>site.config.ts</code> 的 <code>comments</code>）：</p>
-        <ol class="comments__steps">
-          <li>为仓库开启 Discussions，并新建一个分类（如 Announcements）。</li>
-          <li>
-            到 <a href="https://giscus.app/zh-CN" rel="noopener">giscus.app</a> 填入仓库信息，
-            分别复制 <code>data-repo-id</code> 与 <code>data-category-id</code>。
-          </li>
-          <li>
-            把 <code>comments.provider</code> 改为 <code>'giscus'</code>，填入上面两个 ID。
-          </li>
-        </ol>
         <p>
-          完整步骤见仓库内 <code>docs/COMMENTS.md</code>；切换实现不需要改动任何页面代码。
+          可以发邮件到 <a href={`mailto:${author.email}`}>{author.email}</a>
+          {github && (
+            <>
+              ，或者到 <a href={github.href} rel="noopener">GitHub</a> 提 issue
+            </>
+          )}
+          ，我都会看。
         </p>
       </div>
     )
