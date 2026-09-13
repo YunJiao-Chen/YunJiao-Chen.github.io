@@ -21,7 +21,7 @@ export async function getAllPosts(): Promise<Post[]> {
 
 /** 文章 URL：/blog/<id>/ */
 export function postPath(post: Post): string {
-  return `/blog/${post.id}/`;
+  return `/posts/${post.id}/`;
 }
 
 /** 主页精选：优先 featured，不足时用最新补齐 */

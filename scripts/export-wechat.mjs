@@ -5,7 +5,7 @@
  * 运行时机：`npm run build` 在 `astro build` 之后自动执行（也可 `npm run wechat`）
  *
  * 做什么：
- *   1. 读取 dist/blog/<slug>/index.html，抽出 [data-wechat-article] 正文
+ *   1. 读取 dist/posts/<slug>/index.html，抽出 [data-wechat-article] 正文
  *   2. 公众号化：div→section、打上 wx-* 类、复选框转文本、代码块保留浅色 token
  *   3. 用 juice 把 src/styles/wechat.css 全部内联成 style 属性
  *      （公众号编辑器只认行内样式，会丢弃 <style> 与 class）
@@ -31,7 +31,7 @@ import { formatDate, readingTime } from '../src/lib/utils.ts';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = resolve(__dirname, '..');
 const distDir = join(root, 'dist');
-const blogDir = join(distDir, 'blog');
+const postDir = join(distDir, 'posts');
 const wechatDir = join(distDir, siteConfig.wechat.exportDir);
 const contentDir = join(root, 'src', 'content', 'blog');
 const runtimePath = join(root, 'src', 'scripts', 'wechat-runtime.js');
@@ -363,8 +363,8 @@ function escapeHtml(value) {
 /* -------------------------------------------------------------------------- */
 
 async function main() {
-  if (!existsSync(blogDir)) {
-    log('未找到 dist/blog，请先执行 astro build（npm run build:site）');
+  if (!existsSync(postDir)) {
+    log('未找到 dist/posts，请先执行 astro build（npm run build:site）');
     process.exitCode = 1;
     return;
   }
@@ -372,10 +372,10 @@ async function main() {
   const sources = collectSources();
   const entries = [];
 
-  for (const slug of readdirSync(blogDir)) {
+  for (const slug of readdirSync(postDir)) {
     if (onlySlug && slug !== onlySlug) continue;
 
-    const pagePath = join(blogDir, slug, 'index.html');
+    const pagePath = join(postDir, slug, 'index.html');
     if (!existsSync(pagePath)) continue;
 
     const source = sources.get(slug) ?? {};
@@ -405,7 +405,7 @@ async function main() {
       : ($('meta[property="article:published_time"]').attr('content')?.slice(0, 10) ?? '');
     const reading = source.content ? readingTime(source.content).label : '';
     const tags = Array.isArray(data.tags) ? data.tags : [];
-    const url = `${siteConfig.site.url}${siteConfig.site.base.replace(/\/$/, '')}/blog/${slug}/`;
+    const url = `${siteConfig.site.url}${siteConfig.site.base.replace(/\/$/, '')}/posts/${slug}/`;
 
     const meta = { title, digest, categoryName, date, reading, tags, url, slug };
 

@@ -17,7 +17,7 @@ const categories = (await getCategorySummaries())
 <PageLayout
   title="全部文章"
   description={`共 ${posts.length} 篇。按分类筛选，或按时间顺序翻阅。`}
-  path="/blog/"
+  path="/posts/"
 >
   <BlogArchive
     items={page.items}

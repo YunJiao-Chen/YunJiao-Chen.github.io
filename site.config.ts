@@ -142,7 +142,7 @@ export const siteConfig = {
   /* ------------------------------------------------------------------ */
   nav: [
     { label: '首页', href: '/' },
-    { label: '文章', href: '/blog/' },
+    { label: '文章', href: '/posts/' },
     { label: '分类', href: '/categories/' },
     { label: '标签', href: '/tags/' },
     { label: '关于', href: '/about/' },

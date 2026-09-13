@@ -31,7 +31,7 @@ const categories = (await getCategorySummaries())
 <PageLayout
   title={`全部文章（第 ${page.current} 页）`}
   description={`第 ${page.current} 页，共 ${page.total} 篇文章。`}
-  path={`/blog/page/${page.current}/`}
+  path={`/posts/page/${page.current}/`}
 >
   <BlogArchive
     items={page.items}

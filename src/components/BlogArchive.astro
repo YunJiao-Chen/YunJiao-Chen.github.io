@@ -31,7 +31,7 @@ const { items, current, totalPages, total, categories } = Astro.props;
 
 <ArchiveList posts={items} emptyText="还没有文章：在 src/content/blog/ 下新建一篇 Markdown 即可。" />
 
-<Pagination current={current} totalPages={totalPages} basePath="/blog" />
+<Pagination current={current} totalPages={totalPages} basePath="/posts" />
 
 <p class="list-note">
   第 {current} / {totalPages} 页，每页 {siteConfig.site.postsPerPage} 篇。按 <kbd>⌘K</kbd> 搜索全部文章。

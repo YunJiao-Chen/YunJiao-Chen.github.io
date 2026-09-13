@@ -78,9 +78,9 @@
 
 ```
 /                         主页（§2 的 7 个区块）
-/blog/                    全部文章列表（分页 + 分类/标签筛选 + 搜索）
-/blog/<slug>/             文章详情
-/blog/page/2/             列表分页
+/posts/                   全部文章列表（分页 + 分类筛选 + 搜索）
+/posts/<slug>/            文章详情
+/posts/page/2/            列表分页
 /categories/              分类总览（含每类文章数）
 /categories/<category>/   单分类归档
 /tags/                    标签总览（按频次）
@@ -171,7 +171,7 @@ features  : 搜索/暗色模式/RSS/阅读时长/TOC 开关
         │
         ▼
    ④ scripts/export-wechat.mjs 后处理
-      dist/blog/<slug>/index.html → 抽取正文 → juice 内联样式 → dist/wechat/<slug>.html
+      dist/posts/<slug>/index.html → 抽取正文 → juice 内联样式 → dist/wechat/<slug>.html
         │
         ▼  部署到 GitHub Pages（Actions）
 ```
@@ -242,7 +242,7 @@ personal_web/
 
 ### 7.3 构建期导出（备份/批量）
 
-`scripts/export-wechat.mjs`：读取 `dist/blog/*/index.html` → 用 `cheerio` 抽出 `[data-wechat-article]` 正文并做公众号化改造（`div→section`、打 `wx-*` 类、复选框转文本、代码 token 取浅色值）→ `juice` 把 `src/styles/wechat.css` 内联成行内样式 → 套用导出模板（建议标题/摘要、一键复制、下载 HTML、全选正文）→ 输出 `dist/wechat/<slug>.html` 与目录页 `dist/wechat/index.html`。导出页内联了与站内按钮同一份运行时，因此**双击本地文件也能一键复制**。
+`scripts/export-wechat.mjs`：读取 `dist/posts/*/index.html` → 用 `cheerio` 抽出 `[data-wechat-article]` 正文并做公众号化改造（`div→section`、打 `wx-*` 类、复选框转文本、代码 token 取浅色值）→ `juice` 把 `src/styles/wechat.css` 内联成行内样式 → 套用导出模板（建议标题/摘要、一键复制、下载 HTML、全选正文）→ 输出 `dist/wechat/<slug>.html` 与目录页 `dist/wechat/index.html`。导出页内联了与站内按钮同一份运行时，因此**双击本地文件也能一键复制**。
 
 ### 7.4 排版规范（公众号侧）
 

@@ -46,7 +46,7 @@ const [{ newer, older }, related] = await Promise.all([
     <nav class="breadcrumb" aria-label="面包屑">
       <a href={withBase('/')}>首页</a>
       <span aria-hidden="true">/</span>
-      <a href={withBase('/blog/')}>文章</a>
+      <a href={withBase('/posts/')}>文章</a>
       <span aria-hidden="true">/</span>
       <a href={withBase(`/categories/${meta.category.slug}/`)}>{meta.category.name}</a>
     </nav>
