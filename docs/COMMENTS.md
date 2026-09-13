@@ -12,16 +12,38 @@
 | `comments.giscus.category` | `Announcements` | 已填 |
 | `comments.giscus.categoryId` | 空 | **待补**，补上后评论区立即出现 |
 
-**还差三步（都需要仓库管理员在网页操作，API 做不了）**：
+**配置已完成，评论已上线**（2026-09 状态）：
 
-1. 开启 Discussions：仓库 **Settings → General → Features → 勾选 Discussions**。
-   开启后 GitHub 会自动创建 `Announcements`、`General` 等默认分类。
-2. 安装 giscus App：打开 <https://github.com/apps/giscus> → Install → 选择 `blog` 仓库。
-   （giscus 靠这个 App 以你的仓库身份创建 discussion，不装的话评论区会报 "giscus is not installed"。）
-3. 取 `categoryId`：打开 <https://giscus.app/zh-CN> → 填入 `YunJiao-Chen/blog` →
-   Discussion Category 选 `Announcements` → Mapping 选 **pathname** →
-   在生成的配置片段里复制 `data-category-id`（形如 `DIC_kwDOUY1RCM4C...`），
-   填进 `site.config.ts` 的 `comments.giscus.categoryId`，push 一次即可。
+```ts
+comments: {
+  provider: 'giscus',
+  giscus: {
+    repo: 'YunJiao-Chen/blog',
+    repoId: 'R_kgDOUY1RCA',            // 仓库 node_id
+    category: 'Announcements',
+    categoryId: 'DIC_kwDOUY1RCM4DFgPJ', // Announcements 分类 node id
+    mapping: 'pathname',                // 用页面路径关联讨论，改标题不会丢评论
+    strict: false,
+    reactionsEnabled: true,
+    inputPosition: 'top',
+    lang: 'zh-CN',
+  },
+}
+```
+
+仓库侧需要（都已具备）：Discussions 已开启（`has_discussions: true`，默认分类含 Announcements）；
+giscus App 需安装在该仓库上，否则评论区会显示 "giscus is not installed on this repository"，
+装一次即可：<https://github.com/apps/giscus> → Install → 选择 `blog`。
+
+### 怎么验证是否真的可用
+
+1. 打开任意文章页，滚到「评论与讨论」，能看到 **Sign in with GitHub** 就是正常的。
+2. 用 GitHub 账号发出第一条评论时，giscus 会自动在 Announcements 分类下创建该页面的 discussion，
+   之后这个页面就与这个讨论绑定（换标题不影响，因为用的是 pathname）。
+3. 如果显示安装错误，去上面链接装一次 App；如果显示分类错误，重新到 <https://giscus.app/zh-CN> 取 `categoryId`。
+
+> 评论框的主题会跟随站点明暗切换（组件内用 `MutationObserver` 监听 `html.dark` 并通过 `postMessage` 通知 iframe）。
+> `categoryId` 缺失或 `provider` 为 `none` 时，评论区会降级为联系入口，不会渲染坏掉的 iframe。
 
 > 在补上 `categoryId` 之前，文章底部显示的是「联系入口」而不是坏掉的评论区，这是刻意设计的降级（代码里 `giscusReady` 同时要求两个 ID 都存在）。
 
