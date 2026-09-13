@@ -187,6 +187,12 @@ comments: {
 
 产物包含 `.nojekyll`（避免 Jekyll 处理 `_astro` 目录）、`robots.txt`、`sitemap-index.xml`、`rss.xml`。
 
+部署注意事项：
+
+- **不要重跑历史运行**：每个运行构建的是它自己那个提交的代码，重跑旧运行会把旧代码重新发布上线。
+  工作流里有一道 `Guard against stale runs` 守卫，会检查本次运行的提交是否为 `main` 最新提交，不是就直接失败并给出提示。
+- 需要重新发布时，用 `main` 最新提交对应那次运行的 **Re-run all jobs**，或者推一个新提交。
+
 ---
 
 ## 常用命令

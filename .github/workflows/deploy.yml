@@ -31,6 +31,20 @@ jobs:
           node-version: '22'
           cache: npm
 
+      - name: Guard against stale runs
+        # 重跑历史运行会把旧代码重新发布上线（例如把 URL 回滚成旧路由）。
+        # 这里确认本次运行对应的提交就是 main 的最新提交，否则直接失败并提示。
+        run: |
+          git fetch --depth=1 origin main
+          latest=$(git rev-parse origin/main)
+          if [ "$latest" != "$GITHUB_SHA" ]; then
+            echo "::error::本次运行构建的是 $GITHUB_SHA，但 main 最新提交是 $latest。"
+            echo "::error::为避免用旧代码覆盖线上站点，已阻止本次部署。"
+            echo "::error::如需重新发布当前版本，请到 main 最新提交对应的那次运行点 Re-run。"
+            exit 1
+          fi
+          echo "提交校验通过：$GITHUB_SHA 就是 main 最新提交"
+
       - name: Install dependencies
         run: npm ci
 
