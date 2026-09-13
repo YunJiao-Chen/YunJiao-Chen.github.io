@@ -41,7 +41,6 @@ const href = withBase(postPath(post));
         {formatDate(post.data.pubDate)}
       </time>
       {siteConfig.features.readingTime && <span>{meta.reading.label}</span>}
-      <a href={withBase(`/categories/${meta.category.slug}/`)}>{meta.category.name}</a>
     </footer>
   </div>
 </article>

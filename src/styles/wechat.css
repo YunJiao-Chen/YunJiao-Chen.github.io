@@ -153,10 +153,9 @@
   font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
   font-size: 13px;
   line-height: 1.65;
-  color: #24292e;
-  background-color: #f6f8fa;
-  border: 1px solid #e1e4e8;
-  border-radius: 6px;
+  color: #d5d5d6;
+  background-color: #1c1d21;
+  border-radius: 8px;
   padding: 14px 16px;
   margin: 20px 0;
   white-space: pre-wrap;
@@ -168,7 +167,7 @@
   font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
   font-size: 13px;
   line-height: 1.65;
-  color: #24292e;
+  color: #d5d5d6;
   background-color: transparent;
   white-space: pre-wrap;
   word-break: break-all;

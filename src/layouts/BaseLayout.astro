@@ -6,7 +6,6 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import SEO from '../components/SEO.astro';
 import { siteConfig, withBase } from '../../site.config.ts';
-import '../styles/fonts.css';
 import '../styles/global.css';
 
 interface Props {
@@ -50,15 +49,6 @@ const {
     <link rel="apple-touch-icon" href={withBase('/favicon.svg')} />
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#0b0e13" media="(prefers-color-scheme: dark)" />
-
-    {/* 自托管字体：预加载主字体，保证首屏文字不跳（CLS < 0.1） */}
-    <link
-      rel="preload"
-      href={withBase('/fonts/geist-latin-wght-normal.woff2')}
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
 
     <SEO
       title={title}

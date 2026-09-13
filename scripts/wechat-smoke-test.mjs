@@ -68,7 +68,7 @@ const checks = [
   ['剔除 ignore 节点', !html.includes('这段不应该出现')],
   ['剔除锚点链接', !html.includes('heading-anchor')],
   ['复选框转文本标记', html.includes('[x]') && html.includes('[ ]') && !html.includes('<input')],
-  ['代码 token 保留浅色', html.includes('#005CC5')],
+  ['代码 token 带字面颜色', /<span style="color:#[0-9A-Fa-f]{6}/.test(html)],
   ['代码块换行保护', html.includes('white-space:pre-wrap')],
   ['表格内联边框', /<t[hd][^>]*border:1px solid/.test(html)],
   ['引用块内联样式', html.includes('border-left:3px solid #d9d9d9')],

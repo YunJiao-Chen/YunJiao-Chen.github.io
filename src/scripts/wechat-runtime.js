@@ -93,8 +93,9 @@ const SPEC = {
   h4: 'font-size:16px;font-weight:600;color:#444444;margin:22px 0 12px;',
   p: 'font-size:16px;line-height:1.75;color:#3f3f3f;margin:0 0 16px;',
   quote: 'margin:20px 0;padding:12px 14px;background-color:#f7f7f7;border-left:3px solid #d9d9d9;border-radius:0 4px 4px 0;color:#666666;font-size:15px;line-height:1.75;',
-  pre: 'font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;font-size:13px;line-height:1.65;color:#24292e;background-color:#f6f8fa;border:1px solid #e1e4e8;border-radius:6px;padding:14px 16px;margin:20px 0;white-space:pre-wrap;word-break:break-all;overflow-x:auto;',
-  preCode: 'font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;font-size:13px;line-height:1.65;color:#24292e;background-color:transparent;white-space:pre-wrap;word-break:break-all;',
+  /* 代码块与站内一致：深底浅字（token 颜色来自 Shiki 的深色主题） */
+  pre: 'font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;font-size:13px;line-height:1.65;color:#d5d5d6;background-color:#1c1d21;border-radius:8px;padding:14px 16px;margin:20px 0;white-space:pre-wrap;word-break:break-all;overflow-x:auto;',
+  preCode: 'font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;font-size:13px;line-height:1.65;color:#d5d5d6;background-color:transparent;white-space:pre-wrap;word-break:break-all;',
   codeInline: 'font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;font-size:14px;color:#1a1a1a;background-color:#f5f6f8;border-radius:4px;padding:2px 5px;margin:0 2px;',
   table: 'width:100%;border-collapse:collapse;margin:20px 0;font-size:14px;line-height:1.6;',
   th: 'border:1px solid #e5e5e5;background-color:#fafafa;color:#1a1a1a;font-weight:600;padding:8px 10px;text-align:left;',
@@ -125,11 +126,9 @@ function walk(root, visit) {
 }
 
 /**
- * 取代码高亮的「浅色 token」颜色
- * Shiki 配置 defaultColor: 'light' 时，浅色颜色是 style 里的字面 color；
- * 若改用 --shiki-light 变量写法，这里也能兼容。
- * 深色模式下 computed color 是深色 token，直接导出会在浅底代码块里看不清，
- * 所以必须从原始 style 属性里取浅色值。
+ * 取代码高亮的 token 颜色
+ * 站内使用单一深色主题，元素 style 里的字面 color 就是配深色底的 token 颜色；
+ * 因此这里优先取字面值，兼容老配置的 --shiki-light 变量写法。
  */
 function readCustomProps(el) {
   const raw = el.getAttribute && el.getAttribute('style');

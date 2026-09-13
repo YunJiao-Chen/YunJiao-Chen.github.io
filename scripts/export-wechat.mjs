@@ -70,8 +70,8 @@ function collectSources() {
   return out;
 }
 
-/** 从 shiki 的行内样式里取出浅色 token 颜色（导出统一走浅色主题，保证可读） */
-function lightColorOf(styleAttr) {
+/** 从 shiki 的行内样式里取出 token 颜色（站内用深色主题，字面色即配深色底的 token 色） */
+function tokenColorOf(styleAttr) {
   if (!styleAttr) return undefined;
   const match = /(?:^|;)\s*color\s*:\s*(#[0-9a-fA-F]{3,8}|rgba?\([^)]*\))/.exec(styleAttr);
   return match ? match[1] : undefined;
@@ -166,14 +166,14 @@ function toWechatDom($, article) {
       $code.attr('style', '');
       $code.find('span').each((___, spanEl) => {
         const $span = $(spanEl);
-        const color = lightColorOf($span.attr('style'));
+        const color = tokenColorOf($span.attr('style'));
         // 只保留颜色；shiki 的 --shiki-dark 等自定义属性在公众号里无效
         if (color) $span.attr('style', `color:${color}`);
         else $span.removeAttr('style');
         $span.removeClass('line');
       });
       // 没有 token span 的纯文本代码块，给出统一的深色文字
-      const textOnlyColor = lightColorOf($(codeEl).attr('style'));
+      const textOnlyColor = tokenColorOf($(codeEl).attr('style'));
       if (textOnlyColor && $code.find('span').length === 0) {
         $code.attr('style', `color:${textOnlyColor}`);
       }

@@ -34,14 +34,14 @@ for (let page = 1; page <= totalPages; page += 1) {
           <Icon name="chevron-left" size={16} />
         </a>
       ) : (
-        <span class="pagination__link pagination__link--disabled" aria-hidden="true">
+        <span class="pagination__link pagination__link--muted" aria-hidden="true">
           <Icon name="chevron-left" size={16} />
         </span>
       )}
 
       {pages.map((page) =>
         page === '...' ? (
-          <span class="pagination__link pagination__link--disabled" aria-hidden="true">
+          <span class="pagination__link pagination__link--muted" aria-hidden="true">
             …
           </span>
         ) : (
@@ -60,7 +60,7 @@ for (let page = 1; page <= totalPages; page += 1) {
           <Icon name="chevron-right" size={16} />
         </a>
       ) : (
-        <span class="pagination__link pagination__link--disabled" aria-hidden="true">
+        <span class="pagination__link pagination__link--muted" aria-hidden="true">
           <Icon name="chevron-right" size={16} />
         </span>
       )}

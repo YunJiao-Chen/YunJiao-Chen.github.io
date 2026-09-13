@@ -91,14 +91,10 @@ export default defineConfig({
       },
       hastPlugins: [headingAnchorPlugin],
     }),
-    // 双主题代码高亮：默认浅色，html.dark 时切深色（配合 src/styles/prose.css）
-    // defaultColor: 'light' 让浅色 token 直接写成字面颜色，公众号导出可直接沿用
+    // 代码高亮：单一深色主题。参考站（PaperMod）的代码块在浅色模式下也是深底
+    // （--hljs-bg #1c1d21 + 浅色 token），因此这里不再做双主题切换
     shikiConfig: {
-      themes: {
-        light: 'github-light',
-        dark: 'github-dark',
-      },
-      defaultColor: 'light',
+      theme: 'github-dark',
       wrap: false,
     },
   },

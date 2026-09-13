@@ -254,8 +254,11 @@ function auditStructure() {
   // 首屏视觉：PaperMod 结构把真实照片放在顶栏 logo，首页是欢迎卡片 + 条目卡片
   if (existsSync(join(distDir, 'index.html'))) {
     const home = readFileSync(join(distDir, 'index.html'), 'utf8');
-    const header = home.slice(home.indexOf('<header'), home.indexOf('</header>'));
-    add('C 结构', '顶栏含真实头像', /<img\s/.test(header), '');
+    // 参考站的顶栏是纯文字 logo，真实照片放在关于页
+    if (existsSync(join(distDir, 'about/index.html'))) {
+      const about = readFileSync(join(distDir, 'about/index.html'), 'utf8');
+      add('C 结构', '关于页含作者照片', /<img\s/.test(about), '');
+    }
 
     const infoStart = home.indexOf('entry--info');
     const infoEnd = home.indexOf('class="entry"', infoStart);
@@ -367,7 +370,8 @@ function auditStructure() {
     if (/fonts\.googleapis\.com|fonts\.gstatic\.com/.test(text)) fonts.push(relative(root, file));
   }
   add('C 结构', '无 Google Fonts 外链', fonts.length === 0, fonts.join(', '));
-  add('C 结构', '自托管字体文件存在', existsSync(join(root, 'public/fonts/geist-latin-wght-normal.woff2')), '');
+  // 字体策略：参考站用系统字体栈（不再自托管网络字体）
+  add('C 结构', '字体使用系统栈（与参考站一致）', /-apple-system,\s*BlinkMacSystemFont/.test(css), '');
 
   // 站点页面无未定义类（排除 shiki / GFM 自带）
   if (existsSync(distDir)) {

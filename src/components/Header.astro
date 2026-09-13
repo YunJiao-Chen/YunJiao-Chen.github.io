@@ -5,7 +5,6 @@
 import Icon from './Icon.astro';
 import SearchDialog from './SearchDialog.astro';
 import { siteConfig, withBase } from '../../site.config.ts';
-import { portraitUrl } from '../lib/images.ts';
 
 const { pathname } = Astro.url;
 const base = siteConfig.site.base.replace(/\/$/, '');
@@ -22,30 +21,19 @@ const isActive = (href: string) => {
   return currentPath.startsWith(target) || currentPath === target.replace(/\/$/, '');
 };
 
-const avatar = portraitUrl('square');
 ---
 
 <header class="header">
   <div class="container header__inner">
     <a class="brand" href={withBase('/')} aria-label={`${siteConfig.site.title} 首页`}>
-      {
-        avatar ? (
-          <img class="brand__mark" src={avatar} alt="" width="56" height="56" loading="eager" decoding="async" />
-        ) : (
-          <span class="brand__mark" aria-hidden="true">{siteConfig.author.name.slice(0, 1).toUpperCase()}</span>
-        )
-      }
-      <span class="brand__text">
-        <span class="brand__title">{siteConfig.site.title}</span>
-        <span class="brand__subtitle">{siteConfig.site.subtitle}</span>
-      </span>
+      <span class="brand__title">{siteConfig.site.title}</span>
     </a>
 
     {
       siteConfig.features.darkMode && (
         <button type="button" class="icon-btn" data-theme-toggle aria-label="切换深浅色主题">
-          <span class="theme-icon theme-icon--sun" aria-hidden="true"><Icon name="sun" size={17} /></span>
-          <span class="theme-icon theme-icon--moon" aria-hidden="true"><Icon name="moon" size={17} /></span>
+          <span class="theme-icon theme-icon--sun" aria-hidden="true"><Icon name="sun" size={18} /></span>
+          <span class="theme-icon theme-icon--moon" aria-hidden="true"><Icon name="moon" size={18} /></span>
         </button>
       )
     }

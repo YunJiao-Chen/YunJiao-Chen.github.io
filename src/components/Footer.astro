@@ -1,7 +1,7 @@
 ---
 /**
- * 页脚（PaperMod 是居中极简：社交图标 + 版权）
- * 这里保留此前的 3 行导航（关于 / 导航 / 分类），但按同样的克制样式：居中、小字、hairline
+ * 页脚：与参考站一致，居中极简（社交图标 + 版权 + 构建说明）
+ * 导航统一放在顶栏，页脚不再重复导航
  */
 import Icon from './Icon.astro';
 import { siteConfig, withBase } from '../../site.config.ts';
@@ -10,53 +10,26 @@ const year = new Date().getFullYear();
 ---
 
 <footer class="footer">
-  <div class="footer__rows">
-    <div class="footer__row">
-      <p class="footer__label">关于</p>
-      <div class="footer__social">
-        {
-          siteConfig.author.socials.map((social) => (
-            <a href={social.href.startsWith('/') ? withBase(social.href) : social.href} rel="noopener">
-              <Icon name={social.icon} size={14} />
-              {social.label}
-            </a>
-          ))
-        }
-      </div>
-    </div>
-
-    <div class="footer__row">
-      <p class="footer__label">导航</p>
-      <ul class="footer__list">
-        {
-          siteConfig.nav.map((item) => (
-            <li>
-              <a href={withBase(item.href)}>{item.label}</a>
-            </li>
-          ))
-        }
-        {
-          siteConfig.features.rss && (
-            <li>
-              <a href={withBase('/rss.xml')}>RSS</a>
-            </li>
-          )
-        }
-      </ul>
-    </div>
-
-    <div class="footer__row">
-      <p class="footer__label">分类</p>
-      <ul class="footer__list">
-        {
-          siteConfig.categories.map((category) => (
-            <li>
-              <a href={withBase(`/categories/${category.slug}/`)}>{category.name}</a>
-            </li>
-          ))
-        }
-      </ul>
-    </div>
+  <div class="social-icons">
+    {
+      siteConfig.author.socials.map((social) => (
+        <a
+          href={social.href.startsWith('/') ? withBase(social.href) : social.href}
+          rel="noopener"
+          title={social.label}
+          aria-label={social.label}
+        >
+          <Icon name={social.icon} size={26} />
+        </a>
+      ))
+    }
+    {
+      siteConfig.features.rss && (
+        <a href={withBase('/rss.xml')} title="RSS 订阅" aria-label="RSS 订阅">
+          <Icon name="rss" size={26} />
+        </a>
+      )
+    }
   </div>
 
   <div class="footer__bottom">

@@ -7,13 +7,17 @@
 
 .prose {
   max-width: var(--prose-max);
-  font-size: var(--fs-body);
-  line-height: var(--leading-prose);
-  color: var(--text-body);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--content);
 }
 
-.prose > * + * {
-  margin-top: 1.15em;
+/* 参考站：p / figure / ul 用 margin-bottom: var(--content-gap) */
+.prose p,
+.prose figure,
+.prose ul,
+.prose ol {
+  margin: 0 0 var(--content-gap);
 }
 
 /* -------------------------------- 标题 ---------------------------------- */
@@ -25,18 +29,18 @@
 }
 
 .prose h2 {
-  margin-top: 2em;
-  font-size: 1.5rem;
+  margin: 24px auto 16px;
+  font-size: 24px;
 }
 
 .prose h3 {
-  margin-top: 1.7em;
-  font-size: 1.1875rem;
+  margin: 24px 0 16px;
+  font-size: 18px;
 }
 
 .prose h4 {
-  margin-top: 1.4em;
-  font-size: 1rem;
+  margin: 24px 0 16px;
+  font-size: 16px;
   color: var(--text-muted);
 }
 
@@ -64,15 +68,15 @@
   margin: 0;
 }
 
+/* 参考站：正文链接用 box-shadow 画 1px 下划线，hover 变浅灰 */
 .prose a:not(.heading-anchor) {
   color: var(--text);
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 3px;
+  text-decoration: none;
+  box-shadow: 0 1px;
 }
 
 .prose a:not(.heading-anchor):hover {
-  text-decoration-thickness: 2px;
+  color: #aaa;
   border-bottom: none;
 }
 
@@ -128,10 +132,11 @@ html.dark .prose mark {
 }
 
 /* -------------------------------- 引用 ---------------------------------- */
+/* 参考站：20px 外边距 + 14px 内边距 + 3px 左侧主色竖线 */
 .prose blockquote {
-  margin: 1.5em 0;
-  padding: 0 0 0 var(--sp-4);
-  border-left: 3px solid var(--border-strong);
+  margin: 20px 0;
+  padding: 0 14px;
+  border-inline-start: 3px solid var(--text);
   color: var(--text-muted);
 }
 
@@ -142,19 +147,22 @@ html.dark .prose mark {
 /* -------------------------------- 代码 ---------------------------------- */
 .prose code {
   font-family: var(--font-mono);
-  font-size: 0.875em;
-  padding: 0.15em 0.35em;
+  margin: 0 4px;
+  padding: 4px 6px;
+  font-size: 0.78em;
+  line-height: 1.5;
   border-radius: 4px;
   background: var(--code-bg);
-  color: var(--text-body);
+  color: var(--text);
 }
 
+/* 参考站：pre 用深色底（浅色模式下也是），内层 code 自带 padding 与浅灰字色 */
 .prose pre {
   position: relative;
-  margin: 1.5em 0;
-  padding: var(--sp-4);
+  margin: 10px auto;
+  padding: 0;
   border-radius: var(--radius-container);
-  background: var(--code-bg);
+  background: var(--hljs-bg);
   overflow-x: auto;
   font-size: 0.875rem;
   line-height: 1.6;
@@ -162,10 +170,15 @@ html.dark .prose mark {
 }
 
 .prose pre code {
-  padding: 0;
+  display: block;
+  margin: 0;
+  padding: 10px;
   background: none;
+  border-radius: 2px;
   font-size: inherit;
-  color: inherit;
+  color: #d5d5d6;
+  word-break: break-all;
+  white-space: pre-wrap;
 }
 
 .prose pre[data-language]::after {
@@ -182,15 +195,12 @@ html.dark .prose mark {
 }
 
 /* Shiki 双主题：浅色 token 是字面颜色，深色模式必须用 !important 覆盖 */
-html.dark .prose .astro-code span {
-  color: var(--shiki-dark) !important;
+/* 代码高亮用单一深色主题；Shiki 会写行内背景，这里用 !important 压成参考站的 --hljs-bg */
+.prose .astro-code {
+  background: var(--hljs-bg) !important;
 }
 
-html.dark .prose .astro-code {
-  background-color: var(--shiki-dark-bg) !important;
-}
-
-html.dark .prose pre code {
+.prose pre code {
   background: transparent;
 }
 
@@ -279,12 +289,12 @@ html.dark .prose pre code {
    文章页外壳
    ========================================================================== */
 .post-header {
-  padding: var(--sp-6) 0 var(--sp-4);
+  margin: 24px auto var(--content-gap);
 }
 
 .post-header__title {
   margin: 0;
-  font-size: var(--fs-page-title);
+  font-size: 36px;
   line-height: 1.2;
 }
 
@@ -298,14 +308,20 @@ html.dark .prose pre code {
   margin-top: var(--sp-3);
 }
 
+/* 参考站：元信息项用 1px box-shadow 下划线 */
+.post-header__meta > span,
+.post-header__meta > time {
+  box-shadow: 0 1px 0 var(--text-muted);
+}
+
 /* 目录：PaperMod 用可折叠的 details 卡片，而不是右侧栏 */
 .toc {
-  margin-bottom: var(--gap);
-  padding: var(--sp-4);
+  margin: 0 2px 40px;
+  padding: 0.4em;
   border: var(--hairline);
   border-radius: var(--radius-container);
   background: var(--surface-raised);
-  font-size: var(--fs-meta);
+  font-size: 15px;
 }
 
 .toc__title {
@@ -369,7 +385,8 @@ html.dark .prose pre code {
 .post-footer {
   display: grid;
   gap: var(--sp-6);
-  padding: var(--sp-6) 0;
+  margin-top: 56px;
+  padding-bottom: var(--sp-6);
 }
 
 /* 小节标题（相关文章 / 其他标签 / 最近更新） */
@@ -378,11 +395,21 @@ html.dark .prose pre code {
   margin: var(--sp-6) 0 var(--sp-4);
 }
 
-/* 标签行 */
+/* 标签行：参考站用 code-bg + border 的方块（不是胶囊） */
 .post-tags {
   display: flex;
   flex-wrap: wrap;
   gap: var(--sp-2);
+}
+
+.post-tags li,
+.post-tags .chip {
+  border-radius: var(--radius-container);
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 0.2rem 0.6rem;
+  font-size: 14px;
 }
 
 /* 上一篇 / 下一篇（PaperMod 的 next-prev 行） */

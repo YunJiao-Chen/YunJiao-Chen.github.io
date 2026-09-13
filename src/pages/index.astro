@@ -33,9 +33,10 @@ const { author } = siteConfig;
             <a
               href={social.href.startsWith('/') ? withBase(social.href) : social.href}
               rel="noopener"
+              title={social.label}
+              aria-label={social.label}
             >
-              <Icon name={social.icon} size={16} />
-              {social.label}
+              <Icon name={social.icon} size={26} />
             </a>
           ))
         }

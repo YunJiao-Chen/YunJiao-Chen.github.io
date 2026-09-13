@@ -31,8 +31,11 @@
 
 - **拨盘**：`DESIGN_VARIANCE 6` / `MOTION_INTENSITY 4` / `VISUAL_DENSITY 5`（偏紧凑），定义在 `src/styles/global.css` 顶部注释里
 - **无强调色**：按 PaperMod 的做法，链接就是近黑 `#1e1e1e`，hover 加 1px 下划线（深色模式 `#dadadb`）
+- **字体**：系统字体栈（与参考站一致，不再自托管网络字体）
+- **代码块**：恒为深底浅字（`--hljs-bg`，浅色模式下也是），公众号导出同步
 - **配色与版式参考**：Lilian Weng 的 Lil'Log（Hugo PaperMod 主题，实测变量见 `docs/DESIGN.md` §14）；上一轮还比对过 Eugene Yan、Chip Huyen、Vicki Boykis、Simon Willison、Craig Mod、Robin Rendle、Julia Evans（§13）
 - **形状一致性**：卡片与控件统一 `8px` 圆角（PaperMod 的 `--radius`）
+- **页脚**：居中极简（社交图标 + 版权），导航只在顶栏
 - **真实图片**：Hero 人像、文章封面、分类配图都是真实照片（`site.config.ts` 的 `images` 段可关掉远程占位）
 - **文案红线**：禁止破折号（`——` 与 `–`）、每行最多一个中点、hero 最多 4 个文本元素、不写空泛动词
 - **动效**：只用 `opacity` 与 `transform`，全部尊重 `prefers-reduced-motion`，禁止监听 scroll 事件
