@@ -22,10 +22,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           # Astro 7 要求 Node >= 22.12，低于此版本会在构建阶段报引擎不匹配
           node-version: '22'
@@ -36,7 +36,10 @@ jobs:
 
       - name: Configure Pages
         id: pages
-        uses: actions/configure-pages@v5
+        # 注意：仓库必须先启用 Pages（Settings → Pages → Source 选 GitHub Actions），
+        # 否则这一步会以 "Get Pages site failed" 失败；enablement: true 需要额外提供 PAT，
+        # 默认的 GITHUB_TOKEN 不足以自动开启。
+        uses: actions/configure-pages@v6
 
       - name: Build site and export WeChat pages
         # SITE_URL / BASE_PATH 由 configure-pages 注入，因此换仓库或换域名都不用改代码：
@@ -58,7 +61,7 @@ jobs:
 
       - name: Upload artifact
         # 只上传 dist；源码与 .dsh/ 不会进入 Pages 产物
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: ./dist
 
@@ -71,4 +74,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
