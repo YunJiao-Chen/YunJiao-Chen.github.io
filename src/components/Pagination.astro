@@ -1,8 +1,8 @@
 ---
 /**
- * 分页导航：第 1 页 = /blog/，第 N 页 = /blog/page/N/
+ * 列表分页：与 PaperMod 的 list.html 一致
+ *   footer.page-footer > nav.pagination > a.prev / a.next
  */
-import Icon from './Icon.astro';
 import { withBase } from '../../site.config.ts';
 
 interface Props {
@@ -15,55 +15,23 @@ const { current, totalPages, basePath } = Astro.props;
 const root = basePath.replace(/\/$/, '');
 const hrefFor = (page: number) =>
   page <= 1 ? withBase(`${root}/`) : withBase(`${root}/page/${page}/`);
-
-const pages: (number | '...')[] = [];
-const push = (value: number | '...') => {
-  if (pages[pages.length - 1] !== value) pages.push(value);
-};
-for (let page = 1; page <= totalPages; page += 1) {
-  if (page === 1 || page === totalPages || Math.abs(page - current) <= 1) push(page);
-  else push('...');
-}
 ---
 
 {
   totalPages > 1 && (
-    <nav class="pagination" aria-label="分页导航">
-      {current > 1 ? (
-        <a class="pagination__link" href={hrefFor(current - 1)} rel="prev" aria-label="上一页">
-          <Icon name="chevron-left" size={16} />
-        </a>
-      ) : (
-        <span class="pagination__link pagination__link--muted" aria-hidden="true">
-          <Icon name="chevron-left" size={16} />
-        </span>
-      )}
-
-      {pages.map((page) =>
-        page === '...' ? (
-          <span class="pagination__link pagination__link--muted" aria-hidden="true">
-            …
-          </span>
-        ) : (
-          <a
-            class="pagination__link"
-            href={hrefFor(page)}
-            aria-current={page === current ? 'page' : undefined}
-          >
-            {page}
+    <footer class="page-footer">
+      <nav class="pagination" aria-label="分页导航">
+        {current > 1 && (
+          <a class="prev" href={hrefFor(current - 1)} rel="prev">
+            «&nbsp;上一页&nbsp;{current - 1}/{totalPages}
           </a>
-        ),
-      )}
-
-      {current < totalPages ? (
-        <a class="pagination__link" href={hrefFor(current + 1)} rel="next" aria-label="下一页">
-          <Icon name="chevron-right" size={16} />
-        </a>
-      ) : (
-        <span class="pagination__link pagination__link--muted" aria-hidden="true">
-          <Icon name="chevron-right" size={16} />
-        </span>
-      )}
-    </nav>
+        )}
+        {current < totalPages && (
+          <a class="next" href={hrefFor(current + 1)} rel="next">
+            下一页&nbsp;{current + 1}/{totalPages}&nbsp;»
+          </a>
+        )}
+      </nav>
+    </footer>
   )
 }

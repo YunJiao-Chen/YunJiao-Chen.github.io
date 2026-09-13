@@ -185,7 +185,7 @@ personal_web/
 │  ├─ components/               # Hero、PostCard、CategoryCard、TOC、Search、Comments、WeChatExport…
 │  ├─ lib/                      # posts.ts（查询）、toc.ts、reading-time.ts、search-index.ts、wechat.ts
 │  ├─ pages/                    # 路由（文件即路由）
-│  ├─ styles/                   # global.css / prose.css / wechat.css
+│  ├─ styles/                   # papermod/（上游原样）+ papermod.css + site.css + wechat.css
 │  └─ scripts/wechat-copy.ts    # 浏览器端公众号复制（客户端插件）
 ├─ scripts/                     # export-wechat.mjs（构建期导出）
 │                               # new-post.mjs（新建文章脚手架）
@@ -300,8 +300,9 @@ comments: {
 | 圆角/投影 | 4 档圆角 + 3 档投影 | 3 档圆角 + 仅 hover 一档极轻投影 |
 | 模板内联样式 | 散落各处 | **0 处**（改用具名工具类 `.mt-5` / `.is-muted` 等） |
 
-设计令牌全部定义在 `src/styles/global.css` 顶部（颜色 / 字号阶 / 间距阶 / 半径 / 版心），
-文章排版在 `src/styles/prose.css`，公众号排版在 `src/styles/wechat.css`。
+> 注：本节记录的是 v2 当时的做法。v5 起令牌由主题提供
+> （`src/styles/papermod/core/theme-vars.css`），自定义只在 `src/styles/site.css`，
+> 见 §14。下面保留原文以便看清演进过程。
 改配色只需替换 `--accent` 与中性阶；改版心只需改 `--page-max` / `--prose-max`。
 
 ---
@@ -424,71 +425,123 @@ v3 的问题不是"乱"，而是"平"：纯白背景、饱和度 54% 的松绿�
 
 ---
 
-## 14. PaperMod 风格改造（v5：按指定参考站重做）
+## 14. PaperMod 移植（v5：从"照着抄"到"用真主题"）
 
-参考对象：**Lilian Weng 的 Lil'Log**（<https://lilianweng.github.io/>）。
-抓取其 HTML + stylesheet 后确认她用的是 **Hugo PaperMod** 主题
-（特征：`stylesheet.min.<hash>.css` 命名 + integrity 属性），实测变量如下。
+参考对象：**Lilian Weng 的 Lil'Log**（<https://lilianweng.github.io/>），确认她用的是
+**Hugo PaperMod**（`stylesheet.min.<hash>.css` + integrity 属性）。
 
-### 14.A 实测主题变量
+中间走过一段弯路：v5 的前半程是"对着截图手抄 CSS"，结果是"像但不到位"。
+真正解决问题的是换思路：**不要模仿，直接移植**。本版把 PaperMod 的样式表整份搬进
+`src/styles/papermod/`，组件按主题的 class 契约重写，只保留主题没有的功能件。
+
+### 14.A 移植范围与来源
+
+| 项 | 值 |
+| --- | --- |
+| 上游 | <https://github.com/adityatelange/hugo-PaperMod>（MIT，13.9k stars） |
+| 版本 | `d3768854`（2026-08-02），`assets/css/` 下的 18 个文件 |
+| 落地位置 | `src/styles/papermod/**`，引入顺序见 `src/styles/papermod.css` |
+| 一致性 | 逐字节相同，`src/styles/papermod/MANIFEST.json` 存 sha256 |
+| 校验 | `npm run verify:theme`（离线查哈希，`--upstream` 额外抓上游比对），已进 CI |
+| 署名 | 每个 CSS 产物的开头都带 `core/license.css` 的 MIT 声明；另见 `docs/THIRD-PARTY.md` |
+
+引入顺序完全照主题的 `head.html`：
+`license → theme-vars → reset → common/* → chroma-styles → chroma-mod → zmedia → extended`。
+本站自己的样式在 `src/styles/site.css`，**放在主题之后**加载。
+
+**规矩：不给 `src/styles/papermod/` 里的文件做任何就地修改。**
+要改外观，只能在 `site.css` 里追加覆盖，否则下次同步上游就会悄悄丢掉改动。
+`verify:theme` 就是这条规矩的执行者。
+
+### 14.B 标记契约（这一版真正对齐的东西）
+
+"像不像"不取决于配色，取决于 class 是否落在主题选择器上。本版按主题模板逐一对齐：
+
+| 页面 / 区块 | PaperMod 结构 |
+| --- | --- |
+| 骨架 | `body#top[.list]` · `header.header > nav.header-nav` · `main.main` · `footer.footer` |
+| 主题切换 | `.logo-switches > button#theme-toggle.theme-toggle > svg.moon / svg.sun`，状态在 `html[data-theme]` + `localStorage["pref-theme"]` |
+| 首页 | `article.first-entry.home-info`（`h1` + `.entry-content.md-content` + `.entry-footer > .social-icons`） |
+| 条目卡片 | `article.post-entry`（`.entry-cover` + `.entry-header > h2` + `.entry-content > p` + `.entry-footer` + `a.entry-link` 遮罩） |
+| 列表头 | `header.page-header > h1 + .post-description` |
+| 文章页 | `article.post-single`（`header.post-header` + `h1.post-title` + `.post-meta` + `details.toc` + `.post-content.md-content` + `footer.post-footer`） |
+| 目录 | `details.toc > summary > span.title` + `.inner > ul` |
+| 标签 | `ul.post-tags > li > a`；标签总览用 `ul.terms-tags` |
+| 上下篇 | `nav.paginav > a.prev / a.next`（`span.title` + `span`） |
+| 列表分页 | `footer.page-footer > nav.pagination > a.prev / a.next` |
+| 返回顶部 | `a#top-link.top-link.hidden`，居中页脚 |
+
+`a.entry-link` 是主题的关键设计：绝对定位覆盖整张卡片，
+所以卡片里不需要嵌套链接，整卡可点、点击区域明确。
+
+### 14.C 主题变量（取自 `core/theme-vars.css`，不是抄来的近似值）
 
 | Token | 浅色 | 深色 |
 | --- | --- | --- |
-| `--theme`（页面底） | `#ffffff` | `#1d1e20` |
-| `--entry`（卡片底） | `#ffffff` | `#2e2e33` |
-| `--primary`（标题 / 交互） | `#1e1e1e` | `#dadadb` |
-| `--secondary`（元信息） | `#6c6c6c` | `#9b9c9d` |
-| `--tertiary`（强边框） | `#d6d6d6` | `#414244` |
-| `--content`（正文） | `#1f1f1f` | `#c4c4c5` |
-| `--code-bg` | `#f5f5f5` | `#37383e` |
-| `--border` | `#eeeeee` | `#333333` |
+| `--theme`（页面底） | `rgb(255 255 255)` | `rgb(29 30 32)` |
+| `--entry`（卡片底） | `rgb(255 255 255)` | `rgb(46 46 51)` |
+| `--primary`（标题 / 交互） | `rgb(30 30 30)` | `rgb(218 218 219)` |
+| `--secondary`（元信息） | `rgb(108 108 108)` | `rgb(155 156 157)` |
+| `--tertiary`（强边框） | `rgb(214 214 214)` | `rgb(65 66 68)` |
+| `--content`（正文） | `rgb(31 31 31)` | `rgb(196 196 197)` |
+| `--code-bg` | `rgb(245 245 245)` | `rgb(55 56 62)` |
+| `--code-block-bg` | `rgb(28 29 33)` | `rgb(46 46 51)` |
+| `--border` | `rgb(238 238 238)` | `rgb(51 51 51)` |
 | 尺寸 | `--main-width 720px` · `--nav-width 1024px` · `--gap 24px` · `--radius 8px` | 同左 |
 
-### 14.B 它的两个定义性特征（这一版照做了）
+两个定义性特征，这一版是**结构性地**成立，而不是模仿出来的：
 
-1. **全站没有强调色**。链接就是近黑 `--primary`，hover 靠 `a:hover { border-bottom: 1px solid var(--primary) }`
-   加一条 1px 下划线，而不是变色。因此 v4 的电蓝被取消，`--accent` 直接等于 `--primary`。
-2. **首页不是落地页，而是「一张欢迎卡片 + 若干条目卡片」**。
-   欢迎卡片（`first-entry home-info`）= 标题 + 简介 + 社交图标；
-   文章条目（`post-entry`）= 标题 + 摘要（3 行截断）+ 元信息，
-   白底 + 1px `#eee` 边框 + 8px 圆角。
+1. **全站没有强调色。** 链接就是正文色，hover 靠 `box-shadow: 0 1px` / 1px 下划线，
+   不变色。v4 的电蓝 `#1d4ed8` 因此彻底移除（自检里有一条专门确认 `site.css` 不再出现 `--accent`）。
+2. **列表页底色是 `--code-bg`，卡片是 `--entry`。** 靠 `body.list` 切换；
+   深色模式下 `.list` 退回 `--theme`。这就是"卡片浮在浅灰底上"的观感来源。
 
-其余照做：正文 16px / 行高 1.6 到 1.75；文章标题 36px；导航左 logo 右菜单；
-目录从右侧栏改为**可折叠的 details 卡片**；页脚居中、小字、极简。
+### 14.D 相对 v4 的变化
 
-### 14.C 相对 v4 的变化
-
-| 维度 | v4 | v5（PaperMod） |
+| 维度 | v4 | v5（真 PaperMod） |
 | --- | --- | --- |
-| 强调色 | 电蓝 `#1d4ed8` | **无强调色**，等于 `--primary`，hover 用 1px 下划线 |
-| 背景 / 卡片 | `#fcfcfd` + 白卡 | `#ffffff` / 卡片也是 `#ffffff`，靠 1px `#eee` 边框区分 |
-| 版心 | 导航 75rem + 内容 45rem | 导航 **1024px** + 内容 **720px**，全部居中 |
-| 首页 | 身份带 + 精选 + 索引 + Bento + 标签 5 段 | **欢迎卡片 + 6 张条目卡片 + 全部文章链接** |
-| 文章页目录 | 右侧粘性栏 | **正文上方的可折叠 `<details>`** |
-| 文章封面 | 每篇都有随机占位图 | 默认无图（`images.remoteCovers: false`），写了 `cover` 才显示 |
-| 正文字号 | 17px / 行高 1.85 | **16px / 行高 1.75**（与参考站一致） |
-| 自检项 | 54 项 | 55 项（hero 检查改为「顶栏头像 + 欢迎卡片 + 条目列表」） |
+| 样式来源 | 手写 `global.css` + `prose.css` | 上游 CSS 整份移植 + 一层 `site.css` |
+| 强调色 | 电蓝 `#1d4ed8` | 无强调色，hover 走下划线 |
+| 字体 | 自托管 Geist | 主题的系统字体栈（`-apple-system, BlinkMacSystemFont, …`） |
+| 版心 | 导航 75rem · 内容 45rem | 导航 **1024px** · 内容 **720px**，居中 |
+| 首页 | 身份带 + 精选 + 索引 + Bento + 标签 5 段 | **欢迎卡片 + 6 张条目卡片 + 全部文章** |
+| 文章页目录 | 右侧粘性栏 | 正文上方**可折叠 `<details>`** |
+| 文章封面 | 每篇随机占位图 | 默认无图（`images.remoteCovers: false`） |
+| 卡片点击 | 标题链接 | 整卡遮罩 `a.entry-link` |
+| 自检项 | 55 项（含强调色饱和度、圆角 / z-index token 等） | **48 项**，规则改为面向真主题 |
 
-### 14.D 保留与偏离（诚实记录）
+自检项从 55 降到 47 是**规则重写**而不是删检查：删掉的三类是"手写设计系统"才需要的
+约束（强调色饱和度、自建圆角 token 档位、自建 z-index 层级），它们对一份 MIT 主题
+没有意义；补上的六类是移植才需要的约束（圆角只来自主题、站内不新增 token、
+代码块底色恒为深色、无强调色 token、产物内含第三方许可声明、`verify:theme` 哈希一致）。
 
-保留的：分类 / 标签页、站内搜索、公众号导出、giscus 评论、深色模式、
-自托管 Geist 字体（参考站用系统字体栈，这里保留 Geist 是为了西文观感更好，中文同样回落系统字体）。
+### 14.E 保留与偏离（诚实记录）
 
-主动偏离的两处：
+保留的（都是功能需求，不是装饰）：分类 / 标签页、站内搜索、公众号导出按钮、
+giscus 评论、深色模式、`body.list` 之外的页面一律窄栏。
 
-- **页脚仍是 3 行导航**（关于 / 导航 / 分类）。PaperMod 的页脚是居中单行版权加社交图标；
-  但此前明确要求过「页脚 3 行横向排列」，因此保留内容，只把样式改成居中、小字、hairline 分隔。
-- **保留了搜索与公众号导出按钮**。PaperMod 没有这些，它们属于本站的功能需求，不是装饰。
+主动偏离的四处：
 
+| 偏离 | 原因 |
+| --- | --- |
+| 页脚写「由 Astro 构建，主题 PaperMod」而不是「Powered by Hugo & PaperMod」 | 本站是 Astro，写 Hugo 是假话；PaperMod 的 MIT 要求保留署名，所以照留并给出链接 |
+| 搜索入口做成菜单里的一项（`button.menu-search`） | 主题没有站内搜索，但搜索是需求；放进菜单而不是顶栏新增按钮，位置最不突兀 |
+| 文章页多了「复制到公众号 / 复制链接」一行（`.post-actions`） | 主题没有，属于本站功能 |
+| 窄屏不做汉堡菜单 | 主题本身就是横向滚动菜单，照它来；上一版自建的抽屉按钮已删除 |
+
+另外主题的标签总览用 `ul.terms-tags`，分类总览因为要放一句话说明，
+改用了 `article.post-entry` 卡片（仍是主题的类，不新增样式）。
 
 ## 15. 迭代路线
 
-| 阶段 | 内容 |
-| --- | --- |
-| v1（本次交付） | 主页 7 区块、分类/标签归档、Markdown 全能力、公众号双路导出、评论抽象层、GH Pages 部署 |
-| v1.1 | 开启 giscus、添加真实头像与公众号二维码、自定义域名 + CNAME |
-| v1.2 | 阅读统计（Umami）、系列文章聚合页、文章内相关推荐 |
-| v2 | MDX 交互组件（图表/演示）、图片自动化（本地图床/图压缩）、公众号草稿箱 API 直发 |
+| 阶段 | 内容 | 状态 |
+| --- | --- | --- |
+| v1 | 站点骨架、分类 / 标签归档、Markdown 全能力、公众号双路导出、GH Pages 部署 | 已完成 |
+| v2 到 v4 | 排版主导的视觉系统、参考站研究、品牌标记与密度修正 | 已完成 |
+| v5 | **移植 PaperMod 主题**（样式整份引入 + 结构对齐 + 哈希校验进 CI） | 已完成 |
+| v5.1 | 真实头像与邮箱、公众号二维码、自定义域名 + CNAME（此时 `base` 改为 `/`） | 待办 |
+| v5.2 | 阅读统计（Umami）、系列文章聚合页 | 待办 |
+| v6 | 完整 Hugo + PaperMod 迁移（真的用主题而不是移植样式），或 MDX 交互组件、图片自动化 | 待定 |
 
 
 ---
@@ -505,10 +558,29 @@ v3 的问题不是"乱"，而是"平"：纯白背景、饱和度 54% 的松绿�
 
 4. **双扩展名端点**：`src/pages/rss.xml.ts`、`src/pages/search-index.json.ts` 这类文件名在 Astro 7 + Vite 8 下**不会被 TypeScript 转换**，写 `import type` 或类型注解会直接构建失败（`builtin:vite-transform Unexpected token`）。这两个文件因此保持纯 JS 语法并加 `// @ts-nocheck`。
 
-5. **Shiki 双主题**：`shikiConfig.themes` + `defaultColor: 'light'` 会把浅色 token 写成**字面颜色**，深色覆盖必须用 `!important`（`html.dark .prose .astro-code span { color: var(--shiki-dark) !important }`），否则深色模式下代码块仍是浅色 token。同时这个设定让公众号导出可以直接沿用字面浅色值。
+5. **代码高亮**：v5 起改用 shiki 的单一深色主题（`github-dark`）。原因是主题的 `--code-block-bg` 本来就是深色块，双主题（浅底 / 深底切换）反而与主题冲突；单一主题也让公众号导出直接沿用字面颜色，不需要 `!important` 覆盖。
 
 6. **内容缓存**：Markdown 渲染结果缓存在 `node_modules/.astro/data-store.json`。修改 `astro.config.mjs` 的 Markdown 管线后必须清缓存（`npm run build:clean`），否则会继续用旧结果。
 
 7. **中文标签路由**：标签作为路径参数保持原文（如 `/tags/写作/`），由浏览器 percent-encode、GitHub Pages 解码匹配；若改成 `encodeURIComponent` 作为目录名会 404。
 
 8. **`base` 路径**：所有内链都经过 `withBase()`；CI 中由 `actions/configure-pages` 注入 `SITE_URL` 与 `BASE_PATH`，本地默认 `/my-blog`，换仓库只需改 `site.config.ts` 或设环境变量。
+
+9. **移植主题的三条硬规矩**（v5 起）：
+   1. `src/styles/papermod/**` 只读，任何外观调整都写到 `src/styles/site.css`；
+      `npm run verify:theme` 用 SHA256 清单把这条规矩变成 CI 失败。
+   2. 能复用主题的 class 就不新增 CSS。v5 里"最近更新 / 全部文章"这类小标题直接用
+      `header.entry-header > h2`，正文段落用 `div.post-content.md-content`，
+      页脚"回到顶部"沿用 `#top-link`。
+   3. 主题的 `data-theme` 是**属性**不是 class（v4 用的是 `html.dark`）。
+      首屏脚本读 `localStorage["pref-theme"]`，没有记录时跟随
+      `prefers-color-scheme`；`[data-theme="dark"] .moon { display: none }` 靠属性选择器生效，
+      所以图标必须原样带上 `moon` / `sun` 类名。
+
+10. **`z-index` 与滚动监听**：主题的 `#top-link` 用 `z-index: 99` 加 `scroll` 监听；
+    本站不改主题 CSS，但自己的代码里既不加 `z-index`，也不用 `scroll` 监听
+    （改为 `IntersectionObserver` 观察顶栏是否还在视口内）。自检里两条都有对应检查。
+
+11. **`site.css` 里的注释别写 `*/` 序列**：在注释里写 `.entry-*/` 会提前闭合注释，
+    后面的内容被当成 CSS 解析，lightningcss 会报 `Unexpected token Delim('/')`，
+    报错位置指在注释之后，很难看出真正原因。

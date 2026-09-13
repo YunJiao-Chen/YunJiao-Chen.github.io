@@ -1,36 +1,37 @@
 ---
 /**
- * 独立页面布局（关于 / 归档页 / 404）
- * PaperMod 风格：导航宽 1024px，内容列 720px，都居中
+ * 页面布局：与 PaperMod 的 list.html 头部一致
+ *   header.page-header > h1 + div.post-description
+ *   prose = true 时把内容包进 div.post-content.md-content（关于页、404 这类文本页）
+ *   listPage = true 时给 body 加 .list（列表页底色，卡片才浮起来）
  */
 import BaseLayout from './BaseLayout.astro';
-import '../styles/prose.css';
 
 interface Props {
   title: string;
   description?: string;
   path?: string;
   prose?: boolean;
+  listPage?: boolean;
   noindex?: boolean;
 }
 
-const { title, description, path, prose = false, noindex = false } = Astro.props;
+const {
+  title,
+  description,
+  path,
+  prose = false,
+  listPage = false,
+  noindex = false,
+} = Astro.props;
 ---
 
-<BaseLayout
-  title={title}
-  description={description}
-  path={path}
-  noindex={noindex}
-  containerClass="container container--main"
->
-  <header class="page-head">
-    <h1 class="page-head__title">{title}</h1>
-    {description && <p class="page-head__desc">{description}</p>}
+<BaseLayout title={title} description={description} path={path} noindex={noindex} listPage={listPage}>
+  <header class="page-header">
+    <h1>{title}</h1>
+    {description && <div class="post-description">{description}</div>}
     <slot name="head-extra" />
   </header>
 
-  <div class={prose ? 'prose' : ''}>
-    <slot />
-  </div>
+  {prose ? <div class="post-content md-content"><slot /></div> : <slot />}
 </BaseLayout>

@@ -1,9 +1,9 @@
 ---
 /**
- * 主页（PaperMod 结构）
- *   1 欢迎卡片（first-entry / home-info）：标题 + 简介 + 社交图标
- *   2 最新文章条目卡片（post-entry）
- *   3 「全部文章」链接
+ * 主页：与 PaperMod 的 index/home_info + list.html 一致
+ *   article.first-entry.home-info（标题 + 简介 + 社交图标）
+ *   最新文章 post-entry 卡片
+ *   footer.page-footer > nav.pagination（全部文章）
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PostEntry from '../components/PostEntry.astro';
@@ -15,24 +15,25 @@ import { siteConfig, withBase } from '../../site.config.ts';
 const posts = await getAllPosts();
 const latest = await getLatestPosts(siteConfig.site.latestCount);
 const { author } = siteConfig;
+/** 社交链接里已经有 RSS 时不再重复渲染，避免页脚出现两个订阅图标 */
+const hasRssSocial = author.socials.some((social) => social.icon === 'rss');
 ---
 
-<BaseLayout description={siteConfig.site.description} path="/">
-  {/* 1. 欢迎卡片 */}
-  <article class="entry entry--info" data-reveal>
-    <header class="entry__header">
-      <h1 class="entry__title">你好，我是 {author.name}</h1>
+<BaseLayout description={siteConfig.site.description} path="/" listPage>
+  <article class="first-entry home-info">
+    <header class="entry-header">
+      <h1>你好，我是 {author.name}</h1>
     </header>
-    <section class="entry__content">
-      <p class="entry__summary">{author.lead}</p>
-    </section>
-    <footer class="entry__footer">
+    <div class="entry-content md-content">
+      <p>{author.lead}</p>
+    </div>
+    <footer class="entry-footer">
       <div class="social-icons">
         {
           author.socials.map((social) => (
             <a
               href={social.href.startsWith('/') ? withBase(social.href) : social.href}
-              rel="noopener"
+              rel="noopener noreferrer me"
               title={social.label}
               aria-label={social.label}
             >
@@ -40,17 +41,22 @@ const { author } = siteConfig;
             </a>
           ))
         }
+        {
+          siteConfig.features.rss && !hasRssSocial && (
+            <a href={withBase('/rss.xml')} title="RSS 订阅" aria-label="RSS 订阅">
+              <Icon name="rss" size={26} />
+            </a>
+          )
+        }
       </div>
     </footer>
   </article>
 
-  {/* 2. 最新文章 */}
   {latest.map((post) => <PostEntry post={post} />)}
 
-  {/* 3. 全部文章 */}
-  <p>
-    <a class="more-link" href={withBase('/posts/')}>
-      全部 {posts.length} 篇<span aria-hidden="true">→</span>
-    </a>
-  </p>
+  <footer class="page-footer">
+    <nav class="pagination" aria-label="全部文章">
+      <a class="next" href={withBase('/posts/')}>全部 {posts.length} 篇&nbsp;»</a>
+    </nav>
+  </footer>
 </BaseLayout>

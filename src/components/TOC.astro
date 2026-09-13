@@ -1,6 +1,7 @@
 ---
 /**
- * 文章目录：PaperMod 用可折叠的 details 卡片，而不是右侧栏
+ * 文章目录：与 PaperMod 的 _partials/toc.html 一致
+ *   details.toc > summary > span.title + div.inner > ul
  */
 import type { MarkdownHeading } from 'astro';
 
@@ -34,17 +35,23 @@ const tree = build(items);
 {
   items.length > 0 && (
     <details class="toc" data-wechat-ignore>
-      <summary class="toc__title">目录</summary>
-      <nav aria-label="文章目录">
+      <summary accesskey="c" title="(Alt + C)">
+        <span class="title">目录</span>
+      </summary>
+      <div class="inner">
         <ul>
           {tree.map((node) => (
             <li>
-              <a href={`#${node.heading.slug}`}>{node.heading.text}</a>
+              <a href={`#${node.heading.slug}`} aria-label={node.heading.text}>
+                {node.heading.text}
+              </a>
               {node.children.length > 0 && (
                 <ul>
                   {node.children.map((child) => (
                     <li>
-                      <a href={`#${child.heading.slug}`}>{child.heading.text}</a>
+                      <a href={`#${child.heading.slug}`} aria-label={child.heading.text}>
+                        {child.heading.text}
+                      </a>
                     </li>
                   ))}
                 </ul>
@@ -52,7 +59,7 @@ const tree = build(items);
             </li>
           ))}
         </ul>
-      </nav>
+      </div>
     </details>
   )
 }

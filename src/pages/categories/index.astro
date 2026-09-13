@@ -1,6 +1,7 @@
 ---
 /**
- * 分类总览：/categories/（PaperMod 归档风格：一行一个分类 + 篇数）
+ * 分类总览：/categories/
+ * 用主题的 post-entry 卡片承载名称 + 说明 + 篇数，视觉与文章列表一致
  */
 import PageLayout from '../../layouts/PageLayout.astro';
 import { getCategorySummaries } from '../../lib/posts.ts';
@@ -9,21 +10,31 @@ import { withBase } from '../../../site.config.ts';
 const categories = await getCategorySummaries();
 ---
 
-<PageLayout title="分类" description="每篇文章只归属一个分类，分类是站点的主干。" path="/categories/">
-    {
-      categories.map((category) => (
-        <div class="entry">
-          <h2 class="entry__title">
-            <a href={withBase(`/categories/${category.slug}/`)}>{category.name}</a>
-          </h2>
-          <section class="entry__content">
-            <p class="entry__summary">{category.description}</p>
-          </section>
-          <footer class="entry__footer">
-            <span>{category.count} 篇</span>
-            {category.latest && <span>最近 {category.latest.data.title}</span>}
-          </footer>
+<PageLayout
+  title="分类"
+  description="每篇文章只归属一个分类，分类是站点的主干。"
+  path="/categories/"
+  listPage
+>
+  {
+    categories.map((category) => (
+      <article class="post-entry">
+        <header class="entry-header">
+          <h2 class="entry-hint-parent">{category.name}</h2>
+        </header>
+        <div class="entry-content">
+          <p>{category.description}</p>
         </div>
-      ))
-    }
+        <footer class="entry-footer">
+          <span>{category.count} 篇</span>
+          {category.latest && <span>&nbsp;&middot;&nbsp;最近 {category.latest.data.title}</span>}
+        </footer>
+        <a
+          class="entry-link"
+          aria-label={`分类：${category.name}`}
+          href={withBase(`/categories/${category.slug}/`)}
+        />
+      </article>
+    ))
+  }
 </PageLayout>

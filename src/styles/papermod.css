@@ -1,0 +1,26 @@
+/* ==========================================================================
+   PaperMod 主题样式（官方源码，MIT License）
+   ---------------------------------------------------------------------------
+   来源：https://github.com/adityatelange/hugo-PaperMod （MIT，见 core/license.css）
+   文件按主题 layouts/_partials/head.html 的拼接顺序引入：
+     license → theme-vars → reset → common/* → chroma-styles → chroma-mod → zmedia
+   本站的自定义层在 src/styles/site.css，放在主题之后加载。
+   ========================================================================== */
+@import './papermod/core/license.css';
+@import './papermod/core/theme-vars.css';
+@import './papermod/core/reset.css';
+@import './papermod/common/404.css';
+@import './papermod/common/archive.css';
+@import './papermod/common/footer.css';
+@import './papermod/common/header.css';
+@import './papermod/common/main.css';
+@import './papermod/common/md-content.css';
+@import './papermod/common/post-entry.css';
+@import './papermod/common/post-single.css';
+@import './papermod/common/profile-mode.css';
+@import './papermod/common/search.css';
+@import './papermod/common/terms.css';
+@import './papermod/includes/chroma-styles.css';
+@import './papermod/includes/chroma-mod.css';
+@import './papermod/core/zmedia.css';
+@import './papermod/extended/blank.css';

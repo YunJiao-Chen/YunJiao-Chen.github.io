@@ -10,7 +10,12 @@ const posts = await getAllPosts();
 const page = await paginate(posts, 1);
 ---
 
-<PageLayout title="文章" description={`共 ${posts.length} 篇，按发布时间倒序。`} path="/posts/">
+<PageLayout
+  title="文章"
+  description={`共 ${posts.length} 篇，按发布时间倒序。`}
+  path="/posts/"
+  listPage
+>
   <BlogArchive
     items={page.items}
     current={page.current}

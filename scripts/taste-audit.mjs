@@ -43,48 +43,60 @@ function walk(dir, out = []) {
 /* -------------------------------------------------------------------------- */
 
 const toLinear = (c) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
-const luminance = (hex) => {
-  const h = hex.replace('#', '');
-  const full = h.length === 3 ? [...h].map((c) => c + c).join('') : h;
-  const [r, g, b] = [0, 2, 4].map((i) => parseInt(full.slice(i, i + 2), 16) / 255);
-  return 0.2126 * toLinear(r) + 0.7152 * toLinear(g) + 0.0722 * toLinear(b);
-};
+/** 入参是 [r, g, b] */
+const luminance = ([r, g, b]) =>
+  0.2126 * toLinear(r / 255) + 0.7152 * toLinear(g / 255) + 0.0722 * toLinear(b / 255);
 const contrast = (a, b) => {
   const [la, lb] = [luminance(a), luminance(b)];
   return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
 };
 
-/** 从 global.css 里按主题解析 token */
+/** 从 theme-vars.css 里按明暗两套解析颜色 token */
+const themeVarsPath = () => join(root, 'src/styles/papermod/core/theme-vars.css');
+
+/** 解析 rgb(r g b) / rgb(r, g, b) / #rrggbb → [r, g, b] */
+function parseColor(value) {
+  const text = String(value).trim();
+  const rgb = /^rgba?\(\s*([\d.]+)[\s,]+([\d.]+)[\s,]+([\d.]+)/.exec(text);
+  if (rgb) return [Number(rgb[1]), Number(rgb[2]), Number(rgb[3])];
+  const hex = text.replace('#', '');
+  const full = hex.length === 3 ? [...hex].map((c) => c + c).join('') : hex;
+  if (full.length < 6) return null;
+  return [0, 2, 4].map((i) => parseInt(full.slice(i, i + 2), 16));
+}
+
 function parseTokens(css, dark = false) {
-  const block = dark
-    ? css.slice(css.indexOf('html.dark {'))
-    : css.slice(0, css.indexOf('html.dark {'));
+  const marker = ':root[data-theme="dark"] {';
+  const start = dark ? css.indexOf(marker) : 0;
+  const end = dark ? css.length : css.indexOf(marker);
+  const block = css.slice(start, end);
   const tokens = {};
-  for (const m of block.matchAll(/--([\w-]+):\s*(#[0-9a-fA-F]{3,8})/g)) tokens[m[1]] = m[2];
+  for (const m of block.matchAll(/--([\w-]+):\s*([^;]+);/g)) {
+    const color = parseColor(m[2]);
+    if (color) tokens[m[1]] = color;
+  }
   return tokens;
 }
 
 function auditContrast() {
-  const css = readFileSync(join(root, 'src/styles/global.css'), 'utf8');
+  const css = readFileSync(themeVarsPath(), 'utf8');
+  const siteCss = readFileSync(join(root, 'src/styles/site.css'), 'utf8');
+
+  /** 统计窗口内文字与背景的组合（值与用途都取自主题自身） */
+  const expectedPairs = (t) => [
+    ['正文 primary/theme', t.primary, t.theme, 7],
+    ['正文 primary/entry', t.primary, t.entry, 7],
+    ['次要 secondary/theme', t.secondary, t.theme, 4.5],
+    ['次要 secondary/entry', t.secondary, t.entry, 4.5],
+    ['长文 content/entry', t.content, t.entry, 7],
+    ['行内代码 content/code-bg', t.content, t['code-bg'], 4.5],
+  ];
 
   for (const dark of [false, true]) {
     const t = parseTokens(css, dark);
     const mode = dark ? '深色' : '浅色';
-    const pairs = [
-      ['正文 text/bg', t.text, t.bg, 7],
-      ['正文 text/surface', t.text, t.surface, 7],
-      ['长文正文 text-body/bg', t['text-body'], t.bg, 7],
-      ['长文正文 text-body/surface', t['text-body'], t.surface, 7],
-      ['次要 text-muted/bg', t['text-muted'], t.bg, 4.5],
-      ['次要 text-muted/surface', t['text-muted'], t.surface, 4.5],
-      ['弱化 text-subtle/bg', t['text-subtle'], t.bg, 4.5],
-      ['弱化 text-subtle/surface', t['text-subtle'], t.surface, 4.5],
-      ['强调色作链接 accent/bg', t.accent, t.bg, 4.5],
-      ['强调色作链接 accent/surface', t.accent, t.surface, 4.5],
-      ['主按钮文字 accent-contrast/accent', t['accent-contrast'], t.accent, 4.5],
-      ['次级按钮文字 text-muted/bg', t['text-muted'], t.bg, 4.5],
-    ];
-    for (const [name, fg, bg, need] of pairs) {
+
+    for (const [name, fg, bg, need] of expectedPairs(t)) {
       if (!fg || !bg) {
         add('A 对比度', `${mode} ${name}`, false, 'token 缺失');
         continue;
@@ -93,20 +105,26 @@ function auditContrast() {
       add('A 对比度', `${mode} ${name}`, ratio >= need, `${ratio.toFixed(2)}:1，要求 ${need}:1`);
     }
 
-    // 纯黑纯白禁令（§8.B）
-    const values = Object.values(t);
-    add('A 对比度', `${mode} 无纯黑 #000`, !values.includes('#000000'), '');
+    // 纯黑禁令（§8.B）：主题的正文色是 rgb(30,30,30)，深色代码块底也不是纯黑
+    const black = Object.entries(t).filter(([, [r, g, b]]) => r + g + b === 0);
+    add('A 对比度', `${mode} 无纯黑`, black.length === 0, black.map(([k]) => k).join(', '));
+
+    // 代码块底永远是深色块（正文颜色由语法高亮的行内色决定）
+    add(
+      'A 对比度',
+      `${mode} 代码块底色为深色`,
+      luminance(t['code-block-bg']) < 0.15,
+      `亮度 ${luminance(t['code-block-bg']).toFixed(3)}`,
+    );
   }
 
-  // 强调色饱和度 < 80%（§4.2）。用 CSS/HSL 标准定义，而非 HSV
-  const t = parseTokens(css, false);
-  const accent = t.accent.replace('#', '');
-  const [r, g, b] = [0, 2, 4].map((i) => parseInt(accent.slice(i, i + 2), 16) / 255);
-  const max = Math.max(r, g, b);
-  const min = Math.min(r, g, b);
-  const l = (max + min) / 2;
-  const hslSat = max === min ? 0 : (max - min) / (1 - Math.abs(2 * l - 1));
-  add('A 对比度', '强调色饱和度 < 80%（HSL）', hslSat < 0.8, `${(hslSat * 100).toFixed(0)}%`);
+  // 参考站 PaperMod 不使用强调色，链接靠下划线与 hover 变化
+  add(
+    'A 对比度',
+    '无强调色 token（与参考站一致）',
+    !/--accent/.test(siteCss),
+    '',
+  );
 }
 
 /* -------------------------------------------------------------------------- */
@@ -180,7 +198,10 @@ function auditCopy() {
       const footerStart = html.indexOf('<footer');
       const footer = footerStart >= 0 ? html.slice(footerStart, html.indexOf('</footer>') + 9) : '';
       if (/v\d+\.\d+\.\d+/.test(footer)) versionTells.push(`${file} 页脚版本号`);
-      if (/build|build \d|last sync|更新于 20\d\d/i.test(footer)) versionTells.push(`${file} 页脚构建戳`);
+      // 只认 "build 123" 这类构建戳；排掉 astro.build 这样的域名
+      if (/(^|[^/\w.])build\s*[#:]?\s*\d|\blast\s+sync\b|更新于\s*20\d\d/i.test(footer)) {
+        versionTells.push(`${file} 页脚构建戳`);
+      }
     }
   }
   add('B 文案', '无版本号 / 构建时间戳页脚', versionTells.length === 0, versionTells.slice(0, 3).join(', '));
@@ -235,7 +256,12 @@ function auditCopy() {
 /* -------------------------------------------------------------------------- */
 
 function auditStructure() {
-  const css = readFileSync(join(root, 'src/styles/global.css'), 'utf8');
+  const css = readFileSync(join(root, 'src/styles/site.css'), 'utf8');
+  const themeCss = readFileSync(themeVarsPath(), 'utf8');
+  /** 移植进来的 PaperMod 全部样式，用于检查字体栈、圆角等主题级约定 */
+  const vendoredCss = globSync('src/styles/papermod/**/*.css', { cwd: root })
+    .map((p) => readFileSync(join(root, p), 'utf8'))
+    .join('\n');
 
   // §4.8 / §9.E 真实图片
   let imgCount = 0;
@@ -260,33 +286,36 @@ function auditStructure() {
       add('C 结构', '关于页含作者照片', /<img\s/.test(about), '');
     }
 
-    const infoStart = home.indexOf('entry--info');
-    const infoEnd = home.indexOf('class="entry"', infoStart);
+    // 欢迎卡片：PaperMod 的 first-entry home-info
+    const infoStart = home.indexOf('first-entry home-info');
+    const infoEnd = home.indexOf('class="post-entry"', infoStart);
     const info = home.slice(infoStart, infoEnd > infoStart ? infoEnd : infoStart + 3000);
     const textNodes = [
-      /entry__title/.test(info),
-      /entry__summary/.test(info),
-      /social-icons/.test(info),
+      /class="entry-header"/.test(info),
+      /class="entry-content md-content"/.test(info),
+      /class="social-icons"/.test(info),
     ].filter(Boolean).length;
     add('C 结构', '欢迎卡片文本元素 ≤ 4', infoStart > 0 && textNodes <= 4, `${textNodes} 个`);
 
-    // 首页应有条目卡片（PaperMod 的 post-entry 列表）
-    const entries = (home.match(/class="entry"/g) ?? []).length;
+    // 首页应有条目卡片（PaperMod 的 post-entry 列表）与「全部文章」分页链接
+    const entries = (home.match(/class="post-entry"/g) ?? []).length;
     add('C 结构', '首页有条目卡片列表', entries >= 3, `${entries} 条`);
+    add('C 结构', '首页有全部文章入口', /class="pagination"/.test(home), '');
   }
 
-  // §4.4 形状一致性：只允许三档圆角 token
-  const radiusValues = [...css.matchAll(/--radius-[\w-]+:\s*([^;]+);/g)].map((m) => m[1].trim());
-  add('C 结构', '圆角 token ≤ 3 档', radiusValues.length <= 3, radiusValues.join(' / '));
+  // §4.4 形状一致性：圆角只来自主题的单个 --radius
+  const themeRadius = [...themeCss.matchAll(/--radius[\w-]*:/g)].length;
+  const customRadius = [...css.matchAll(/--radius[\w-]*:/g)].length;
+  add('C 结构', '圆角只有主题一个 token', themeRadius === 1, `theme-vars 里 ${themeRadius} 个`);
+  add('C 结构', '站内不新增圆角 token', customRadius === 0, `site.css 里 ${customRadius} 个`);
   const hardcodedRadius = [...css.matchAll(/border-radius:\s*(\d+)px/g)]
     .map((m) => Number(m[1]))
     .filter((n) => ![2, 4, 8, 14].includes(n));
   add('C 结构', '无计划外圆角值', hardcodedRadius.length === 0, hardcodedRadius.join(', '));
 
-  // §6.F z-index 集中定义
-  const zVars = [...css.matchAll(/--z-[\w-]+:\s*\d+/g)].length;
+  // §6.F z-index 集中：主题只给 top-link 一个层级，站内不再自造
   const rawZ = [...css.matchAll(/z-index:\s*(\d+)/g)].map((m) => m[1]);
-  add('C 结构', 'z-index 集中定义', zVars >= 4 && rawZ.length === 0, `token ${zVars} 个，裸值 ${rawZ.length} 个`);
+  add('C 结构', 'z-index 只用主题的层级', rawZ.length === 0, `site.css 裸值 ${rawZ.length} 个`);
 
   // 内联样式（除 Shiki 代码高亮外应为 0）
   let inline = 0;
@@ -340,6 +369,16 @@ function auditStructure() {
   add('C 结构', '图标来自图标库', fromLibrary, '');
   add('C 结构', '无手绘 SVG 路径', handDrawn === 0, `Icon.astro 内手写路径 ${handDrawn} 条`);
 
+  // 移植主题的署名必须随产物发布（CSS 打包会剥掉注释，只能单独出文件）
+  const noticePath = join(distDir, 'third-party-licenses.txt');
+  const notice = existsSync(noticePath) ? readFileSync(noticePath, 'utf8') : '';
+  add(
+    'C 结构',
+    '产物内含第三方许可声明',
+    /adityatelange/.test(notice) && /MIT/.test(notice),
+    existsSync(noticePath) ? '' : '缺少 third-party-licenses.txt',
+  );
+
   // 网格布局：不允许 flex 百分比数学（§3.E）
   const flexMath = [];
   for (const file of walk(join(root, 'src'))) {
@@ -370,8 +409,13 @@ function auditStructure() {
     if (/fonts\.googleapis\.com|fonts\.gstatic\.com/.test(text)) fonts.push(relative(root, file));
   }
   add('C 结构', '无 Google Fonts 外链', fonts.length === 0, fonts.join(', '));
-  // 字体策略：参考站用系统字体栈（不再自托管网络字体）
-  add('C 结构', '字体使用系统栈（与参考站一致）', /-apple-system,\s*BlinkMacSystemFont/.test(css), '');
+  // 字体策略：参考站用系统字体栈（不自托管网络字体）
+  add(
+    'C 结构',
+    '字体使用系统栈（与参考站一致）',
+    /-apple-system,\s*BlinkMacSystemFont/.test(vendoredCss),
+    '',
+  );
 
   // 站点页面无未定义类（排除 shiki / GFM 自带）
   if (existsSync(distDir)) {
@@ -385,12 +429,14 @@ function auditStructure() {
         .map((f) => readFileSync(join(distDir, f), 'utf8'))
         .join('') +
       pageStyles +
-      css +
-      readFileSync(join(root, 'src/styles/prose.css'), 'utf8');
+      css;
     const defined = new Set([...cssAll.matchAll(/\.([a-zA-Z][\w-]*)/g)].map((m) => m[1]));
     const allowed = new Set([
       'astro-code-themes', 'github-light', 'github-dark', 'line', 'contains-task-list',
       'task-list-item', 'sr-only', 'heading-anchor', 'data-footnote-backref', 'footnotes',
+      'moon', 'sun', 'icon',
+      // 主题模板里的结构性钩子，主题自己不给样式（PaperMod 原样如此）
+      'page-footer', 'prev', 'astro-code',
     ]);
     const unknown = new Set();
     for (const file of globSync('**/*.html', { cwd: distDir }).filter((f) => !f.startsWith('wechat/'))) {

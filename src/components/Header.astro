@@ -1,6 +1,10 @@
 ---
 /**
- * 顶栏（PaperMod 的 nav）：左侧 logo（头像 + 站名 + 主题切换），右侧菜单
+ * 顶栏：与 PaperMod 的 _partials/header.html 结构一致
+ *   header.header > nav.header-nav
+ *     div.logo > a + div.logo-switches > button#theme-toggle.theme-toggle (svg.moon / svg.sun)
+ *     ul#menu.menu > li > a > span[.active]
+ * 说明：主题靠 .menu 的横向滚动适配窄屏，不加汉堡按钮，保持与参考站一致。
  */
 import Icon from './Icon.astro';
 import SearchDialog from './SearchDialog.astro';
@@ -8,7 +12,9 @@ import { siteConfig, withBase } from '../../site.config.ts';
 
 const { pathname } = Astro.url;
 const base = siteConfig.site.base.replace(/\/$/, '');
+const label = siteConfig.site.title;
 
+/** 去掉 base 与末尾斜杠，便于比较当前路由 */
 const normalize = (value: string) => {
   const stripped = value.startsWith(base) ? value.slice(base.length) : value;
   return stripped.endsWith('/') ? stripped : `${stripped}/`;
@@ -18,81 +24,74 @@ const currentPath = normalize(pathname);
 const isActive = (href: string) => {
   const target = normalize(href);
   if (target === '/') return currentPath === '/';
-  return currentPath.startsWith(target) || currentPath === target.replace(/\/$/, '');
+  return currentPath === target || currentPath.startsWith(target);
 };
-
 ---
 
 <header class="header">
-  <div class="container header__inner">
-    <a class="brand" href={withBase('/')} aria-label={`${siteConfig.site.title} 首页`}>
-      <span class="brand__title">{siteConfig.site.title}</span>
-    </a>
+  <nav class="header-nav">
+    <div class="logo">
+      <a href={withBase('/')} accesskey="h" title={`${label} (Alt + H)`}>{label}</a>
+      {
+        siteConfig.features.darkMode && (
+          <div class="logo-switches">
+            <button
+              id="theme-toggle"
+              class="theme-toggle"
+              accesskey="t"
+              title="(Alt + T)"
+              aria-label="切换主题"
+            >
+              <Icon name="moon" size={17} class="moon" />
+              <Icon name="sun" size={17} class="sun" />
+            </button>
+          </div>
+        )
+      }
+    </div>
 
-    {
-      siteConfig.features.darkMode && (
-        <button type="button" class="icon-btn" data-theme-toggle aria-label="切换深浅色主题">
-          <span class="theme-icon theme-icon--sun" aria-hidden="true"><Icon name="sun" size={18} /></span>
-          <span class="theme-icon theme-icon--moon" aria-hidden="true"><Icon name="moon" size={18} /></span>
-        </button>
-      )
-    }
-
-    <nav class="nav" data-nav aria-label="主导航">
+    <ul id="menu" class="menu">
       {
         siteConfig.nav.map((item) => (
-          <a
-            class="nav__link"
-            href={withBase(item.href)}
-            aria-current={isActive(item.href) ? 'page' : undefined}
-          >
-            {item.label}
-          </a>
+          <li>
+            <a href={withBase(item.href)} title={item.label}>
+              <span class={isActive(item.href) ? 'active' : undefined}>{item.label}</span>
+            </a>
+          </li>
         ))
       }
-      {siteConfig.features.search && <SearchDialog />}
-      <button type="button" class="icon-btn nav-toggle" data-nav-toggle aria-label="打开菜单" aria-expanded="false">
-        <Icon name="menu" size={19} />
-      </button>
-    </nav>
-  </div>
+      {
+        siteConfig.features.search && (
+          <li>
+            <button
+              type="button"
+              class="menu-search"
+              data-search-open
+              accesskey="/"
+              title="搜索 (Alt + /)"
+            >
+              <span>搜索</span>
+            </button>
+          </li>
+        )
+      }
+    </ul>
+  </nav>
 </header>
 
-<style>
-  .theme-icon {
-    display: none;
-    line-height: 0;
-  }
-
-  :global(html:not(.dark)) .theme-icon--moon {
-    display: inline-flex;
-  }
-
-  :global(html.dark) .theme-icon--sun {
-    display: inline-flex;
-  }
-</style>
+<SearchDialog />
 
 <script>
-  const toggle = document.querySelector('[data-theme-toggle]');
+  /* 主题切换：与 PaperMod 的 footer.html 一致（data-theme 属性 + pref-theme 键） */
+  const toggle = document.getElementById('theme-toggle');
   toggle?.addEventListener('click', () => {
-    const root = document.documentElement;
-    const dark = !root.classList.contains('dark');
-    root.classList.toggle('dark', dark);
-    root.classList.toggle('light', !dark);
-    try {
-      localStorage.setItem('theme', dark ? 'dark' : 'light');
-    } catch {
-      /* 隐私模式下忽略 */
+    const html = document.documentElement;
+    if (html.dataset.theme === 'dark') {
+      html.dataset.theme = 'light';
+      localStorage.setItem('pref-theme', 'light');
+    } else {
+      html.dataset.theme = 'dark';
+      localStorage.setItem('pref-theme', 'dark');
     }
-  });
-
-  const navToggle = document.querySelector('[data-nav-toggle]');
-  const nav = document.querySelector('[data-nav]');
-  navToggle?.addEventListener('click', () => {
-    if (!nav) return;
-    const open = nav.getAttribute('data-open') === 'true';
-    nav.setAttribute('data-open', open ? 'false' : 'true');
-    navToggle.setAttribute('aria-expanded', open ? 'false' : 'true');
   });
 </script>

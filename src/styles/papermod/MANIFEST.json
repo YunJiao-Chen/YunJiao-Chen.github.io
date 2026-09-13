@@ -1,0 +1,28 @@
+{
+  "upstream": "https://github.com/adityatelange/hugo-PaperMod",
+  "commit": "d3768854d00ad003b0a8dbdba254ce9224377a01",
+  "commitDate": "2026-08-02",
+  "license": "MIT",
+  "sourceDir": "assets/css",
+  "note": "逐字节取自上游，未经修改；改动前请先看 docs/THIRD-PARTY.md",
+  "files": {
+    "common/404.css": "9705ce7d90048df2e07be7d6a8c5cf07925e2227b85668c5a6ba55806bdf80fb",
+    "common/archive.css": "4b55199b093696aa44a11cc1ad64b587ef6ac49f295f199acb867c79f24157a6",
+    "common/footer.css": "583ac4c7f9fb05eb063e23a0432272c91bee11c3932edf05e878cdae87aa0152",
+    "common/header.css": "6a9e5ec754ed77bb7b3f5cc5ce36edbfd4087a78b84b16cc9619c8d9463ad8f1",
+    "common/main.css": "214526c924ae0650a3cee48e2efb03c62f5df28c5632c68f6f10ae37687a3fc2",
+    "common/md-content.css": "7f31e2667baf78986160dae6ef3f4ee6add583838fb49588dbaeea5cc8952684",
+    "common/post-entry.css": "8e01782ff102ced03422bd1288fa33a9c5162b517a332ee2fc7b0783e1b22806",
+    "common/post-single.css": "27ded3e8c813b51c863d3f3b831c1154339569d4c9ea776ea1c879b848769198",
+    "common/profile-mode.css": "b31e648e50650397bbe693152263a9f8225b2537c99321f5283876007c0cf4bc",
+    "common/search.css": "ba4a4a9a31c453fbebcc4ee22501008a9cd2d486a27e73f5a5c5f2dd02a693bd",
+    "common/terms.css": "731c68a0d8fb784abf0afd7d696789d7cff82fc99df88960fa9cfabccac6cf1f",
+    "core/license.css": "70ea496e8f250829ff84916525eca601879a0ae24eee627885e913259e4d46c2",
+    "core/reset.css": "ccc8f5f35540cab5baa668dc6a3f3be697176dcfd2702739e64aa4e9b4caaa89",
+    "core/theme-vars.css": "69c2a5ae72959839d1d243809a4851a0d3390984113dfac0888f999ceb1a173f",
+    "core/zmedia.css": "3ec4f34122e492b30d73ef37aaf0bf22ecb310fd6edfb5c0712b5cb96c0f1c37",
+    "extended/blank.css": "92a2dfddc40ac8643c67179553d1580536158c960ec267df8e1e52ae6e8a9086",
+    "includes/chroma-mod.css": "5f0912cbec5423dd2e7070a132c062bc7697313545cc176842bb231083b5a89a",
+    "includes/chroma-styles.css": "543ca68e06e6343b0173e9cc1134466885c7a8d398ccd054d15902d3636c7bbd"
+  }
+}

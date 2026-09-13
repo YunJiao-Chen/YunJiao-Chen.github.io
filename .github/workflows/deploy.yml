@@ -66,10 +66,12 @@ jobs:
         run: npm run build
 
       - name: Design and export gates
-        # 设计规范自检（对比度 / 文案 / 结构 / base 一致性）与公众号导出回归测试
+        # 设计规范自检（对比度 / 文案 / 结构 / base 一致性）、公众号导出回归测试、
+        # 主题完整性（确认 src/styles/papermod/ 与上游逐字节一致，没有被就地改过）
         env:
           ASTRO_TELEMETRY_DISABLED: '1'
         run: |
+          npm run verify:theme
           npm run audit
           npm run test:wechat
 

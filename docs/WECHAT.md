@@ -120,7 +120,10 @@ wechat:
 | 图片 | `max-width:100%`，块级居中，圆角 6px |
 | 链接 | 公众号链接色 `#576b95` |
 
-改一处即可同时影响**站内文章排版**与**公众号导出排版**（`prose.css` 管站内、`wechat.css` 管导出，数值按上表对齐）。
+改一处即可同时影响**站内文章排版**与**公众号导出排版**：`wechat.css` 管导出，
+站内正文由移植进来的 PaperMod 主题（`src/styles/papermod/common/md-content.css`）负责，
+两者不是同一份 CSS，所以改了站内字号要回来把上表的数值同步一次。
+导出侧的两份实现（构建期 `export-wechat.mjs` 与浏览器端 `wechat-runtime.js`）用的是同一份规格。
 
 ---
 

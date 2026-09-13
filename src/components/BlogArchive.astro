@@ -5,7 +5,6 @@
 import ArchiveList from './ArchiveList.astro';
 import Pagination from './Pagination.astro';
 import type { Post } from '../lib/posts.ts';
-import { siteConfig } from '../../site.config.ts';
 
 interface Props {
   items: Post[];
@@ -21,6 +20,4 @@ const { items, current, totalPages, total } = Astro.props;
 
 <Pagination current={current} totalPages={totalPages} basePath="/posts" />
 
-<p class="list-note">
-  共 {total} 篇，第 {current} / {totalPages} 页（每页 {siteConfig.site.postsPerPage} 篇）。按 <kbd>⌘K</kbd> 搜索。
-</p>
+<p class="post-meta">共 {total} 篇，第 {current} / {totalPages} 页</p>

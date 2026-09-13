@@ -11,9 +11,9 @@
 | 能力 | 说明 |
 | --- | --- |
 | 主页 | PaperMod 结构：欢迎卡片 + 文章条目卡片 + 全部文章链接（无落地页式分区） |
-| 视觉系统 | 单色系（一个强调色 + 中性灰阶）、细线分隔、统一字号/间距令牌；模板内联样式为 0 |
-| 设计规范 | 视觉按 Hugo PaperMod（Lilian Weng 站）重做，流程按 [`design-taste-frontend`](https://github.com/Leonxlnx/taste-skill)；55 项可执行自检 |
-| Markdown 写作 | GFM 表格、任务列表、脚注、删除线、Shiki 代码高亮（明暗双主题）、标题锚点、自动目录（TOC）、阅读时长 |
+| 视觉系统 | 直接移植 [PaperMod](https://github.com/adityatelange/hugo-PaperMod)（MIT）的样式表，逐字节与上游一致并用哈希校验；本站只加一层 `site.css` |
+| 设计规范 | 视觉 = PaperMod 原样，流程按 [`design-taste-frontend`](https://github.com/Leonxlnx/taste-skill)；48 项可执行自检 + 主题哈希校验，都进 CI |
+| Markdown 写作 | GFM 表格、任务列表、脚注、删除线、Shiki 代码高亮（单一深色主题）、标题锚点、自动目录（TOC）、阅读时长 |
 | 分类 + 标签 | 分类是固定栏目（导航骨架），标签横向串联；分类页 / 标签页 / 分页 / 时间线全部构建期生成 |
 | 站内搜索 | 构建期生成 `search-index.json`，`⌘K` / `Ctrl+K` 打开，纯前端过滤，零服务端 |
 | 公众号双路导出 | 文章页「复制到公众号」一键把排版内联后写进剪贴板；构建后另产出 `dist/wechat/<slug>.html` 独立预览页 |
@@ -29,21 +29,21 @@
 本站视觉按 `design-taste-frontend` 规范重做，安装在本仓库的 `.dsh/skills/design-taste-frontend/`。
 关键约定（改动样式前请先读）：
 
-- **拨盘**：`DESIGN_VARIANCE 6` / `MOTION_INTENSITY 4` / `VISUAL_DENSITY 5`（偏紧凑），定义在 `src/styles/global.css` 顶部注释里
-- **无强调色**：按 PaperMod 的做法，链接就是近黑 `#1e1e1e`，hover 加 1px 下划线（深色模式 `#dadadb`）
-- **字体**：系统字体栈（与参考站一致，不再自托管网络字体）
-- **代码块**：恒为深底浅字（`--hljs-bg`，浅色模式下也是），公众号导出同步
-- **配色与版式参考**：Lilian Weng 的 Lil'Log（Hugo PaperMod 主题，实测变量见 `docs/DESIGN.md` §14）；上一轮还比对过 Eugene Yan、Chip Huyen、Vicki Boykis、Simon Willison、Craig Mod、Robin Rendle、Julia Evans（§13）
-- **形状一致性**：卡片与控件统一 `8px` 圆角（PaperMod 的 `--radius`）
-- **页脚**：居中极简（社交图标 + 版权），导航只在顶栏
-- **真实图片**：Hero 人像、文章封面、分类配图都是真实照片（`site.config.ts` 的 `images` 段可关掉远程占位）
+- **样式来源**：`src/styles/papermod/**` 是上游 CSS 的原样复制，**不要改**；所有自定义写在 `src/styles/site.css`（在其后加载）。`npm run verify:theme` 用 SHA256 清单守住这条规矩
+- **无强调色**：链接就是正文色，hover 靠 1px 下划线而不是变色（深色模式一样）
+- **字体**：主题的系统字体栈（`-apple-system, BlinkMacSystemFont, …`），不自托管网络字体
+- **代码块**：恒为深底浅字（`--code-block-bg`），公众号导出同步
+- **配色与版式参考**：Lilian Weng 的 Lil'Log（Hugo PaperMod，变量表见 `docs/DESIGN.md` §14）；上一轮还比对过 Eugene Yan、Chip Huyen、Vicki Boykis、Simon Willison、Craig Mod、Robin Rendle、Julia Evans（§13）
+- **形状一致性**：全站只有一个 `--radius: 8px`（主题给的），站内不新增圆角 token
+- **页脚**：居中单行（版权 + 来源说明），导航只在顶栏
+- **真实图片**：作者照片放在关于页；文章默认无封面，frontmatter 写 `cover` 才显示
 - **文案红线**：禁止破折号（`——` 与 `–`）、每行最多一个中点、hero 最多 4 个文本元素、不写空泛动词
 - **动效**：只用 `opacity` 与 `transform`，全部尊重 `prefers-reduced-motion`，禁止监听 scroll 事件
 
 提交前跑一次门禁：
 
 ```bash
-npm run build && npm run audit   # 55 项断言，全部通过才允许发布
+npm run build && npm run audit   # 48 项断言，全部通过才允许发布
 ```
 
 ## 快速开始
@@ -108,9 +108,8 @@ footer: { since, icp, note }
 常见改动：
 
 - **换成 GitHub Pages 项目站点**：`site.url = 'https://<user>.github.io'`、`site.base = '/<repo>'`（用户站点或自定义域名填 `'/'`）。
-- **调整视觉风格**：颜色、字号阶、间距阶、版心全部是 `src/styles/global.css` 顶部的设计令牌；换配色只改 `--accent` 与中性灰阶即可，其余组件自动跟随。改完务必跑 `npm run audit` 确认对比度没掉。
-- **换成自己的图片**：人像写 `author.photo = '/portrait.jpg'`，文章封面在 frontmatter 写 `cover: /images/xxx.jpg`（文件放 `public/images/`）。默认用的是 Lorem Picsum 占位照片，把 `images.remoteCovers` 设为 `false` 可完全关闭远程图片。
-- **换照片**：照片放进 `public/` 并设置 `author.photo = '/portrait.jpg'`（文章封面用 frontmatter 的 `cover`）。默认用的是 Lorem Picsum 远程占位照片。
+- **调整视觉风格**：颜色 / 字号 / 版心都是主题的令牌（`src/styles/papermod/core/theme-vars.css`，明暗两套）。要改观感就在 `src/styles/site.css` 里覆盖，别动主题文件；改完跑 `npm run audit` 确认对比度与结构约定没掉。
+- **换成自己的图片**：作者照片放进 `public/` 并写 `author.photo = '/portrait.jpg'`；文章封面在 frontmatter 写 `cover: /images/xxx.jpg`（文件同样放 `public/images/`）。当前 `images.remoteCovers` 为 `false`，列表与文章页默认没有封面图，与参考站一致。
 - **社交媒体分享图**：默认使用 `public/og-default.svg`。部分平台（微信/Twitter 等）对 SVG 支持有限，建议用 1200×630 的 PNG 替换，并在 `src/components/SEO.astro` 里把默认图路径改成该 PNG。
 - **增删分类**：改 `categories` 数组即可，路由、主页卡片、页脚、统计数字会自动跟着变。
 - **CI 覆盖地址**：设环境变量 `SITE_URL` / `BASE_PATH`，无需改代码（`deploy.yml` 已自动注入）。
@@ -126,13 +125,14 @@ footer: { since, icp, note }
 │  ├─ content.config.ts      # 内容集合 schema（zod 校验，字段写错直接构建失败）
 │  ├─ content/blog/*.md      # 文章（文件名即 URL：/blog/<文件名>/）
 │  ├─ layouts/               # BaseLayout / PostLayout / PageLayout
-│  ├─ components/            # Hero 区块、卡片、TOC、搜索、评论、公众号导出按钮…
+│  ├─ components/            # 顶栏、页脚、条目卡片、TOC、搜索、评论、公众号导出按钮…
 │  ├─ lib/                   # posts.ts（查询层）、utils.ts（日期/阅读时长/文案）
 │  ├─ pages/                 # 路由：主页、博客、分类、标签、关于、RSS、搜索索引、404
 │  ├─ scripts/               # wechat-runtime.js（浏览器端公众号导出运行时）
-│  └─ styles/                # global.css / prose.css / wechat.css
+│  └─ styles/                # papermod/（上游原样）+ papermod.css + site.css + wechat.css
 ├─ scripts/
-│  ├─ taste-audit.mjs        # 设计规范自检（47 项：对比度 / 文案 / 结构）
+│  ├─ taste-audit.mjs        # 设计规范自检（48 项：对比度 / 文案 / 结构）
+│  ├─ verify-theme.mjs       # 主题完整性校验（SHA256 清单，防就地改动）
 │  ├─ export-wechat.mjs      # 构建期公众号导出（cheerio + juice）
 │  ├─ new-post.mjs           # 新建文章脚手架
 │  └─ wechat-smoke-test.mjs  # 导出运行时回归测试（jsdom）
@@ -211,7 +211,7 @@ comments: {
 | `npm run new -- "标题"` | 新建文章 |
 | `npm run test:wechat` | 公众号导出运行时回归测试（18 项断言） |
 | `npm run check` | Astro/TS 类型检查 |
-| `npm run audit` | 设计规范自检（对比度 / 文案 / 结构共 55 项，接 CI 可当门禁） |
+| `npm run audit` | 设计规范自检（对比度 / 文案 / 结构共 48 项，接 CI 可当门禁） |
 | `npm run preview` | 预览 `dist/` |
 
 ---

@@ -1,6 +1,6 @@
 ---
 /**
- * 标签场：纯文字 + hairline，不用一排胶囊（避免视觉噪音）
+ * 标签场：与 PaperMod 的 terms.html 一致（ul.terms-tags）
  */
 import { withBase } from '../../site.config.ts';
 
@@ -14,13 +14,15 @@ const { tags, limit = 0, showCount = true } = Astro.props;
 const list = limit > 0 ? tags.slice(0, limit) : tags;
 ---
 
-<div class="tag-field">
+<ul class="terms-tags">
   {
     list.map((tag) => (
-      <a class="tag-field__item" href={withBase(`/tags/${encodeURIComponent(tag.slug)}/`)}>
-        {tag.name}
-        {showCount && <span class="tag-field__count">{tag.count}</span>}
-      </a>
+      <li>
+        <a href={withBase(`/tags/${encodeURIComponent(tag.slug)}/`)}>
+          {tag.name}
+          {showCount && <sup>{tag.count}</sup>}
+        </a>
+      </li>
     ))
   }
-</div>
+</ul>

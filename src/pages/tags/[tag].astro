@@ -32,9 +32,12 @@ const tags = await getTagSummaries();
   title={`标签 ${tag.name}`}
   description={`共 ${posts.length} 篇文章。`}
   path={`/tags/${tag.slug}/`}
+  listPage
 >
   <ArchiveList posts={posts} emptyText={`标签「${tag.name}」下还没有文章。`} />
 
-  <h2 class="subhead">其他标签</h2>
+  <header class="entry-header">
+    <h2>其他标签</h2>
+  </header>
   <TagField tags={tags.filter((item) => item.name !== tag.name)} limit={24} />
 </PageLayout>

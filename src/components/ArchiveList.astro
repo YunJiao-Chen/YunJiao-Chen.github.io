@@ -1,6 +1,6 @@
 ---
 /**
- * 归档列表：单列条目卡片（PaperMod 的 post-entry 列表）
+ * 归档列表：一串 post-entry 卡片
  */
 import PostEntry from './PostEntry.astro';
 import type { Post } from '../lib/posts.ts';
@@ -16,12 +16,10 @@ const { posts, emptyText = '这里还没有文章。' } = Astro.props;
 
 {
   posts.length === 0 ? (
-    <div class="empty">
+    <div class="post-content md-content">
       <p>{emptyText}</p>
       <p>
-        <a class="text-link" href={withBase('/posts/')}>
-          去看全部文章
-        </a>
+        <a href={withBase('/posts/')}>去看全部文章</a>
       </p>
     </div>
   ) : (

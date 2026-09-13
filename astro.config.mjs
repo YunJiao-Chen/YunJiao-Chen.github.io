@@ -91,8 +91,8 @@ export default defineConfig({
       },
       hastPlugins: [headingAnchorPlugin],
     }),
-    // 代码高亮：单一深色主题。参考站（PaperMod）的代码块在浅色模式下也是深底
-    // （--hljs-bg #1c1d21 + 浅色 token），因此这里不再做双主题切换
+    // 代码高亮：单一深色主题。PaperMod 的代码块底色在浅色模式下也是深的
+    // （--code-block-bg 恒为深色块），所以不做明暗双主题切换
     shikiConfig: {
       theme: 'github-dark',
       wrap: false,

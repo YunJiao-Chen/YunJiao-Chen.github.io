@@ -73,6 +73,7 @@ interface Props {
 const { name, size = 16, class: className = '', label } = Astro.props;
 
 const raw = ICONS[name] ?? ICONS.link;
+const cls = className ? `icon ${className}` : 'icon';
 
 const svg = raw
   .replace(/<!--[\s\S]*?-->/g, '')
@@ -81,7 +82,7 @@ const svg = raw
   .replace(/stroke-width="[^"]*"/g, `stroke-width="${STROKE}"`)
   .replace(/width="24"/, `width="${size}"`)
   .replace(/height="24"/, `height="${size}"`)
-  .replace('<svg', `<svg class="icon ${className}"`)
+  .replace('<svg', `<svg class="${cls}"`)
   .replace(
     '<svg',
     label ? `<svg role="img" aria-label="${label}"` : '<svg aria-hidden="true" focusable="false"',

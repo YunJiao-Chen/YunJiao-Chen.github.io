@@ -1,6 +1,6 @@
 ---
 /**
- * 关于我（PaperMod 的内容页：窄栏 + 正文 + 事实列表）
+ * 关于：PaperMod 的 list.html 头部 + 正文，右侧一栏放照片与事实
  */
 import PageLayout from '../layouts/PageLayout.astro';
 import PostEntry from '../components/PostEntry.astro';
@@ -15,7 +15,7 @@ const portrait = portraitUrl('portrait');
 
 <PageLayout title={`关于 ${author.name}`} description={author.tagline} path="/about/">
   <div class="about">
-    <div class="prose">
+    <div class="post-content md-content">
       <p>{author.bio[0]}</p>
       <p>{author.bio[1]}</p>
       <p>{author.bio[2]}</p>
@@ -39,10 +39,9 @@ const portrait = portraitUrl('portrait');
           用 Markdown 写作，站点用 <a href="https://astro.build" rel="noopener">Astro</a>
           构建成静态页面，源码托管在 GitHub。
         </li>
-        <li>
-          每篇文章都能一键转成公众号排版，文末的「复制到公众号」按钮会把样式内联后写进剪贴板。
-        </li>
+        <li>每篇文章都能一键转成公众号排版，文末的「复制到公众号」按钮会把样式内联后写进剪贴板。</li>
         <li>写作原则：能跑通再说，给出取舍而不只是结论，标注不确定的地方。</li>
+        <li>{siteConfig.footer.note}</li>
       </ul>
 
       <h2>联系我</h2>
@@ -50,7 +49,10 @@ const portrait = portraitUrl('portrait');
         {
           author.socials.map((social) => (
             <li>
-              <a href={social.href.startsWith('/') ? withBase(social.href) : social.href} rel="noopener">
+              <a
+                href={social.href.startsWith('/') ? withBase(social.href) : social.href}
+                rel="noopener"
+              >
                 {social.label}
               </a>
               {social.icon === 'mail' && `：${author.email}`}
@@ -87,33 +89,8 @@ const portrait = portraitUrl('portrait');
     </aside>
   </div>
 
-  <h2 class="subhead">最近更新</h2>
+  <header class="entry-header">
+    <h2>最近更新</h2>
+  </header>
   {latest.map((post) => <PostEntry post={post} />)}
 </PageLayout>
-
-<style>
-  .about {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 13rem;
-    gap: var(--gap);
-    align-items: start;
-  }
-
-  .about__side {
-    display: grid;
-    gap: var(--sp-4);
-  }
-
-  .about__portrait {
-    width: 100%;
-    aspect-ratio: 4 / 5;
-    object-fit: cover;
-    border-radius: var(--radius-container);
-  }
-
-  @media (max-width: 768px) {
-    .about {
-      grid-template-columns: minmax(0, 1fr);
-    }
-  }
-</style>

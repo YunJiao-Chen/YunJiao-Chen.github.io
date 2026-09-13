@@ -1,7 +1,12 @@
 ---
 /**
- * 条目卡片（PaperMod 的 post-entry）
- * 结构：标题 + 摘要 + 元信息；frontmatter 写了 cover 时左侧出现方形配图
+ * 条目卡片：与 PaperMod 的 list.html 里 post-entry 的结构一致
+ *   article.post-entry
+ *     div.entry-cover（可选）
+ *     header.entry-header > h2.entry-hint-parent
+ *     div.entry-content > p
+ *     footer.entry-footer（日期 · 阅读时间）
+ *     a.entry-link（覆盖整张卡片，负责点击跳转）
  */
 import { postPath, postMeta, type Post } from '../lib/posts.ts';
 import { formatDate } from '../lib/utils.ts';
@@ -16,31 +21,33 @@ const { post } = Astro.props;
 const meta = postMeta(post);
 const cover = coverUrl(post);
 const href = withBase(postPath(post));
+
+/* 与主题的 post_meta.html 一致：用不换行空格 + 中点拼接 */
+const dateHtml = `<span>${formatDate(post.data.pubDate)}</span>`;
+const readingHtml = siteConfig.features.readingTime
+  ? `<span>${meta.reading.label}</span>`
+  : '';
+const metaHtml = [dateHtml, readingHtml].filter(Boolean).join('&nbsp;&middot;&nbsp;');
 ---
 
-<article class={`entry${cover ? ' entry--cover' : ''}`} data-reveal>
+<article class="post-entry">
   {
     cover && (
-      <a class="entry__thumb" href={href} tabindex="-1" aria-hidden="true">
-        <img src={cover} alt="" width="480" height="480" loading="lazy" decoding="async" />
-      </a>
+      <div class="entry-cover">
+        <img src={cover} alt="" width="480" height="240" loading="lazy" decoding="async" />
+      </div>
     )
   }
 
-  <div>
-    <header class="entry__header">
-      <h2 class="entry__title"><a href={href}>{post.data.title}</a></h2>
-    </header>
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">{post.data.title}</h2>
+  </header>
 
-    <section class="entry__content">
-      <p class="entry__summary">{post.data.description}</p>
-    </section>
-
-    <footer class="entry__footer">
-      <time datetime={new Date(post.data.pubDate).toISOString()}>
-        {formatDate(post.data.pubDate)}
-      </time>
-      {siteConfig.features.readingTime && <span>{meta.reading.label}</span>}
-    </footer>
+  <div class="entry-content">
+    <p>{post.data.description}</p>
   </div>
+
+  <footer class="entry-footer" set:html={metaHtml} />
+
+  <a class="entry-link" aria-label={`文章：${post.data.title}`} href={href}></a>
 </article>

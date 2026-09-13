@@ -1,6 +1,12 @@
 ---
 /**
- * 文章布局（PaperMod）：标题区 + 可折叠目录 + 正文 + 操作区 + 标签 / 上下篇 / 相关 / 评论
+ * 文章布局：与 PaperMod 的 single.html 结构一致
+ *   article.post-single
+ *     header.post-header（面包屑 + h1.post-title + .post-description + .post-meta）
+ *     details.toc（ShowToc）
+ *     div.post-content.md-content
+ *     footer.post-footer（ul.post-tags + nav.paginav 上一篇 / 下一篇）
+ *   评论区接在 article 之后（主题里 comments 也在 post-single 内，这里放到页尾更易读）
  */
 import type { MarkdownHeading } from 'astro';
 
@@ -9,11 +15,9 @@ import TOC from '../components/TOC.astro';
 import Comments from '../components/Comments.astro';
 import WeChatExport from '../components/WeChatExport.astro';
 import Icon from '../components/Icon.astro';
-import PostEntry from '../components/PostEntry.astro';
-import { getAdjacentPosts, getRelatedPosts, postMeta, postPath, type Post } from '../lib/posts.ts';
+import { getAdjacentPosts, postMeta, postPath, type Post } from '../lib/posts.ts';
 import { formatDate } from '../lib/utils.ts';
 import { siteConfig, withBase } from '../../site.config.ts';
-import '../styles/prose.css';
 
 interface Props {
   post: Post;
@@ -22,11 +26,14 @@ interface Props {
 
 const { post, headings } = Astro.props;
 const meta = postMeta(post);
+const { newer, older } = await getAdjacentPosts(post.id);
 
-const [{ newer, older }, related] = await Promise.all([
-  getAdjacentPosts(post.id),
-  getRelatedPosts(post, 3),
-]);
+/* 与主题的 post_meta.html 一致：不换行空格 + 中点拼接 */
+const metaParts = [
+  `<span title="${new Date(post.data.pubDate).toISOString()}">${formatDate(post.data.pubDate)}</span>`,
+  siteConfig.features.readingTime ? `<span>${meta.reading.label}</span>` : '',
+].filter(Boolean);
+const metaHtml = metaParts.join('&nbsp;&middot;&nbsp;');
 ---
 
 <BaseLayout
@@ -38,103 +45,80 @@ const [{ newer, older }, related] = await Promise.all([
   updatedDate={post.data.updatedDate}
   tags={post.data.tags}
   author={post.data.wechat?.author ?? siteConfig.author.name}
-  containerClass="container container--main"
 >
-  <nav class="breadcrumb" aria-label="面包屑">
-    <a href={withBase('/')}>首页</a>
-    <span aria-hidden="true">/</span>
-    <a href={withBase('/posts/')}>文章</a>
-    <span aria-hidden="true">/</span>
-    <a href={withBase(`/categories/${meta.category.slug}/`)}>{meta.category.name}</a>
-  </nav>
+  <article class="post-single">
+    <header class="post-header">
+      <nav class="breadcrumbs" role="navigation" aria-label="面包屑">
+        <a href={withBase('/')}>首页</a>
+        <Icon name="chevron-right" size={14} />
+        <a href={withBase('/posts/')}>文章</a>
+        <Icon name="chevron-right" size={14} />
+        <a href={withBase(`/categories/${meta.category.slug}/`)}>{meta.category.name}</a>
+        <Icon name="chevron-right" size={14} />
+      </nav>
 
-  <header class="post-header">
-    <h1 class="post-header__title">{post.data.title}</h1>
-    <p class="post-header__dek">{post.data.description}</p>
-    <div class="meta post-header__meta">
-      <span>
-        <Icon name="calendar" size={14} />
-        <time datetime={new Date(post.data.pubDate).toISOString()}>
-          {formatDate(post.data.pubDate)}
-        </time>
-      </span>
-      {post.data.updatedDate && <span>更新于 {formatDate(post.data.updatedDate)}</span>}
-      {siteConfig.features.readingTime && <span>{meta.reading.label}</span>}
-      {post.data.series && <span>系列 {post.data.series}</span>}
+      <h1 class="post-title entry-hint-parent">{post.data.title}</h1>
+
+      <div class="post-description">{post.data.description}</div>
+
+      <div class="post-meta">
+        <Fragment set:html={metaHtml} />
+        {
+          post.data.updatedDate && (
+            <span>&nbsp;&middot;&nbsp;更新于 {formatDate(post.data.updatedDate)}</span>
+          )
+        }
+      </div>
+    </header>
+
+    {siteConfig.features.toc && <TOC headings={headings} />}
+
+    <div class="post-content md-content" data-wechat-article>
+      <slot />
     </div>
-  </header>
 
-  {siteConfig.features.toc && <TOC headings={headings} />}
+    <div class="post-actions">
+      <WeChatExport post={post} />
+      <button type="button" class="btn" data-copy-link data-wechat-ignore>
+        <Icon name="link" size={14} /> 复制链接
+      </button>
+    </div>
 
-  <article class="prose" data-wechat-article>
-    <slot />
+    <footer class="post-footer">
+      {
+        post.data.tags.length > 0 && (
+          <ul class="post-tags" data-wechat-ignore>
+            {post.data.tags.map((tag) => (
+              <li>
+                <a href={withBase(`/tags/${encodeURIComponent(tag)}/`)}>{tag}</a>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+
+      {
+        siteConfig.features.postNav && (
+          <nav class="paginav" aria-label="上下篇">
+            {newer && (
+              <a class="prev" href={withBase(postPath(newer))}>
+                <span class="title">« 上一篇</span>
+                <span>{newer.data.title}</span>
+              </a>
+            )}
+            {older && (
+              <a class="next" href={withBase(postPath(older))}>
+                <span class="title">下一篇 »</span>
+                <span>{older.data.title}</span>
+              </a>
+            )}
+          </nav>
+        )
+      }
+    </footer>
   </article>
 
-  <div class="post-actions">
-    <WeChatExport post={post} />
-    <button type="button" class="btn btn--ghost" data-copy-link data-wechat-ignore>
-      <Icon name="link" size={15} /> 复制链接
-    </button>
-    {
-      siteConfig.wechat.showCopyButton && meta.wechatEnabled && (
-        <span class="post-actions__note">
-          「复制到公众号」会把排版转成行内样式后写入剪贴板，直接粘到公众号编辑器即可。
-        </span>
-      )
-    }
-  </div>
-
-  <footer class="post-footer">
-    {
-      post.data.tags.length > 0 && (
-        <div class="post-tags" data-wechat-ignore>
-          {post.data.tags.map((tag) => (
-            <a class="chip" href={withBase(`/tags/${encodeURIComponent(tag)}/`)}>
-              #{tag}
-            </a>
-          ))}
-        </div>
-      )
-    }
-
-    {
-      siteConfig.features.postNav && (
-        <nav class="post-nav" aria-label="上下篇">
-          <div class="post-nav__item">
-            <p class="post-nav__label">上一篇</p>
-            {newer ? (
-              <p class="post-nav__title">
-                <a href={withBase(postPath(newer))}>{newer.data.title}</a>
-              </p>
-            ) : (
-              <p class="post-nav__title post-nav__title--empty">已经是最新一篇</p>
-            )}
-          </div>
-          <div class="post-nav__item post-nav--right">
-            <p class="post-nav__label">下一篇</p>
-            {older ? (
-              <p class="post-nav__title">
-                <a href={withBase(postPath(older))}>{older.data.title}</a>
-              </p>
-            ) : (
-              <p class="post-nav__title post-nav__title--empty">已经是最早一篇</p>
-            )}
-          </div>
-        </nav>
-      )
-    }
-
-    {
-      related.length > 0 && (
-        <section>
-          <h2 class="subhead">相关文章</h2>
-          {related.map((item) => <PostEntry post={item} />)}
-        </section>
-      )
-    }
-
-    <Comments />
-  </footer>
+  <Comments />
 </BaseLayout>
 
 <script>

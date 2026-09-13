@@ -1,0 +1,392 @@
+/*! 本样式表包含 PaperMod 主题的样式（MIT License）
+ *  PaperMod: https://github.com/adityatelange/hugo-PaperMod
+ *  Copyright (c) 2020 nanxiaobei and adityatelange
+ *  Copyright (c) 2021-2026 adityatelange
+ *  完整许可见仓库根目录 LICENSE-PaperMod 与 docs/THIRD-PARTY.md
+ */
+/* ==========================================================================
+   本站自定义层（在 PaperMod 主题样式之后加载）
+   ---------------------------------------------------------------------------
+   只放主题没有的三类东西：
+     1 中文排版微调（主题的正文字号与行高是为英文设定的）
+     2 本站功能件：公众号导出按钮、站内搜索弹层、评论区、跳转链接
+     3 无障碍与工具类
+   主题自身的类（.header、.header-nav、.logo、#menu、.main、.post-entry、.entry-*
+   系列、.post-single、.post-title、.post-meta、.post-content、.toc、.paginav、
+   .post-tags、.pagination、.terms-tags、.footer、.social-icons、.top-link）
+   一律不改，保持与主题一致。
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. 中文排版微调
+   -------------------------------------------------------------------------- */
+body {
+  line-height: 1.7; /* 主题为 1.6，中文需要略松 */
+}
+
+.md-content p,
+.md-content li,
+.entry-content p {
+  line-height: 1.75;
+}
+
+/* 正文里连续中文与英数之间不额外加字距，保持与主题一致 */
+.md-content {
+  letter-spacing: 0;
+}
+
+/* --------------------------------------------------------------------------
+   2. 功能件
+   -------------------------------------------------------------------------- */
+/* 顶栏里的搜索入口：外观与主题的 .menu a 一致，只是换成 button 元素 */
+.menu-search {
+  padding: 0;
+  border: none;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.menu-search:hover {
+  color: var(--primary);
+}
+
+/* 公众号导出按钮：沿用主题 .post-tags a 的语言（浅底 + 细边 + 圆角） */
+.wechat-export {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.wechat-export a,
+.wechat-export button,
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--code-bg);
+  color: var(--primary);
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.wechat-export a:hover,
+.wechat-export button:hover,
+.btn:hover {
+  border-color: var(--tertiary);
+  border-bottom: 1px solid var(--tertiary);
+}
+
+/* 次级按钮：不填底色，靠边框区分 */
+.btn--ghost {
+  background: transparent;
+}
+
+.btn--primary {
+  background: var(--primary);
+  color: var(--theme);
+  border-color: var(--primary);
+}
+
+.post-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.post-actions__note {
+  flex: 1 1 16rem;
+  color: var(--secondary);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+/* 站内搜索弹层：视觉对齐主题（--entry 底 + --border 边 + --radius 圆角） */
+.search-dialog {
+  margin: 12vh auto auto;
+  padding: 0;
+  width: 100%;
+  max-width: min(94vw, 40rem);
+  border: none;
+  background: transparent;
+  color: var(--primary);
+}
+
+.search-dialog::backdrop {
+  background: rgb(0 0 0 / 45%);
+}
+
+.search-dialog__panel {
+  overflow: hidden;
+  background: var(--entry);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 24px 60px -30px rgb(0 0 0 / 35%);
+}
+
+.search-dialog__field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  color: var(--secondary);
+}
+
+.search-dialog__input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: var(--primary);
+  font: inherit;
+  outline: none;
+}
+
+.search-dialog__results {
+  display: grid;
+  gap: 2px;
+  max-height: min(52vh, 26rem);
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.search-dialog__foot {
+  display: flex;
+  gap: 16px;
+  padding: 8px 14px;
+  border-top: 1px solid var(--border);
+  color: var(--secondary);
+  font-size: 12px;
+}
+
+.search-dialog__foot span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.search-result {
+  display: grid;
+  gap: 2px;
+  padding: 10px;
+  border-radius: var(--radius);
+}
+
+.search-result[data-active='true'],
+.search-result:hover {
+  background: var(--code-bg);
+}
+
+.search-result__title {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.search-result__desc {
+  color: var(--secondary);
+  font-size: 14px;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.search-result__meta {
+  color: var(--secondary);
+  font-size: 12px;
+}
+
+.search-state {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  padding: 28px 16px;
+  text-align: center;
+  color: var(--secondary);
+  font-size: 14px;
+}
+
+/* 加载骨架：形状与结果行一致 */
+.search-skeleton {
+  display: grid;
+  gap: 10px;
+  padding: 10px;
+}
+
+.search-skeleton span {
+  height: 12px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--code-bg) 0%, var(--border) 50%, var(--code-bg) 100%);
+  background-size: 200% 100%;
+  animation: search-shimmer 1.4s linear infinite;
+}
+
+.search-skeleton span:nth-child(2) {
+  width: 70%;
+}
+
+.search-skeleton span:nth-child(4) {
+  width: 84%;
+}
+
+@keyframes search-shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .search-skeleton span {
+    animation: none;
+  }
+}
+
+/* 评论区 */
+.comments {
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+.comments__title {
+  font-size: 20px;
+}
+
+.comments__desc {
+  margin: 6px 0 0;
+  color: var(--secondary);
+  font-size: 14px;
+}
+
+.giscus-host {
+  margin-top: 16px;
+  min-height: 6rem;
+}
+
+.comments__placeholder {
+  margin-top: 12px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--code-bg);
+  color: var(--secondary);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.comments__placeholder p {
+  margin: 0;
+}
+
+.comments__placeholder a {
+  color: var(--primary);
+  box-shadow: 0 1px;
+}
+
+/* 关于页：照片 + 事实列表（PaperMod 没有对应组件，用主题语言拼） */
+.about {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 12rem;
+  gap: var(--gap);
+  align-items: start;
+  margin-bottom: var(--gap);
+}
+
+.about__side {
+  display: grid;
+  gap: 16px;
+}
+
+.about__portrait {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border-radius: var(--radius);
+}
+
+.fact-list {
+  display: grid;
+  gap: 10px;
+  margin: 16px 0 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+
+.fact-list__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 14px;
+}
+
+.fact-list__row dt {
+  color: var(--secondary);
+}
+
+.fact-list__row dd {
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .about {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   3. 无障碍与工具类
+   -------------------------------------------------------------------------- */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  padding: 8px 16px;
+  background: var(--primary);
+  color: var(--theme);
+  font-size: 14px;
+}
+
+.skip-link:focus {
+  left: 0;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* 键盘提示：主题没有 kbd 样式 */
+kbd {
+  padding: 2px 6px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--code-bg);
+  color: var(--secondary);
+  font-family: inherit;
+  font-size: 12px;
+}
+
+/* 主题的锚点标题图标由主题处理；这里只保留目录高亮 */
+.toc a[data-active='true'] {
+  color: var(--primary);
+  box-shadow: 0 1px;
+}

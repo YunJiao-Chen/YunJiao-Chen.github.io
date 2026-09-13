@@ -1,39 +1,60 @@
 ---
 /**
- * 页脚：与参考站一致，居中极简（社交图标 + 版权 + 构建说明）
- * 导航统一放在顶栏，页脚不再重复导航
+ * 页脚：与 PaperMod 的 _partials/footer.html 一致
+ *   单行居中，版权 + 一行来源说明，另加一个回到顶部按钮
+ * 与主题的差异：主题写 "Powered by Hugo & PaperMod"，本站用 Astro 构建，
+ * 只移植了 PaperMod 的样式（MIT），所以这里如实写成 Astro 与 PaperMod 主题。
+ * 许可协议等长文案放在关于页，页脚保持主题那样的短行。
  */
-import Icon from './Icon.astro';
 import { siteConfig, withBase } from '../../site.config.ts';
 
 const year = new Date().getFullYear();
 ---
 
 <footer class="footer">
-  <div class="social-icons">
-    {
-      siteConfig.author.socials.map((social) => (
-        <a
-          href={social.href.startsWith('/') ? withBase(social.href) : social.href}
-          rel="noopener"
-          title={social.label}
-          aria-label={social.label}
-        >
-          <Icon name={social.icon} size={26} />
-        </a>
-      ))
-    }
-    {
-      siteConfig.features.rss && (
-        <a href={withBase('/rss.xml')} title="RSS 订阅" aria-label="RSS 订阅">
-          <Icon name="rss" size={26} />
-        </a>
-      )
-    }
-  </div>
-
-  <div class="footer__bottom">
-    <span>© {siteConfig.footer.since} {year} {siteConfig.author.name}</span>
-    <span>{siteConfig.footer.note}</span>
-  </div>
+  <span>&copy; {year} <a href={withBase('/')}>{siteConfig.site.title}</a></span>
+  <span>
+    {' · '}由 <a href="https://astro.build" rel="noopener" target="_blank">Astro</a> 构建，主题
+    <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank"
+      >PaperMod</a
+    >
+  </span>
 </footer>
+
+<a
+  href="#top"
+  id="top-link"
+  class="top-link hidden"
+  aria-label="回到顶部"
+  title="回到顶部 (Alt + G)"
+  accesskey="g"
+>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+  >
+    <polyline points="17 11 12 6 7 11"></polyline>
+    <polyline points="17 18 12 13 7 18"></polyline>
+  </svg>
+</a>
+
+<script>
+  /* 回到顶部：主题用 scroll 监听控制显隐，这里换成 IntersectionObserver，
+     观察顶栏是否还在视口里（看得到顶栏就说明没滚下去，按钮隐藏） */
+  const topLink = document.getElementById('top-link');
+  const header = document.querySelector('.header');
+  if (topLink && header && 'IntersectionObserver' in window) {
+    new IntersectionObserver(
+      ([entry]) => {
+        topLink.classList.toggle('hidden', entry.isIntersecting);
+      },
+      { threshold: 0 },
+    ).observe(header);
+  }
+</script>
