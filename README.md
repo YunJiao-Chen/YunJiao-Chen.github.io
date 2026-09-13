@@ -12,7 +12,7 @@
 | --- | --- |
 | 主页 5 区块 | 非对称 Hero（真实照片）→ 精选头条 → 双栏索引 → 分类 Bento（5 格）→ 标签场；页脚为品牌行 + 3 行横向排列 |
 | 视觉系统 | 单色系（一个强调色 + 中性灰阶）、细线分隔、统一字号/间距令牌；模板内联样式为 0 |
-| 设计规范 | 按 [`design-taste-frontend`](https://github.com/Leonxlnx/taste-skill) 重做：真实图片、自托管 Geist 字体、Tabler 图标、入场动效、47 项可执行自检 |
+| 设计规范 | 按 [`design-taste-frontend`](https://github.com/Leonxlnx/taste-skill) 重做：真实图片、自托管 Geist 字体、Tabler 图标、入场动效、50 项可执行自检 |
 | Markdown 写作 | GFM 表格、任务列表、脚注、删除线、Shiki 代码高亮（明暗双主题）、标题锚点、自动目录（TOC）、阅读时长 |
 | 分类 + 标签 | 分类是固定栏目（导航骨架），标签横向串联；分类页 / 标签页 / 分页 / 时间线全部构建期生成 |
 | 站内搜索 | 构建期生成 `search-index.json`，`⌘K` / `Ctrl+K` 打开，纯前端过滤，零服务端 |
@@ -60,7 +60,7 @@ npm run check        # 类型检查（当前 0 error / 0 warning）
 ### 写作
 
 ```bash
-npm run new -- "我的新文章" --category frontend --tags Astro,性能
+npm run new -- "我的新文章" --category credit --tags 评分卡,风控
 ```
 
 会在 `src/content/blog/` 生成带完整 frontmatter 的文件。正文标题从 `##` 开始（`<h1>` 由模板渲染）。
@@ -71,7 +71,7 @@ title: 我的新文章
 description: 一句话摘要：用于卡片、SEO 与公众号摘要
 pubDate: 2026-09-13
 updatedDate: 2026-09-20      # 可选
-category: frontend           # frontend | backend | ai | reading | life
+category: credit              # credit | bigdata | nlp | recsys | reading
 tags: [Astro, 性能]
 series: Astro 实战            # 可选
 featured: false              # true 会进入主页「精选文章」

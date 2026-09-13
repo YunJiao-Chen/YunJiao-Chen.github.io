@@ -88,7 +88,7 @@
 /sitemap-index.xml        Sitemap（@astrojs/sitemap 生成）
 ```
 
-**URL 约定**：全小写、连字符分隔；分类与标签使用拼音/英文 slug（`前端工程 → frontend`），中文标题只出现在页面文案里。文章 slug 由文件名决定（`my-first-post.md → /blog/my-first-post/`），保证 URL 稳定不被标题改名影响。
+**URL 约定**：全小写、连字符分隔；分类与标签使用英文 slug（`信贷模型 → credit`），中文标题只出现在页面文案里。文章 slug 由文件名决定（`credit-scorecard-pipeline.md → /posts/credit-scorecard-pipeline/`），保证 URL 稳定不被标题改名影响。
 
 **导航层级**：任何页面到主页 ≤1 次点击，到文章 ≤2 次点击（分类作为主干，标签作为横向切片）。
 
@@ -104,7 +104,7 @@ title: 用 Astro 搭一个能一键同步公众号的博客   # 必填
 description: 一句话摘要，用于卡片/SEO/公众号 digest  # 必填
 pubDate: 2025-01-12                            # 必填
 updatedDate: 2025-02-03                        # 选填
-category: frontend                             # 必填，必须是 site.config 里定义的 slug
+category: credit                               # 必填，必须是 site.config 里定义的 slug
 tags: [Astro, 静态站点, 公众号]                  # 选填
 cover: /images/cover-a.svg                     # 选填；缺省不加封面（保持单色克制）
 draft: false                                   # 选填，true 不进生产构建
@@ -137,11 +137,11 @@ features  : 搜索/暗色模式/RSS/阅读时长/TOC 开关
 
 | slug | 名称 | 内容定位 |
 | --- | --- | --- |
-| `frontend` | 前端工程 | 框架、性能、工程化、CSS |
-| `backend` | 后端与架构 | 服务端、数据库、分布式、系统设计 |
-| `ai` | AI 与工具链 | 大模型应用、Agent、效率工具 |
-| `reading` | 读书笔记 | 技术书与非技术书摘与思考 |
-| `life` | 生活随笔 | 随笔、旅行、年度总结 |
+| `credit` | 信贷模型 | 评分卡、风控建模、KS 与 AUC、贷后监控 |
+| `bigdata` | 大数据 | Spark、Flink、特征平台、数据质量 |
+| `nlp` | NLP | 文本建模、信息抽取、大模型落地 |
+| `recsys` | 推荐算法 | 召回排序、冷启动、实验设计 |
+| `reading` | 读书笔记 | 算法与工程书籍的摘录与批注 |
 
 新增分类只需在 `site.config.ts` 的数组里加一项并建一篇对应文章，路由与主页卡片自动生成。
 
@@ -350,7 +350,7 @@ hero 标题从 40 到 60px 收到 36 到 48px，其余间距阶同比例下调�
 
 | 维度 | v2 | v3 |
 | --- | --- | --- |
-| 图片 | 完全无图（纯文字） | Hero 人像 + 每篇文章封面 + 分类配图，共 69 处真实照片引用 |
+| 图片 | 完全无图（纯文字） | Hero 人像 + 每篇文章封面 + 分类配图，构建产物中共 69 处真实照片引用 |
 | 字体 | 系统字体栈 | 自托管 Geist Variable + Geist Mono（82 KB，latin 子集），CJK 回落系统字体 |
 | 图标 | 18 条手写 SVG 路径 | Tabler Icons 官方图标库，线宽统一 1.75 |
 | 强调色 | 靛蓝 #3559d9（饱和度偏高） | 松绿 #30685a，饱和度 54%，对白底 6.45:1 |

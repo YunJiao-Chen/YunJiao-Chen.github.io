@@ -947,22 +947,23 @@ kbd {
 
 .footer__rows {
   display: grid;
-  gap: var(--sp-5);
-  margin-top: var(--sp-6);
+  gap: 0;
+  margin-top: var(--sp-5);
 }
 
+/* 紧凑：每行只占一行（桌面端不换行），行间用 hairline 分隔 */
 .footer__row {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: baseline;
-  gap: var(--sp-3) var(--sp-6);
-  padding-top: var(--sp-4);
+  gap: var(--sp-5);
+  padding: var(--sp-3) 0;
   border-top: var(--hairline);
 }
 
 .footer__label {
   flex: none;
-  width: 3.5rem;
+  width: 2.5rem;
   margin: 0;
   font-size: var(--fs-caption);
   font-weight: 600;
@@ -970,16 +971,20 @@ kbd {
 }
 
 .footer__intro {
+  flex: 1 1 auto;
+  min-width: 0;
   margin: 0;
-  max-width: 44ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   color: var(--text-muted);
   font-size: var(--fs-sm);
 }
 
 .footer__list {
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--sp-2) var(--sp-5);
+  flex-wrap: nowrap;
+  gap: var(--sp-5);
   list-style: none;
   margin: 0;
   padding: 0;
@@ -989,8 +994,9 @@ kbd {
 
 .footer__social {
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--sp-2) var(--sp-5);
+  flex: none;
+  flex-wrap: nowrap;
+  gap: var(--sp-5);
   font-size: var(--fs-sm);
   color: var(--text-muted);
 }
@@ -1141,7 +1147,23 @@ kbd {
     grid-column: span 1;
   }
 
+  /* 窄屏无法保证单行，允许换行而不是裁切内容 */
+  .footer__row {
+    flex-wrap: wrap;
+    gap: var(--sp-2) var(--sp-4);
+  }
+
   .footer__label {
     width: 100%;
+  }
+
+  .footer__list,
+  .footer__social {
+    flex-wrap: wrap;
+    gap: var(--sp-2) var(--sp-4);
+  }
+
+  .footer__intro {
+    white-space: normal;
   }
 }

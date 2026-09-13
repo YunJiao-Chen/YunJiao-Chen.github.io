@@ -61,8 +61,8 @@ npm run wechat
 ```
 dist/wechat/
 ├─ index.html                    # 目录页（标题 / 分类 / 日期 / 摘要）
-├─ astro-personal-blog-rebuild.html
-├─ markdown-to-wechat-pipeline.html
+├─ credit-scorecard-pipeline.html
+├─ spark-data-skew.html
 └─ ...                           # 每篇文章一个全内联样式的独立页面
 ```
 
@@ -79,7 +79,7 @@ dist/wechat/
 ### 只导出一篇
 
 ```bash
-node scripts/export-wechat.mjs --only astro-personal-blog-rebuild
+node scripts/export-wechat.mjs --only credit-scorecard-pipeline
 node scripts/export-wechat.mjs --check      # 只校验能否导出，不写文件
 ```
 

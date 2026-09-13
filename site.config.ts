@@ -54,7 +54,7 @@ export const siteConfig = {
     title: 'yjchen',
     subtitle: '算法工程师',
     description:
-      '一个算法工程师的个人博客：信贷模型、大数据、NLP 与推荐算法的实践笔记，也写读书笔记与生活随笔。用 Markdown 写作。',
+      '一个算法工程师的个人博客：信贷模型、大数据、NLP 与推荐算法的实践笔记，也写读书笔记。用 Markdown 写作。',
     /** 生产地址（不带结尾斜杠）。GitHub Pages 项目站点填 https://<user>.github.io */
     url: env('SITE_URL', 'https://yunjiao-chen.github.io'),
     /**
@@ -88,7 +88,7 @@ export const siteConfig = {
     bio: [
       '你好，我是 yjchen，一名算法工程师，主要做信贷模型。',
       '日常工作在数据和模型之间：特征工程、大数据处理、NLP、推荐算法，以及把模型送到线上之后的那堆事。',
-      '这个博客记录我在这些方向上的实践与踩坑，也写读书笔记和生活随笔。如果某篇文章帮到了你，欢迎在评论区聊聊。',
+      '这个博客记录我在这些方向上的实践与踩坑，也写读书笔记。如果某篇文章帮到了你，欢迎在评论区聊聊。',
     ],
     jobTitle: '算法工程师',
     /** 下面两项和照片一样是占位，请改成你自己的信息 */
@@ -137,29 +137,29 @@ export const siteConfig = {
   /* ------------------------------------------------------------------ */
   categories: [
     {
-      slug: 'frontend',
-      name: '前端工程',
-      description: '框架原理、性能优化、构建工具与 CSS 工程化。',
+      slug: 'credit',
+      name: '信贷模型',
+      description: '评分卡、风控建模、KS 与 AUC、贷后监控与迭代。',
     },
     {
-      slug: 'backend',
-      name: '后端与架构',
-      description: '服务端设计、数据库、分布式系统与稳定性实践。',
+      slug: 'bigdata',
+      name: '大数据',
+      description: 'Spark、Flink、特征平台、数据质量与调度。',
     },
     {
-      slug: 'ai',
-      name: 'AI 与工具链',
-      description: '大模型应用、Agent 工程与提升效率的工具链。',
+      slug: 'nlp',
+      name: 'NLP',
+      description: '文本建模、信息抽取与大模型在业务里的落地。',
+    },
+    {
+      slug: 'recsys',
+      name: '推荐算法',
+      description: '召回与排序、冷启动、探索利用与实验设计。',
     },
     {
       slug: 'reading',
       name: '读书笔记',
-      description: '技术书与非技术书的摘录、批注与延伸思考。',
-    },
-    {
-      slug: 'life',
-      name: '生活随笔',
-      description: '年度总结、旅行见闻与日常里的小发现。',
+      description: '算法与工程类书籍的摘录、批注与延伸思考。',
     },
   ] as Category[],
 
