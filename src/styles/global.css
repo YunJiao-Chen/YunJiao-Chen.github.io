@@ -64,7 +64,7 @@
   --sp-10: 5rem;
   --sp-11: 6rem;
 
-  --section-y: var(--sp-7);
+  --section-y: var(--sp-6);
   --hairline: 1px solid var(--border);
 
   /* —— 形状一致性锁（§4.4）：全站只允许这三档 —— */
@@ -230,6 +230,11 @@ h4 {
   border-top: var(--hairline);
 }
 
+/* 同主题内的浅色分区，用来给连续的白底页面制造节奏（§4.11 允许同主题内的色阶变化） */
+.section--tinted {
+  background: var(--surface);
+}
+
 /* 区块头纵向堆叠，禁止右上角浮动说明文字（§9.F split-header ban） */
 .section-head {
   display: flex;
@@ -339,10 +344,12 @@ h4 {
   display: grid;
   place-items: center;
   border-radius: var(--radius-control);
-  background: var(--text);
-  color: var(--bg);
-  font-size: var(--fs-caption);
+  /* 淡强调色底 + 强调色字母，替代原来的近黑方块 */
+  background: var(--accent-weak);
+  color: var(--accent);
+  font-size: 0.875rem;
   font-weight: 600;
+  line-height: 1;
 }
 
 .brand__text {
@@ -425,14 +432,15 @@ h4 {
    5. Hero（Asymmetric Split，§4.3 反居中；§4.7 最多 4 个文本元素）
    -------------------------------------------------------------------------- */
 .hero {
-  padding: var(--sp-8) 0 var(--sp-7);
+  padding: var(--sp-7) 0 var(--sp-6);
 }
 
 .hero__split {
   display: grid;
-  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  /* 8:4 让文字占主导，图片变窄，hero 不再被竖图撑高 */
+  grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
   gap: var(--sp-7);
-  align-items: end;
+  align-items: center;
 }
 
 .hero__eyebrow {
@@ -461,9 +469,15 @@ h4 {
   margin-top: var(--sp-5);
 }
 
+.hero__figure {
+  justify-self: end;
+  width: 100%;
+  max-width: 20rem;
+}
+
 .hero__figure img {
   width: 100%;
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 1 / 1;
   object-fit: cover;
   border-radius: var(--radius-container);
   background: var(--surface);
@@ -613,9 +627,25 @@ a.chip:hover {
 
 .index-item {
   display: grid;
-  gap: var(--sp-1);
+  grid-template-columns: 5.5rem minmax(0, 1fr);
+  gap: var(--sp-4);
+  align-items: start;
   padding: var(--sp-4) 0;
   border-bottom: var(--hairline);
+}
+
+.index-item__thumb img {
+  width: 5.5rem;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--radius-control);
+  background: var(--surface);
+}
+
+.index-item__body {
+  display: grid;
+  gap: var(--sp-1);
+  min-width: 0;
 }
 
 .index-item__date {
@@ -625,20 +655,20 @@ a.chip:hover {
 }
 
 .index-item__title {
-  font-size: var(--fs-title);
+  font-size: var(--fs-body-lg);
   font-weight: 500;
   line-height: 1.4;
   transition: color var(--dur) var(--ease-out);
-}
-
-.index-item:hover .index-item__title {
-  color: var(--accent);
 }
 
 .index-item__dek {
   margin: 0;
   color: var(--text-muted);
   font-size: var(--fs-sm);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 /* --------------------------------------------------------------------------
@@ -816,6 +846,25 @@ a.chip:hover {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* 左标题右内容的分区头：用于标签这类横向内容，填补右侧空白 */
+.split-head {
+  display: grid;
+  grid-template-columns: 16rem minmax(0, 1fr);
+  gap: var(--sp-7);
+  align-items: start;
+}
+
+.split-head .section-head {
+  margin-bottom: 0;
+}
+
+@media (max-width: 1024px) {
+  .split-head {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--sp-5);
+  }
 }
 
 /* --------------------------------------------------------------------------
@@ -1052,7 +1101,7 @@ kbd {
 
 @media (max-width: 1024px) {
   :root {
-    --section-y: var(--sp-6);
+    --section-y: var(--sp-5);
   }
 
   .hero__split {

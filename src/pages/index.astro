@@ -108,8 +108,8 @@ const portrait = portraitUrl();
     </div>
   </section>
 
-  {/* 4. 分类 Bento */}
-  <section class="section" aria-label="博客分类">
+  {/* 4. 分类 Bento（浅色区块，给连续白底页面制造节奏） */}
+  <section class="section section--tinted" aria-label="博客分类">
     <div class="container">
       <div class="section-head">
         <h2 class="section-head__title">按分类浏览</h2>
@@ -121,21 +121,21 @@ const portrait = portraitUrl();
     </div>
   </section>
 
-  {/* 5. 标签场 */}
+  {/* 5. 标签：左标题右内容，填补横向空白 */}
   <section class="section" aria-label="标签">
     <div class="container">
-      <div class="section-head">
-        <h2 class="section-head__title">标签</h2>
-        <p class="section-head__desc">同一主题散落在不同分类时，用标签串联。</p>
-      </div>
-      <TagField tags={tags} limit={20} />
-      <div class="section-foot">
-        <a class="text-link" href={withBase('/tags/')}>
-          全部 {tags.length} 个标签<span aria-hidden="true">→</span>
-        </a>
+      <div class="split-head">
+        <div class="section-head">
+          <h2 class="section-head__title">标签</h2>
+          <p class="section-head__desc">同一主题散落在不同分类时，用标签串联。</p>
+          <p>
+            <a class="text-link" href={withBase('/tags/')}>
+              全部 {tags.length} 个标签<span aria-hidden="true">→</span>
+            </a>
+          </p>
+        </div>
+        <TagField tags={tags} limit={24} />
       </div>
     </div>
   </section>
-
-
 </BaseLayout>
