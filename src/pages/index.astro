@@ -35,22 +35,35 @@ const [featured, categories, tags] = await Promise.all([
 const lead = featured[0];
 const latest = await getLatestPosts(siteConfig.site.latestCount, lead ? [lead.id] : []);
 const { author } = siteConfig;
-const portrait = portraitUrl();
+const portrait = portraitUrl('square');
 ---
 
 <BaseLayout description={siteConfig.site.description} path="/">
-  {/* 1. Hero：非对称分栏，最多 4 个文本元素（状态行 / 标题 / 引导语 / 按钮） */}
+  {/* 1. Hero：紧凑身份带（头像 + 身份 + 名称 | 引导语 + 按钮），首屏尽快进入内容 */}
   <div class="container hero">
-    <div class="hero__split">
+    <div class="hero__band">
+      <div class="hero__identity">
+        {
+          portrait && (
+            <img
+              class="hero__avatar"
+              src={portrait}
+              alt={`${author.name} 的照片`}
+              width="480"
+              height="480"
+              loading="eager"
+              decoding="async"
+            />
+          )
+        }
+        <div>
+          {author.status && <p class="eyebrow hero__eyebrow">{author.status}</p>}
+          <h1 class="hero__title">{author.name}</h1>
+        </div>
+      </div>
+
       <div>
-        {author.status && <p class="eyebrow hero__eyebrow">{author.status}</p>}
-
-        <h1 class="hero__title">
-          你好，我是{author.name}
-        </h1>
-
         <p class="hero__lead">{author.lead}</p>
-
         <div class="hero__cta">
           <a class="btn btn--primary" href={withBase('/posts/')}>看文章</a>
           <a class="text-link" href={withBase('/about/')}>
@@ -58,21 +71,6 @@ const portrait = portraitUrl();
           </a>
         </div>
       </div>
-
-      {
-        portrait && (
-          <figure class="hero__figure" data-reveal>
-            <img
-              src={portrait}
-              alt={`${author.name} 的照片`}
-              width="1200"
-              height="1500"
-              loading="eager"
-              decoding="async"
-            />
-          </figure>
-        )
-      }
     </div>
   </div>
 

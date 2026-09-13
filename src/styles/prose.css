@@ -9,7 +9,8 @@
   max-width: var(--prose-max);
   font-size: var(--fs-body-lg);
   line-height: var(--leading-prose);
-  color: var(--text);
+  /* 正文比标题浅一档，参考站普遍如此，长文阅读更柔和 */
+  color: var(--text-body);
   word-wrap: break-word;
 }
 
@@ -87,6 +88,7 @@
 
 .prose strong {
   font-weight: 600;
+  color: var(--text);
 }
 
 .prose mark {

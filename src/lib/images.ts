@@ -16,10 +16,14 @@ export function coverUrl(post?: Post): string | undefined {
   return `${siteConfig.images.coverBase}/${post.id}/1600/1000`;
 }
 
-/** 作者照片：本地优先，其次远程占位 */
-export function portraitUrl(): string | undefined {
+/**
+ * 作者照片：本地优先，其次远程占位
+ * @param aspect 'square' 用于圆形头像，'portrait' 用于关于页竖图
+ */
+export function portraitUrl(aspect: 'square' | 'portrait' = 'portrait'): string | undefined {
   if (siteConfig.author.photo) return withBase(siteConfig.author.photo);
   if (!siteConfig.images.remotePortrait) return undefined;
-  return `${siteConfig.images.coverBase}/${siteConfig.images.portraitSeed}/1200/1500`;
+  const [w, h] = aspect === 'square' ? [480, 480] : [1200, 1500];
+  return `${siteConfig.images.coverBase}/${siteConfig.images.portraitSeed}/${w}/${h}`;
 }
 

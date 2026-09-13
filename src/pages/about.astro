@@ -11,7 +11,7 @@ import { siteConfig, withBase } from '../../site.config.ts';
 
 const { author } = siteConfig;
 const latest = await getLatestPosts(5);
-const portrait = portraitUrl();
+const portrait = portraitUrl('portrait');
 ---
 
 <PageLayout

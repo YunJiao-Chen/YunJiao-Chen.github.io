@@ -30,7 +30,8 @@
 关键约定（改动样式前请先读）：
 
 - **拨盘**：`DESIGN_VARIANCE 6` / `MOTION_INTENSITY 4` / `VISUAL_DENSITY 5`（偏紧凑），定义在 `src/styles/global.css` 顶部注释里
-- **单一强调色**：松绿 `#30685a`（深色模式 `#8ed0bc`），其余全部中性灰阶；饱和度上限 80%
+- **单一强调色**：电蓝 `#1d4ed8`（深色模式 `#8ab0ff`），其余全部中性灰阶；HSL 饱和度上限 80%
+- **配色与版式参考**：Eugene Yan、Chip Huyen、Vicki Boykis、Simon Willison、Craig Mod、Robin Rendle、Julia Evans、Lilian Weng（做法见 `docs/DESIGN.md` §13）
 - **形状一致性**：容器 `14px` / 控件 `8px` / 行内标签胶囊，全站只有这三档
 - **真实图片**：Hero 人像、文章封面、分类配图都是真实照片（`site.config.ts` 的 `images` 段可关掉远程占位）
 - **文案红线**：禁止破折号（`——` 与 `–`）、每行最多一个中点、hero 最多 4 个文本元素、不写空泛动词

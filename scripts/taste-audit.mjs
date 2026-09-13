@@ -73,6 +73,8 @@ function auditContrast() {
     const pairs = [
       ['正文 text/bg', t.text, t.bg, 7],
       ['正文 text/surface', t.text, t.surface, 7],
+      ['长文正文 text-body/bg', t['text-body'], t.bg, 7],
+      ['长文正文 text-body/surface', t['text-body'], t.surface, 7],
       ['次要 text-muted/bg', t['text-muted'], t.bg, 4.5],
       ['次要 text-muted/surface', t['text-muted'], t.surface, 4.5],
       ['弱化 text-subtle/bg', t['text-subtle'], t.bg, 4.5],
@@ -96,14 +98,15 @@ function auditContrast() {
     add('A 对比度', `${mode} 无纯黑 #000`, !values.includes('#000000'), '');
   }
 
-  // 强调色饱和度 < 80%（§4.2）
+  // 强调色饱和度 < 80%（§4.2）。用 CSS/HSL 标准定义，而非 HSV
   const t = parseTokens(css, false);
   const accent = t.accent.replace('#', '');
   const [r, g, b] = [0, 2, 4].map((i) => parseInt(accent.slice(i, i + 2), 16) / 255);
   const max = Math.max(r, g, b);
   const min = Math.min(r, g, b);
-  const saturation = max === 0 ? 0 : (max - min) / max;
-  add('A 对比度', '强调色饱和度 < 80%', saturation < 0.8, `${(saturation * 100).toFixed(0)}%`);
+  const l = (max + min) / 2;
+  const hslSat = max === min ? 0 : (max - min) / (1 - Math.abs(2 * l - 1));
+  add('A 对比度', '强调色饱和度 < 80%（HSL）', hslSat < 0.8, `${(hslSat * 100).toFixed(0)}%`);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -251,8 +254,8 @@ function auditStructure() {
   // 首页 hero 必须有图片（§4.8：hero 需要真实视觉）
   if (existsSync(join(distDir, 'index.html'))) {
     const home = readFileSync(join(distDir, 'index.html'), 'utf8');
-    // hero 区域 = 从 hero__split 到紧随其后的第一个 section 边界（不依赖后续区块的位置）
-    const heroStart = home.indexOf('hero__split');
+    // hero 区域 = 从 class="hero 到紧随其后的第一个 section 边界
+    const heroStart = home.indexOf('class="hero');
     const heroEnd = home.indexOf('class="section"', heroStart);
     const hero = home.slice(heroStart, heroEnd > heroStart ? heroEnd : heroStart + 6000);
     add('C 结构', 'hero 含真实图片', /<img\s/.test(hero), '');
