@@ -1,0 +1,34 @@
+---
+/**
+ * 标签总览：/tags/
+ * 布局族：标签场 + 卡片网格
+ */
+import PageLayout from '../../layouts/PageLayout.astro';
+import TagField from '../../components/TagField.astro';
+import ArchiveList from '../../components/ArchiveList.astro';
+import { getAllPosts, getTagSummaries } from '../../lib/posts.ts';
+
+const [tags, posts] = await Promise.all([getTagSummaries(), getAllPosts()]);
+---
+
+<PageLayout
+  title="标签"
+  description={`共 ${tags.length} 个标签，按出现次数排序。`}
+  path="/tags/"
+>
+  {tags.length > 0 ? <TagField tags={tags} /> : <div class="empty">还没有标签。</div>}
+
+  <section class="mt-9">
+    <div class="section-head">
+      <h2 class="section-head__title">全部文章</h2>
+      <p class="section-head__desc">共 {posts.length} 篇。</p>
+    </div>
+    <ArchiveList posts={posts} variant="cards" />
+  </section>
+</PageLayout>
+
+<style>
+  .mt-9 {
+    margin-top: var(--sp-9);
+  }
+</style>

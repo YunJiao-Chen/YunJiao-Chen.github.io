@@ -1,0 +1,26 @@
+---
+/**
+ * 文章详情页：/blog/<slug>/
+ */
+import type { GetStaticPaths } from 'astro';
+import { render } from 'astro:content';
+
+import PostLayout from '../../layouts/PostLayout.astro';
+import { getAllPosts, type Post } from '../../lib/posts.ts';
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const posts = await getAllPosts();
+  return posts.map((post) => ({ params: { id: post.id }, props: { post } }));
+};
+
+interface Props {
+  post: Post;
+}
+
+const { post } = Astro.props;
+const { Content, headings } = await render(post);
+---
+
+<PostLayout post={post} headings={headings}>
+  <Content />
+</PostLayout>

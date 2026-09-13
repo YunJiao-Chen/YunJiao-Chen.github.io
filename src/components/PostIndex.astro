@@ -1,0 +1,30 @@
+---
+/**
+ * 双栏索引列表（条目多于 5 条时使用，避免单列 hairline 长列表）
+ */
+import { postPath, postMeta, type Post } from '../lib/posts.ts';
+import { formatDate } from '../lib/utils.ts';
+import { withBase } from '../../site.config.ts';
+
+interface Props {
+  posts: Post[];
+  /** 是否显示摘要 */
+  showDek?: boolean;
+}
+
+const { posts, showDek = true } = Astro.props;
+---
+
+<div class="index-list">
+  {
+    posts.map((post) => (
+      <a class="index-item" href={withBase(postPath(post))} data-reveal>
+        <span class="index-item__date">
+          {formatDate(post.data.pubDate)} / {postMeta(post).category.name}
+        </span>
+        <span class="index-item__title">{post.data.title}</span>
+        {showDek && <span class="index-item__dek">{post.data.description}</span>}
+      </a>
+    ))
+  }
+</div>

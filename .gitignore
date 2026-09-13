@@ -1,0 +1,11 @@
+# 依赖与构建产物
+node_modules/
+dist/
+.astro/
+.npm-cache/
+
+# 环境与本地文件
+.env
+.env.*
+.DS_Store
+*.log

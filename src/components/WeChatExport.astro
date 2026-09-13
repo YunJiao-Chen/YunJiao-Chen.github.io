@@ -1,0 +1,45 @@
+---
+/**
+ * 「复制到公众号」按钮组
+ * 数据通过 data-* 传给浏览器端脚本（src/scripts/wechat-runtime.js）
+ */
+import Icon from './Icon.astro';
+import { postMeta, type Post } from '../lib/posts.ts';
+import { formatDate } from '../lib/utils.ts';
+import { siteConfig } from '../../site.config.ts';
+
+interface Props {
+  post: Post;
+}
+
+const { post } = Astro.props;
+const meta = postMeta(post);
+const attrs = {
+  'data-title': meta.wechatTitle,
+  'data-date': formatDate(post.data.pubDate),
+  'data-category': meta.category.name,
+  'data-reading': meta.reading.label,
+  'data-tags': post.data.tags.join(','),
+  'data-opening': siteConfig.wechat.openingLine,
+  'data-signature': siteConfig.wechat.signature,
+  'data-follow': siteConfig.wechat.followText,
+};
+---
+
+{
+  siteConfig.wechat.showCopyButton && meta.wechatEnabled && (
+    <div class="wechat-export" data-wechat-ignore>
+      <button type="button" class="btn btn--primary" data-wechat-copy {...attrs}>
+        <Icon name="copy" size={14} /> 复制到公众号
+      </button>
+      <button type="button" class="btn btn--ghost" data-wechat-download {...attrs}>
+        <Icon name="download" size={14} /> 下载 HTML
+      </button>
+    </div>
+  )
+}
+
+<script>
+  import { mountWechatExport } from '../scripts/wechat-runtime.js';
+  mountWechatExport();
+</script>

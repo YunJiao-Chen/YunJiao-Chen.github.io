@@ -1,0 +1,40 @@
+---
+/**
+ * 文章卡片（带真实封面）
+ * 布局族：封面在上，文字在下；分类与日期放在图外。
+ */
+import { postPath, postMeta, type Post } from '../lib/posts.ts';
+import { formatDate } from '../lib/utils.ts';
+import { coverUrl } from '../lib/images.ts';
+import { withBase } from '../../site.config.ts';
+
+interface Props {
+  post: Post;
+}
+
+const { post } = Astro.props;
+const meta = postMeta(post);
+const cover = coverUrl(post);
+---
+
+<article class="post-card" data-reveal>
+  {
+    cover && (
+      <a class="post-card__figure" href={withBase(postPath(post))} tabindex="-1" aria-hidden="true">
+        <img src={cover} alt="" width="1600" height="1000" loading="lazy" decoding="async" />
+      </a>
+    )
+  }
+
+  <p class="post-card__kicker">{meta.category.name}</p>
+  <h3 class="post-card__title">
+    <a href={withBase(postPath(post))}>{post.data.title}</a>
+  </h3>
+  <p class="post-card__dek">{post.data.description}</p>
+  <p class="meta post-card__meta">
+    <span>
+      <time datetime={new Date(post.data.pubDate).toISOString()}>{formatDate(post.data.pubDate)}</time>
+    </span>
+    <span>{meta.reading.minutes} 分钟</span>
+  </p>
+</article>

@@ -1,0 +1,128 @@
+---
+/**
+ * 基础布局：HTML 外壳 + 顶栏 + 页脚 + 入场动效
+ */
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import SEO from '../components/SEO.astro';
+import { siteConfig, withBase } from '../../site.config.ts';
+import '../styles/fonts.css';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  path?: string;
+  type?: 'website' | 'article';
+  image?: string;
+  pubDate?: Date;
+  updatedDate?: Date;
+  tags?: string[];
+  author?: string;
+  noindex?: boolean;
+  bodyClass?: string;
+  containerClass?: string;
+}
+
+const {
+  title,
+  description,
+  path,
+  type = 'website',
+  image,
+  pubDate,
+  updatedDate,
+  tags,
+  author,
+  noindex,
+  bodyClass = '',
+  containerClass = '',
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang={siteConfig.site.lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="icon" type="image/svg+xml" href={withBase('/favicon.svg')} />
+    <link rel="apple-touch-icon" href={withBase('/favicon.svg')} />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0b0e13" media="(prefers-color-scheme: dark)" />
+
+    {/* 自托管字体：预加载主字体，保证首屏文字不跳（CLS < 0.1） */}
+    <link
+      rel="preload"
+      href={withBase('/fonts/geist-latin-wght-normal.woff2')}
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+
+    <SEO
+      title={title}
+      description={description}
+      path={path}
+      type={type}
+      image={image}
+      pubDate={pubDate}
+      updatedDate={updatedDate}
+      tags={tags}
+      author={author}
+      noindex={noindex}
+    />
+
+    {/* 首屏恢复主题，避免深色模式闪白；同时标记 JS 可用（入场动效依赖它） */}
+    <script is:inline>
+      (function () {
+        document.documentElement.classList.add('js');
+        try {
+          var stored = localStorage.getItem('theme');
+          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var dark = stored ? stored === 'dark' : prefersDark;
+          document.documentElement.classList.toggle('dark', dark);
+          document.documentElement.classList.toggle('light', !dark);
+        } catch (e) {
+          document.documentElement.classList.add('light');
+        }
+      })();
+    </script>
+
+    <slot name="head" />
+  </head>
+
+  <body class={bodyClass}>
+    <a class="skip-link" href="#main">跳到正文</a>
+    <Header />
+    <main id="main" class={containerClass}>
+      <slot />
+    </main>
+    <Footer />
+    <slot name="scripts" />
+
+    <script>
+      /* 入场动效：IntersectionObserver + CSS 过渡，不监听 scroll（skill §5.D 硬性禁止）
+         减少动效偏好下直接显示，不做任何过渡 */
+      const nodes = Array.from(document.querySelectorAll<HTMLElement>('[data-reveal]'));
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!nodes.length) {
+        /* 无元素时不做任何事 */
+      } else if (reduced || !('IntersectionObserver' in window)) {
+        nodes.forEach((node) => node.setAttribute('data-revealed', 'true'));
+      } else {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (!entry.isIntersecting) return;
+              entry.target.setAttribute('data-revealed', 'true');
+              observer.unobserve(entry.target);
+            });
+          },
+          { rootMargin: '0px 0px -8% 0px', threshold: 0.05 },
+        );
+        nodes.forEach((node) => observer.observe(node));
+      }
+    </script>
+  </body>
+</html>

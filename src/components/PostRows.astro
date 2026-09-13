@@ -1,0 +1,26 @@
+---
+/**
+ * 紧凑行列表（最多 5 条时使用；只有下边框，不做上下双边框）
+ */
+import { postPath, postMeta, type Post } from '../lib/posts.ts';
+import { formatDate } from '../lib/utils.ts';
+import { withBase } from '../../site.config.ts';
+
+interface Props {
+  posts: Post[];
+}
+
+const { posts } = Astro.props;
+---
+
+<div class="rows">
+  {
+    posts.map((post) => (
+      <a class="row" href={withBase(postPath(post))}>
+        <span class="row__date">{formatDate(post.data.pubDate)}</span>
+        <span class="row__title">{post.data.title}</span>
+        <span class="row__meta">{postMeta(post).reading.minutes} 分钟</span>
+      </a>
+    ))
+  }
+</div>

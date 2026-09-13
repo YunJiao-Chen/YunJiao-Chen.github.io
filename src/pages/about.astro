@@ -1,0 +1,171 @@
+---
+/**
+ * 关于我：编辑式长文 + 经历时间线 + 联系方式 + 最近更新 + 订阅
+ * 布局族：图文分栏（照片 + 长文）+ 事实列表 + 行列表
+ */
+import PageLayout from '../layouts/PageLayout.astro';
+import PostRows from '../components/PostRows.astro';
+import { getAllPosts, getLatestPosts } from '../lib/posts.ts';
+import { portraitUrl } from '../lib/images.ts';
+import { siteConfig, withBase } from '../../site.config.ts';
+
+const { author } = siteConfig;
+const [latest, posts] = await Promise.all([getLatestPosts(5), getAllPosts()]);
+const portrait = portraitUrl();
+---
+
+<PageLayout
+  title={`关于 ${author.name}`}
+  description={author.tagline}
+  path="/about/"
+  width="prose"
+>
+  <div class="about-split">
+    <div class="prose">
+      <p>{author.bio[0]}</p>
+      <p>{author.bio[1]}</p>
+      <p>{author.bio[2]}</p>
+
+      <h2>这个博客写什么</h2>
+      <p>内容按 {siteConfig.categories.length} 个固定分类组织：</p>
+      <ul>
+        {
+          siteConfig.categories.map((category) => (
+            <li>
+              <a href={withBase(`/categories/${category.slug}/`)}>{category.name}</a>
+              ：{category.description}
+            </li>
+          ))
+        }
+      </ul>
+
+      <h2>怎么写</h2>
+      <ul>
+        <li>
+          用 Markdown 写作，站点用 <a href="https://astro.build" rel="noopener">Astro</a>
+          构建成静态页面，源码托管在 GitHub。
+        </li>
+        <li>
+          每篇文章都能一键转成公众号排版，文末的「复制到公众号」按钮会把样式内联后写进剪贴板。
+        </li>
+        <li>写作原则：能跑通再说，给出取舍而不只是结论，标注不确定的地方。</li>
+      </ul>
+
+      <blockquote>
+        <p>如果某篇文章帮你省下几个小时，那就已经值回我写它的时间。</p>
+      </blockquote>
+
+      <h2>经历</h2>
+      <ul>
+        {
+          author.timeline.map((item) => (
+            <li>
+              <strong>{item.year}</strong>：{item.title}。{item.description}
+            </li>
+          ))
+        }
+      </ul>
+
+      <h2>联系我</h2>
+      <p>欢迎交流技术问题、指出文章里的错误，或者只是打个招呼：</p>
+      <ul>
+        {
+          author.socials.map((social) => (
+            <li>
+              <a href={social.href.startsWith('/') ? withBase(social.href) : social.href} rel="noopener">
+                {social.label}
+              </a>
+              {social.icon === 'mail' && `：${author.email}`}
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <aside class="about-side">
+      {
+        portrait && (
+          <img
+            class="about-portrait"
+            src={portrait}
+            alt={`${author.name} 的照片`}
+            width="1200"
+            height="1500"
+            loading="lazy"
+            decoding="async"
+          />
+        )
+      }
+      <dl class="fact-list">
+        <div class="fact-list__row">
+          <dt>职业</dt>
+          <dd>{author.jobTitle}</dd>
+        </div>
+        <div class="fact-list__row">
+          <dt>所在</dt>
+          <dd>{author.location}</dd>
+        </div>
+        <div class="fact-list__row">
+          <dt>文章</dt>
+          <dd>{posts.length} 篇</dd>
+        </div>
+        <div class="fact-list__row">
+          <dt>当前</dt>
+          <dd>{author.status}</dd>
+        </div>
+      </dl>
+    </aside>
+  </div>
+
+  <section class="mt-9">
+    <div class="section-head">
+      <h2 class="section-head__title">最近更新</h2>
+      <p class="section-head__desc">最新的 5 篇文章。</p>
+    </div>
+    <PostRows posts={latest} />
+  </section>
+</PageLayout>
+
+<style>
+  .about-split {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 18rem;
+    gap: var(--sp-9);
+    align-items: start;
+  }
+
+  .about-side {
+    position: sticky;
+    top: 5rem;
+    display: grid;
+    gap: var(--sp-5);
+  }
+
+  .about-portrait {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: var(--radius-container);
+    background: var(--surface);
+  }
+
+  .mt-9 {
+    margin-top: var(--sp-9);
+  }
+
+  @media (max-width: 1024px) {
+    .about-split {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--sp-7);
+    }
+
+    .about-side {
+      position: static;
+      order: -1;
+    }
+
+    .about-portrait {
+      aspect-ratio: 16 / 9;
+    }
+  }
+</style>

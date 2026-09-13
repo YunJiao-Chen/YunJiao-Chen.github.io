@@ -1,0 +1,47 @@
+---
+/**
+ * 精选头条（Editorial Spotlight）
+ * 布局族：图文分栏。标签放在标题上方（图外），不压在图片上。
+ */
+import { postPath, postMeta, type Post } from '../lib/posts.ts';
+import { formatDate } from '../lib/utils.ts';
+import { coverUrl } from '../lib/images.ts';
+import { withBase } from '../../site.config.ts';
+
+interface Props {
+  post: Post;
+}
+
+const { post } = Astro.props;
+const meta = postMeta(post);
+const cover = coverUrl(post);
+---
+
+<article class="spotlight" data-reveal>
+  {
+    cover && (
+      <a class="spotlight__figure" href={withBase(postPath(post))} tabindex="-1" aria-hidden="true">
+        <img src={cover} alt="" width="1600" height="1000" loading="eager" decoding="async" />
+      </a>
+    )
+  }
+
+  <div>
+    <p class="spotlight__kicker">
+      {meta.category.name}
+      {post.data.series && ` / 系列 ${post.data.series}`}
+    </p>
+    <h3 class="spotlight__title">
+      <a href={withBase(postPath(post))}>{post.data.title}</a>
+    </h3>
+    <p class="spotlight__dek">{post.data.description}</p>
+    <p class="meta spotlight__meta">
+      <span>
+        <time datetime={new Date(post.data.pubDate).toISOString()}>
+          {formatDate(post.data.pubDate)}
+        </time>
+      </span>
+      <span>{meta.reading.label}</span>
+    </p>
+  </div>
+</article>

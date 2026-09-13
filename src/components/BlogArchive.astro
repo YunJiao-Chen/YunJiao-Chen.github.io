@@ -1,0 +1,47 @@
+---
+/**
+ * 文章列表主体：分类筛选 + 卡片网格 + 分页
+ */
+import ArchiveList from './ArchiveList.astro';
+import Pagination from './Pagination.astro';
+import type { Post } from '../lib/posts.ts';
+import { siteConfig, withBase } from '../../site.config.ts';
+
+interface Props {
+  items: Post[];
+  current: number;
+  totalPages: number;
+  total: number;
+  categories: { slug: string; name: string; count: number }[];
+}
+
+const { items, current, totalPages, total, categories } = Astro.props;
+---
+
+<div class="toolbar">
+  <span class="chip">全部 {total}</span>
+  {
+    categories.map((category) => (
+      <a class="chip" href={withBase(`/categories/${category.slug}/`)}>
+        {category.name} {category.count}
+      </a>
+    ))
+  }
+</div>
+
+<ArchiveList posts={items} emptyText="还没有文章：在 src/content/blog/ 下新建一篇 Markdown 即可。" />
+
+<Pagination current={current} totalPages={totalPages} basePath="/blog" />
+
+<p class="list-note">
+  第 {current} / {totalPages} 页，每页 {siteConfig.site.postsPerPage} 篇。按 <kbd>⌘K</kbd> 搜索全部文章。
+</p>
+
+<style>
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+    margin-bottom: var(--sp-7);
+  }
+</style>

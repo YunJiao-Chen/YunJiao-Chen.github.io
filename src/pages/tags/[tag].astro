@@ -1,0 +1,51 @@
+---
+/**
+ * 单标签归档：/tags/<tag>/
+ * 中文标签直接作为路径参数（浏览器会自动编码）
+ */
+import type { GetStaticPaths } from 'astro';
+
+import PageLayout from '../../layouts/PageLayout.astro';
+import ArchiveList from '../../components/ArchiveList.astro';
+import TagField from '../../components/TagField.astro';
+import { getPostsByTag, getTagSummaries, type Post } from '../../lib/posts.ts';
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const tags = await getTagSummaries();
+  return Promise.all(
+    tags.map(async (tag) => ({
+      params: { tag: tag.slug },
+      props: { tag, posts: await getPostsByTag(tag.name) },
+    })),
+  );
+};
+
+interface Props {
+  tag: { name: string; count: number; slug: string };
+  posts: Post[];
+}
+
+const { tag, posts } = Astro.props;
+const tags = await getTagSummaries();
+---
+
+<PageLayout
+  title={`标签 ${tag.name}`}
+  description={`共 ${posts.length} 篇文章。`}
+  path={`/tags/${tag.slug}/`}
+>
+  <ArchiveList posts={posts} variant="cards" emptyText={`标签「${tag.name}」下还没有文章。`} />
+
+  <section class="mt-9">
+    <div class="section-head">
+      <h2 class="section-head__title">其他标签</h2>
+    </div>
+    <TagField tags={tags.filter((item) => item.name !== tag.name)} limit={24} />
+  </section>
+</PageLayout>
+
+<style>
+  .mt-9 {
+    margin-top: var(--sp-9);
+  }
+</style>

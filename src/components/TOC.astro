@@ -1,0 +1,88 @@
+---
+/**
+ * 文章目录（TOC）：由 Astro 的 render() 返回的 headings 生成，右侧粘性跟随
+ */
+import type { MarkdownHeading } from 'astro';
+
+interface Props {
+  headings: MarkdownHeading[];
+  minDepth?: number;
+  maxDepth?: number;
+}
+
+const { headings, minDepth = 2, maxDepth = 3 } = Astro.props;
+const items = headings.filter((h) => h.depth >= minDepth && h.depth <= maxDepth);
+
+/** 把扁平标题列表构建成嵌套结构 */
+type Node = { heading: MarkdownHeading; children: Node[] };
+function build(list: MarkdownHeading[]): Node[] {
+  const roots: Node[] = [];
+  let current: Node | undefined;
+  for (const heading of list) {
+    const node: Node = { heading, children: [] };
+    if (heading.depth <= minDepth || !current) {
+      roots.push(node);
+      current = node;
+    } else {
+      current.children.push(node);
+    }
+  }
+  return roots;
+}
+
+const tree = build(items);
+---
+
+{
+  items.length > 0 && (
+    <aside class="toc" aria-label="文章目录" data-wechat-ignore>
+      <p class="toc__title">目录</p>
+      <nav>
+        <ul>
+          {tree.map((node) => (
+            <li>
+              <a href={`#${node.heading.slug}`}>{node.heading.text}</a>
+              {node.children.length > 0 && (
+                <ul>
+                  {node.children.map((child) => (
+                    <li>
+                      <a href={`#${child.heading.slug}`}>{child.heading.text}</a>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </aside>
+  )
+}
+
+<script>
+  /* 滚动高亮当前小节 */
+  const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('.toc a[href^="#"]'));
+  if (links.length) {
+    const targets = links
+      .map((link) => {
+        const id = decodeURIComponent(link.getAttribute('href')!.slice(1));
+        const el = document.getElementById(id);
+        return el ? { link, el } : null;
+      })
+      .filter((item): item is { link: HTMLAnchorElement; el: HTMLElement } => item !== null);
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          const hit = targets.find((t) => t.el === entry.target);
+          if (!hit) return;
+          links.forEach((l) => l.removeAttribute('data-active'));
+          hit.link.setAttribute('data-active', 'true');
+        });
+      },
+      { rootMargin: '-15% 0px -70% 0px', threshold: [0, 1] },
+    );
+    targets.forEach((t) => observer.observe(t.el));
+  }
+</script>

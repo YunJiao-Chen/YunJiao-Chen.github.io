@@ -1,0 +1,257 @@
+/* ==========================================================================
+   微信公众号排版样式（构建期由 juice 内联进 dist/wechat/*.html）
+   --------------------------------------------------------------------------
+   为什么单独一份？
+   公众号编辑器只认元素上的 style 属性，会丢弃 <style> 与 class。
+   所以这里的每条规则都会在构建期被 juice 转换成行内样式。
+   规则命中的 class 由 scripts/export-wechat.mjs 在转换 DOM 时打上（wx-* 前缀）。
+
+   排版规范（站内与导出保持同一套参数）：
+     正文 16px / 行高 1.75 / 段间距 16px / 主色 #07C160
+   ========================================================================== */
+
+.wx-article {
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB',
+    'Microsoft YaHei', sans-serif;
+  font-size: 16px;
+  line-height: 1.75;
+  color: #3f3f3f;
+  letter-spacing: 0.5px;
+  word-break: break-word;
+  text-align: left;
+}
+
+/* -------------------------------- 元信息 -------------------------------- */
+.wx-opening {
+  font-size: 15px;
+  color: #888888;
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #eeeeee;
+}
+
+.wx-meta {
+  font-size: 13px;
+  color: #9a9a9a;
+  margin-bottom: 22px;
+  letter-spacing: 0.3px;
+}
+
+/* -------------------------------- 标题 ---------------------------------- */
+.wx-h2 {
+  font-size: 19px;
+  font-weight: 700;
+  color: #1a1a1a;
+  line-height: 1.5;
+  margin: 32px 0 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #ececec;
+}
+
+.wx-h3 {
+  font-size: 17px;
+  font-weight: 700;
+  color: #1a1a1a;
+  line-height: 1.5;
+  margin: 26px 0 14px;
+}
+
+.wx-h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #444444;
+  margin: 22px 0 12px;
+}
+
+/* -------------------------------- 正文 ---------------------------------- */
+.wx-p {
+  font-size: 16px;
+  line-height: 1.75;
+  color: #3f3f3f;
+  margin: 0 0 16px;
+}
+
+.wx-strong {
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.wx-em {
+  font-style: italic;
+  color: #555555;
+}
+
+.wx-del {
+  color: #9a9a9a;
+  text-decoration: line-through;
+}
+
+.wx-mark {
+  background-color: #fff3bf;
+  color: #3f3f3f;
+  padding: 0 3px;
+}
+
+.wx-link {
+  color: #576b95;
+  text-decoration: none;
+  border-bottom: 1px solid #576b95;
+}
+
+.wx-hr {
+  border: none;
+  border-top: 1px dashed #dddddd;
+  margin: 26px 0;
+}
+
+/* -------------------------------- 列表 ---------------------------------- */
+.wx-ul,
+.wx-ol {
+  margin: 0 0 16px;
+  padding-left: 22px;
+}
+
+.wx-li {
+  font-size: 16px;
+  line-height: 1.75;
+  color: #3f3f3f;
+  margin-bottom: 8px;
+}
+
+.wx-task {
+  font-size: 16px;
+  line-height: 1.75;
+  color: #3f3f3f;
+  margin-bottom: 8px;
+  list-style: none;
+}
+
+/* -------------------------------- 引用 ---------------------------------- */
+.wx-quote {
+  margin: 20px 0;
+  padding: 12px 14px;
+  background-color: #f7f7f7;
+  border-left: 3px solid #d9d9d9;
+  border-radius: 0 4px 4px 0;
+  color: #666666;
+  font-size: 15px;
+  line-height: 1.75;
+}
+
+/* -------------------------------- 代码 ---------------------------------- */
+.wx-code-inline {
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: 14px;
+  color: #1a1a1a;
+  background-color: #f5f6f8;
+  border-radius: 4px;
+  padding: 2px 5px;
+  margin: 0 2px;
+}
+
+.wx-pre {
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: 13px;
+  line-height: 1.65;
+  color: #24292e;
+  background-color: #f6f8fa;
+  border: 1px solid #e1e4e8;
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin: 20px 0;
+  white-space: pre-wrap;
+  word-break: break-all;
+  overflow-x: auto;
+}
+
+.wx-pre-code {
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: 13px;
+  line-height: 1.65;
+  color: #24292e;
+  background-color: transparent;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* -------------------------------- 表格 ---------------------------------- */
+.wx-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.wx-th {
+  border: 1px solid #e5e5e5;
+  background-color: #fafafa;
+  color: #1a1a1a;
+  font-weight: 600;
+  padding: 8px 10px;
+  text-align: left;
+}
+
+.wx-td {
+  border: 1px solid #e5e5e5;
+  color: #3f3f3f;
+  padding: 8px 10px;
+  text-align: left;
+}
+
+/* -------------------------------- 图片 ---------------------------------- */
+.wx-img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 20px auto;
+  border-radius: 6px;
+}
+
+.wx-figure {
+  margin: 20px 0;
+}
+
+.wx-figcaption {
+  font-size: 13px;
+  color: #9a9a9a;
+  text-align: center;
+  margin-top: 8px;
+}
+
+/* -------------------------------- 脚注 ---------------------------------- */
+.wx-footnotes {
+  margin-top: 28px;
+  padding-top: 14px;
+  border-top: 1px solid #eeeeee;
+  font-size: 14px;
+  color: #8a8a8a;
+  line-height: 1.7;
+}
+
+/* ------------------------------ 结尾区块 -------------------------------- */
+.wx-signature {
+  margin-top: 30px;
+  padding-top: 14px;
+  border-top: 1px solid #eeeeee;
+  font-size: 14px;
+  color: #8a8a8a;
+  line-height: 1.7;
+}
+
+.wx-follow {
+  margin-top: 22px;
+  padding: 14px 16px;
+  background-color: #f7f7f7;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #666666;
+  line-height: 1.7;
+}
+
+.wx-tags {
+  margin-top: 18px;
+  font-size: 13px;
+  color: #9a9a9a;
+  line-height: 1.7;
+}

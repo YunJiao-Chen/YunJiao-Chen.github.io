@@ -1,0 +1,93 @@
+---
+/**
+ * 图标：来自 Tabler Icons 官方图标库（skill §3.C / §9.E：禁止手绘 SVG 路径）
+ * ---------------------------------------------------------------------------
+ * 做法：构建期用 `?raw` 把官方 SVG 源文件读成字符串，做三步归一化后内联输出。
+ *   1. 去掉 Tabler 自带的 class 与背景占位路径（M0 0h24v24H0z）
+ *   2. 全局统一线宽（§3.C：strokeWidth 全站一致，这里固定 1.75）
+ *   3. 尺寸与无障碍属性由 props 决定
+ * 全站只使用这一个图标家族，不混用其他库。
+ */
+import search from '@tabler/icons/outline/search.svg?raw';
+import sun from '@tabler/icons/outline/sun.svg?raw';
+import moon from '@tabler/icons/outline/moon.svg?raw';
+import menu from '@tabler/icons/outline/menu-2.svg?raw';
+import close from '@tabler/icons/outline/x.svg?raw';
+import arrowRight from '@tabler/icons/outline/arrow-right.svg?raw';
+import arrowUpRight from '@tabler/icons/outline/arrow-up-right.svg?raw';
+import clock from '@tabler/icons/outline/clock.svg?raw';
+import calendar from '@tabler/icons/outline/calendar.svg?raw';
+import tag from '@tabler/icons/outline/tag.svg?raw';
+import copy from '@tabler/icons/outline/copy.svg?raw';
+import check from '@tabler/icons/outline/check.svg?raw';
+import download from '@tabler/icons/outline/download.svg?raw';
+import mail from '@tabler/icons/outline/mail.svg?raw';
+import rss from '@tabler/icons/outline/rss.svg?raw';
+import github from '@tabler/icons/outline/brand-github.svg?raw';
+import wechat from '@tabler/icons/outline/brand-wechat.svg?raw';
+import qrcode from '@tabler/icons/outline/qrcode.svg?raw';
+import link from '@tabler/icons/outline/link.svg?raw';
+import externalLink from '@tabler/icons/outline/external-link.svg?raw';
+import message from '@tabler/icons/outline/message-circle.svg?raw';
+import chevronLeft from '@tabler/icons/outline/chevron-left.svg?raw';
+import chevronRight from '@tabler/icons/outline/chevron-right.svg?raw';
+
+/** 全站统一线宽 */
+const STROKE = '1.75';
+
+const ICONS: Record<string, string> = {
+  search,
+  sun,
+  moon,
+  menu,
+  close,
+  'arrow-right': arrowRight,
+  'arrow-up-right': arrowUpRight,
+  clock,
+  calendar,
+  tag,
+  copy,
+  check,
+  download,
+  mail,
+  rss,
+  github,
+  wechat,
+  qrcode,
+  link,
+  'external-link': externalLink,
+  message,
+  'chevron-left': chevronLeft,
+  'chevron-right': chevronRight,
+};
+
+interface Props {
+  name: string;
+  /** 像素尺寸，默认 16（14 用于行内，20 用于大按钮） */
+  size?: number;
+  class?: string;
+  /** 提供后图标具备语义（否则对辅助技术隐藏） */
+  label?: string;
+}
+
+const { name, size = 16, class: className = '', label } = Astro.props;
+
+const raw = ICONS[name] ?? ICONS.link;
+
+const svg = raw
+  .replace(/<!--[\s\S]*?-->/g, '')
+  .replace(/\sclass="[^"]*"/g, '')
+  .replace(/<path stroke="none" d="M0 0h24v24H0z"[^>]*\/>/g, '')
+  .replace(/stroke-width="[^"]*"/g, `stroke-width="${STROKE}"`)
+  .replace(/width="24"/, `width="${size}"`)
+  .replace(/height="24"/, `height="${size}"`)
+  .replace('<svg', `<svg class="icon ${className}"`)
+  .replace(
+    '<svg',
+    label ? `<svg role="img" aria-label="${label}"` : '<svg aria-hidden="true" focusable="false"',
+  )
+  .replace(/\n\s+/g, ' ')
+  .trim();
+---
+
+<Fragment set:html={svg} />

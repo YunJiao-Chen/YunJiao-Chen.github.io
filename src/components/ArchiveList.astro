@@ -1,0 +1,38 @@
+---
+/**
+ * 归档列表：卡片网格（带封面）或紧凑行列表
+ */
+import PostCard from './PostCard.astro';
+import PostRows from './PostRows.astro';
+import type { Post } from '../lib/posts.ts';
+import { withBase } from '../../site.config.ts';
+
+interface Props {
+  posts: Post[];
+  variant?: 'cards' | 'rows';
+  emptyText?: string;
+}
+
+const { posts, variant = 'cards', emptyText = '这里还没有文章。' } = Astro.props;
+---
+
+{
+  posts.length === 0 ? (
+    <div class="empty">
+      <p>{emptyText}</p>
+      <p>
+        <a class="text-link" href={withBase('/blog/')}>
+          去看全部文章<span aria-hidden="true">→</span>
+        </a>
+      </p>
+    </div>
+  ) : variant === 'rows' ? (
+    <PostRows posts={posts} />
+  ) : (
+    <div class="card-grid">
+      {posts.map((post) => (
+        <PostCard post={post} />
+      ))}
+    </div>
+  )
+}
