@@ -1,0 +1,74 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  # 也可以在 Actions 页面手动触发一次
+  workflow_dispatch:
+
+# GitHub Pages 部署所需的最小权限
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 同时只允许一个部署；排队中的推送不会打断正在进行的发布
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          # Astro 7 要求 Node >= 22.12，低于此版本会在构建阶段报引擎不匹配
+          node-version: '22'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Configure Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
+      - name: Build site and export WeChat pages
+        # SITE_URL / BASE_PATH 由 configure-pages 注入，因此换仓库或换域名都不用改代码：
+        #   SITE_URL  = https://<user>.github.io   （origin，不含子路径）
+        #   BASE_PATH = /<repo> 或 ''（用户站点、自定义域名）
+        env:
+          SITE_URL: ${{ steps.pages.outputs.origin }}
+          BASE_PATH: ${{ steps.pages.outputs.base_path }}
+          ASTRO_TELEMETRY_DISABLED: '1'
+        run: npm run build
+
+      - name: Design and export gates
+        # 设计规范自检（对比度 / 文案 / 结构 / base 一致性）与公众号导出回归测试
+        env:
+          ASTRO_TELEMETRY_DISABLED: '1'
+        run: |
+          npm run audit
+          npm run test:wechat
+
+      - name: Upload artifact
+        # 只上传 dist；源码与 .dsh/ 不会进入 Pages 产物
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -56,9 +56,14 @@ export const siteConfig = {
     description:
       '一个关于前端工程、后端架构、AI 工具链与读书笔记的个人博客。用 Markdown 写作，同步发布到微信公众号。',
     /** 生产地址（不带结尾斜杠）。GitHub Pages 项目站点填 https://<user>.github.io */
-    url: env('SITE_URL', 'https://yourname.github.io'),
-    /** 部署子路径。用户站点或自定义域名填 '/' */
-    base: env('BASE_PATH', '/my-blog'),
+    url: env('SITE_URL', 'https://yunjiao-chen.github.io'),
+    /**
+     * 部署子路径，决定所有内链与资源的路径前缀：
+     *   仓库名 personal  → 项目站点 https://yunjiao-chen.github.io/personal/ → 填 '/personal'
+     *   仓库名 <user>.github.io（用户站点）或绑定自定义域名 → 填 '/'
+     * CI 里由 actions/configure-pages 注入 BASE_PATH 覆盖，这里只是本地默认值。
+     */
+    base: env('BASE_PATH', '/personal'),
     lang: 'zh-CN',
     locale: 'zh_CN',
     timezone: 'Asia/Shanghai',

@@ -308,6 +308,23 @@ function auditStructure() {
     add('C 结构', '统计数据位于内容之后', factsPos > tagsPos && tagsPos >= 0, '');
   }
 
+  // 部署子路径一致性：base 不是 '/' 时，sitemap 与 RSS 的绝对地址都必须带 base
+  if (existsSync(join(distDir, 'index.html'))) {
+    const homeHtml = readFileSync(join(distDir, 'index.html'), 'utf8');
+    const baseMatch = /href="([^"]*)\/_astro\//.exec(homeHtml);
+    const base = baseMatch ? baseMatch[1] : '';
+    if (base) {
+      const sitemap = existsSync(join(distDir, 'sitemap-0.xml'))
+        ? readFileSync(join(distDir, 'sitemap-0.xml'), 'utf8')
+        : '';
+      const rss = existsSync(join(distDir, 'rss.xml')) ? readFileSync(join(distDir, 'rss.xml'), 'utf8') : '';
+      const badSitemap = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].filter((m) => !m[1].includes(base));
+      const badRss = [...rss.matchAll(/<link>([^<]+)<\/link>/g)].filter((m) => !m[1].includes(base));
+      add('C 结构', `sitemap 链接带 base（${base}）`, badSitemap.length === 0, badSitemap.slice(0, 2).map((m) => m[1]).join(', '));
+      add('C 结构', `RSS 链接带 base（${base}）`, badRss.length === 0, badRss.slice(0, 3).map((m) => m[1]).join(', '));
+    }
+  }
+
   // §9.E 手绘 SVG：图标必须来自图标库
   const icon = readFileSync(join(root, 'src/components/Icon.astro'), 'utf8');
   const fromLibrary = icon.includes("@tabler/icons/outline/");

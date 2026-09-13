@@ -11,7 +11,7 @@
 import rss from '@astrojs/rss';
 
 import { getAllPosts, postMeta, postPath } from '../lib/posts.ts';
-import { siteConfig } from '../../site.config.ts';
+import { siteConfig, absoluteUrl } from '../../site.config.ts';
 
 export async function GET(context) {
   const posts = await getAllPosts();
@@ -20,7 +20,9 @@ export async function GET(context) {
   return rss({
     title: siteConfig.site.title,
     description: siteConfig.site.description,
-    site: context.site ?? siteConfig.site.url,
+    // 频道与条目都用带 base 的绝对地址：
+    // Astro 的 site 只有域名（不含 /personal 这类子路径），直接交给 rss() 会漏掉 base
+    site: absoluteUrl('/'),
     trailingSlash: true,
     items: posts.map((post) => {
       const meta = postMeta(post);
@@ -28,7 +30,7 @@ export async function GET(context) {
         title: post.data.title,
         description: post.data.description,
         pubDate: new Date(post.data.pubDate),
-        link: postPath(post),
+        link: absoluteUrl(postPath(post)),
         categories: [meta.category.name, ...post.data.tags],
         author: post.data.wechat?.author ?? siteConfig.author.name,
       };
