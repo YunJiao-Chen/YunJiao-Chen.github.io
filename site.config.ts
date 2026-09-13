@@ -59,11 +59,11 @@ export const siteConfig = {
     url: env('SITE_URL', 'https://yunjiao-chen.github.io'),
     /**
      * 部署子路径，决定所有内链与资源的路径前缀：
-     *   仓库名 personal  → 项目站点 https://yunjiao-chen.github.io/personal/ → 填 '/personal'
+     *   仓库名 blog → 项目站点 https://yunjiao-chen.github.io/blog/ → 填 '/blog'
      *   仓库名 <user>.github.io（用户站点）或绑定自定义域名 → 填 '/'
      * CI 里由 actions/configure-pages 注入 BASE_PATH 覆盖，这里只是本地默认值。
      */
-    base: env('BASE_PATH', '/personal'),
+    base: env('BASE_PATH', '/blog'),
     lang: 'zh-CN',
     locale: 'zh_CN',
     timezone: 'Asia/Shanghai',
