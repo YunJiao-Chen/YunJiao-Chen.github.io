@@ -1,7 +1,7 @@
 ---
 /**
- * 页脚：品牌行 + 3 行横向排列（关于 / 导航 / 分类）+ 版权行
- * 不放构建版本号与时间戳（设计规范 §9.F）
+ * 页脚（PaperMod 是居中极简：社交图标 + 版权）
+ * 这里保留此前的 3 行导航（关于 / 导航 / 分类），但按同样的克制样式：居中、小字、hairline
  */
 import Icon from './Icon.astro';
 import { siteConfig, withBase } from '../../site.config.ts';
@@ -10,74 +10,57 @@ const year = new Date().getFullYear();
 ---
 
 <footer class="footer">
-  <div class="container">
-    <a class="brand" href={withBase('/')}>
-      <span class="brand__mark" aria-hidden="true">{siteConfig.author.name.slice(0, 1)}</span>
-      <span class="brand__text">
-        <span class="brand__title">{siteConfig.site.title}</span>
-        <span class="brand__subtitle">{siteConfig.site.subtitle}</span>
-      </span>
-    </a>
-
-    <div class="footer__rows">
-      <div class="footer__row">
-        <p class="footer__label">关于</p>
-        <p class="footer__intro">{siteConfig.author.tagline}</p>
-        <div class="footer__social">
-          {
-            siteConfig.author.socials.map((social) => (
-              <a
-                href={social.href.startsWith('/') ? withBase(social.href) : social.href}
-                rel="noopener"
-              >
-                <Icon name={social.icon} size={15} />
-                {social.label}
-              </a>
-            ))
-          }
-        </div>
-      </div>
-
-      <div class="footer__row">
-        <p class="footer__label">导航</p>
-        <ul class="footer__list">
-          {
-            siteConfig.nav.map((item) => (
-              <li>
-                <a href={withBase(item.href)}>{item.label}</a>
-              </li>
-            ))
-          }
-          {
-            siteConfig.features.rss && (
-              <li>
-                <a href={withBase('/rss.xml')}>RSS</a>
-              </li>
-            )
-          }
-        </ul>
-      </div>
-
-      <div class="footer__row">
-        <p class="footer__label">分类</p>
-        <ul class="footer__list">
-          {
-            siteConfig.categories.map((category) => (
-              <li>
-                <a href={withBase(`/categories/${category.slug}/`)}>{category.name}</a>
-              </li>
-            ))
-          }
-        </ul>
+  <div class="footer__rows">
+    <div class="footer__row">
+      <p class="footer__label">关于</p>
+      <div class="footer__social">
+        {
+          siteConfig.author.socials.map((social) => (
+            <a href={social.href.startsWith('/') ? withBase(social.href) : social.href} rel="noopener">
+              <Icon name={social.icon} size={14} />
+              {social.label}
+            </a>
+          ))
+        }
       </div>
     </div>
 
-    <div class="footer__bottom">
-      <span>
-        © {siteConfig.footer.since} {year} {siteConfig.author.name}
-        {siteConfig.footer.icp && ` / ${siteConfig.footer.icp}`}
-      </span>
-      <span>{siteConfig.footer.note}</span>
+    <div class="footer__row">
+      <p class="footer__label">导航</p>
+      <ul class="footer__list">
+        {
+          siteConfig.nav.map((item) => (
+            <li>
+              <a href={withBase(item.href)}>{item.label}</a>
+            </li>
+          ))
+        }
+        {
+          siteConfig.features.rss && (
+            <li>
+              <a href={withBase('/rss.xml')}>RSS</a>
+            </li>
+          )
+        }
+      </ul>
     </div>
+
+    <div class="footer__row">
+      <p class="footer__label">分类</p>
+      <ul class="footer__list">
+        {
+          siteConfig.categories.map((category) => (
+            <li>
+              <a href={withBase(`/categories/${category.slug}/`)}>{category.name}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer__bottom">
+    <span>© {siteConfig.footer.since} {year} {siteConfig.author.name}</span>
+    <span>{siteConfig.footer.note}</span>
   </div>
 </footer>

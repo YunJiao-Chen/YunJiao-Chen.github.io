@@ -10,9 +10,9 @@
 
 | 能力 | 说明 |
 | --- | --- |
-| 主页 5 区块 | 非对称 Hero（真实照片）→ 精选头条 → 双栏索引 → 分类 Bento（5 格）→ 标签场；页脚为品牌行 + 3 行横向排列 |
+| 主页 | PaperMod 结构：欢迎卡片 + 文章条目卡片 + 全部文章链接（无落地页式分区） |
 | 视觉系统 | 单色系（一个强调色 + 中性灰阶）、细线分隔、统一字号/间距令牌；模板内联样式为 0 |
-| 设计规范 | 按 [`design-taste-frontend`](https://github.com/Leonxlnx/taste-skill) 重做：真实图片、自托管 Geist 字体、Tabler 图标、入场动效、50 项可执行自检 |
+| 设计规范 | 视觉按 Hugo PaperMod（Lilian Weng 站）重做，流程按 [`design-taste-frontend`](https://github.com/Leonxlnx/taste-skill)；55 项可执行自检 |
 | Markdown 写作 | GFM 表格、任务列表、脚注、删除线、Shiki 代码高亮（明暗双主题）、标题锚点、自动目录（TOC）、阅读时长 |
 | 分类 + 标签 | 分类是固定栏目（导航骨架），标签横向串联；分类页 / 标签页 / 分页 / 时间线全部构建期生成 |
 | 站内搜索 | 构建期生成 `search-index.json`，`⌘K` / `Ctrl+K` 打开，纯前端过滤，零服务端 |
@@ -30,9 +30,9 @@
 关键约定（改动样式前请先读）：
 
 - **拨盘**：`DESIGN_VARIANCE 6` / `MOTION_INTENSITY 4` / `VISUAL_DENSITY 5`（偏紧凑），定义在 `src/styles/global.css` 顶部注释里
-- **单一强调色**：电蓝 `#1d4ed8`（深色模式 `#8ab0ff`），其余全部中性灰阶；HSL 饱和度上限 80%
-- **配色与版式参考**：Eugene Yan、Chip Huyen、Vicki Boykis、Simon Willison、Craig Mod、Robin Rendle、Julia Evans、Lilian Weng（做法见 `docs/DESIGN.md` §13）
-- **形状一致性**：容器 `14px` / 控件 `8px` / 行内标签胶囊，全站只有这三档
+- **无强调色**：按 PaperMod 的做法，链接就是近黑 `#1e1e1e`，hover 加 1px 下划线（深色模式 `#dadadb`）
+- **配色与版式参考**：Lilian Weng 的 Lil'Log（Hugo PaperMod 主题，实测变量见 `docs/DESIGN.md` §14）；上一轮还比对过 Eugene Yan、Chip Huyen、Vicki Boykis、Simon Willison、Craig Mod、Robin Rendle、Julia Evans（§13）
+- **形状一致性**：卡片与控件统一 `8px` 圆角（PaperMod 的 `--radius`）
 - **真实图片**：Hero 人像、文章封面、分类配图都是真实照片（`site.config.ts` 的 `images` 段可关掉远程占位）
 - **文案红线**：禁止破折号（`——` 与 `–`）、每行最多一个中点、hero 最多 4 个文本元素、不写空泛动词
 - **动效**：只用 `opacity` 与 `transform`，全部尊重 `prefers-reduced-motion`，禁止监听 scroll 事件
@@ -40,7 +40,7 @@
 提交前跑一次门禁：
 
 ```bash
-npm run build && npm run audit   # 50 项断言，全部通过才允许发布
+npm run build && npm run audit   # 55 项断言，全部通过才允许发布
 ```
 
 ## 快速开始
@@ -208,7 +208,7 @@ comments: {
 | `npm run new -- "标题"` | 新建文章 |
 | `npm run test:wechat` | 公众号导出运行时回归测试（18 项断言） |
 | `npm run check` | Astro/TS 类型检查 |
-| `npm run audit` | 设计规范自检（对比度 / 文案 / 结构共 50 项，接 CI 可当门禁） |
+| `npm run audit` | 设计规范自检（对比度 / 文案 / 结构共 55 项，接 CI 可当门禁） |
 | `npm run preview` | 预览 `dist/` |
 
 ---

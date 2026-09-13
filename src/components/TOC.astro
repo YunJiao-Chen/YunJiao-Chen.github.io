@@ -1,6 +1,6 @@
 ---
 /**
- * 文章目录（TOC）：由 Astro 的 render() 返回的 headings 生成，右侧粘性跟随
+ * 文章目录：PaperMod 用可折叠的 details 卡片，而不是右侧栏
  */
 import type { MarkdownHeading } from 'astro';
 
@@ -13,7 +13,6 @@ interface Props {
 const { headings, minDepth = 2, maxDepth = 3 } = Astro.props;
 const items = headings.filter((h) => h.depth >= minDepth && h.depth <= maxDepth);
 
-/** 把扁平标题列表构建成嵌套结构 */
 type Node = { heading: MarkdownHeading; children: Node[] };
 function build(list: MarkdownHeading[]): Node[] {
   const roots: Node[] = [];
@@ -29,15 +28,14 @@ function build(list: MarkdownHeading[]): Node[] {
   }
   return roots;
 }
-
 const tree = build(items);
 ---
 
 {
   items.length > 0 && (
-    <aside class="toc" aria-label="文章目录" data-wechat-ignore>
-      <p class="toc__title">目录</p>
-      <nav>
+    <details class="toc" data-wechat-ignore>
+      <summary class="toc__title">目录</summary>
+      <nav aria-label="文章目录">
         <ul>
           {tree.map((node) => (
             <li>
@@ -55,12 +53,12 @@ const tree = build(items);
           ))}
         </ul>
       </nav>
-    </aside>
+    </details>
   )
 }
 
 <script>
-  /* 滚动高亮当前小节 */
+  /* 滚动到当前小节时高亮对应目录项 */
   const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('.toc a[href^="#"]'));
   if (links.length) {
     const targets = links

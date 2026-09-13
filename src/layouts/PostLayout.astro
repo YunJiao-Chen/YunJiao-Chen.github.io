@@ -1,6 +1,6 @@
 ---
 /**
- * 文章布局：编辑式标题区 + 通栏封面 + 正文（含目录）+ 操作区 + 上下篇 + 相关 + 评论
+ * 文章布局（PaperMod）：标题区 + 可折叠目录 + 正文 + 操作区 + 标签 / 上下篇 / 相关 / 评论
  */
 import type { MarkdownHeading } from 'astro';
 
@@ -9,9 +9,9 @@ import TOC from '../components/TOC.astro';
 import Comments from '../components/Comments.astro';
 import WeChatExport from '../components/WeChatExport.astro';
 import Icon from '../components/Icon.astro';
+import PostEntry from '../components/PostEntry.astro';
 import { getAdjacentPosts, getRelatedPosts, postMeta, postPath, type Post } from '../lib/posts.ts';
 import { formatDate } from '../lib/utils.ts';
-import { coverUrl } from '../lib/images.ts';
 import { siteConfig, withBase } from '../../site.config.ts';
 import '../styles/prose.css';
 
@@ -22,7 +22,6 @@ interface Props {
 
 const { post, headings } = Astro.props;
 const meta = postMeta(post);
-const cover = coverUrl(post);
 
 const [{ newer, older }, related] = await Promise.all([
   getAdjacentPosts(post.id),
@@ -35,25 +34,23 @@ const [{ newer, older }, related] = await Promise.all([
   description={post.data.description}
   path={postPath(post)}
   type="article"
-  image={cover}
   pubDate={post.data.pubDate}
   updatedDate={post.data.updatedDate}
   tags={post.data.tags}
   author={post.data.wechat?.author ?? siteConfig.author.name}
-  containerClass="container container--post"
+  containerClass="container container--main"
 >
-  <header class="post-header">
-    <nav class="breadcrumb" aria-label="面包屑">
-      <a href={withBase('/')}>首页</a>
-      <span aria-hidden="true">/</span>
-      <a href={withBase('/posts/')}>文章</a>
-      <span aria-hidden="true">/</span>
-      <a href={withBase(`/categories/${meta.category.slug}/`)}>{meta.category.name}</a>
-    </nav>
+  <nav class="breadcrumb" aria-label="面包屑">
+    <a href={withBase('/')}>首页</a>
+    <span aria-hidden="true">/</span>
+    <a href={withBase('/posts/')}>文章</a>
+    <span aria-hidden="true">/</span>
+    <a href={withBase(`/categories/${meta.category.slug}/`)}>{meta.category.name}</a>
+  </nav>
 
+  <header class="post-header">
     <h1 class="post-header__title">{post.data.title}</h1>
     <p class="post-header__dek">{post.data.description}</p>
-
     <div class="meta post-header__meta">
       <span>
         <Icon name="calendar" size={14} />
@@ -64,57 +61,36 @@ const [{ newer, older }, related] = await Promise.all([
       {post.data.updatedDate && <span>更新于 {formatDate(post.data.updatedDate)}</span>}
       {siteConfig.features.readingTime && <span>{meta.reading.label}</span>}
       {post.data.series && <span>系列 {post.data.series}</span>}
-      {post.data.draft && <span>草稿</span>}
     </div>
   </header>
 
-  {
-    cover && (
-      <figure class="post-cover">
-        <img
-          src={cover}
-          alt={`${post.data.title} 的配图`}
-          width="1600"
-          height="900"
-          loading="eager"
-          decoding="async"
-        />
-      </figure>
-    )
-  }
+  {siteConfig.features.toc && <TOC headings={headings} />}
 
-  <div class="post-layout">
-    <div>
-      <article class="prose" data-wechat-article>
-        <slot />
-      </article>
+  <article class="prose" data-wechat-article>
+    <slot />
+  </article>
 
-      <div class="post-actions">
-        <WeChatExport post={post} />
-        <button type="button" class="btn btn--ghost" data-copy-link data-wechat-ignore>
-          <Icon name="link" size={15} /> 复制链接
-        </button>
-        {
-          siteConfig.wechat.showCopyButton && meta.wechatEnabled && (
-            <span class="post-actions__note">
-              「复制到公众号」会把排版转成行内样式后写入剪贴板，直接粘到公众号编辑器即可。
-              构建时还会生成一份独立导出页。
-            </span>
-          )
-        }
-      </div>
-    </div>
-
-    {siteConfig.features.toc && <TOC headings={headings} />}
+  <div class="post-actions">
+    <WeChatExport post={post} />
+    <button type="button" class="btn btn--ghost" data-copy-link data-wechat-ignore>
+      <Icon name="link" size={15} /> 复制链接
+    </button>
+    {
+      siteConfig.wechat.showCopyButton && meta.wechatEnabled && (
+        <span class="post-actions__note">
+          「复制到公众号」会把排版转成行内样式后写入剪贴板，直接粘到公众号编辑器即可。
+        </span>
+      )
+    }
   </div>
 
-  <div class="post-footer">
+  <footer class="post-footer">
     {
       post.data.tags.length > 0 && (
         <div class="post-tags" data-wechat-ignore>
           {post.data.tags.map((tag) => (
             <a class="chip" href={withBase(`/tags/${encodeURIComponent(tag)}/`)}>
-              {tag}
+              #{tag}
             </a>
           ))}
         </div>
@@ -151,29 +127,17 @@ const [{ newer, older }, related] = await Promise.all([
     {
       related.length > 0 && (
         <section>
-          <div class="section-head">
-            <h2 class="section-head__title">相关文章</h2>
-          </div>
-          <div class="related">
-            {related.map((item) => (
-              <a class="related__item" href={withBase(postPath(item))}>
-                <span>{item.data.title}</span>
-                <time datetime={new Date(item.data.pubDate).toISOString()}>
-                  {formatDate(item.data.pubDate)}
-                </time>
-              </a>
-            ))}
-          </div>
+          <h2 class="subhead">相关文章</h2>
+          {related.map((item) => <PostEntry post={item} />)}
         </section>
       )
     }
 
     <Comments />
-  </div>
+  </footer>
 </BaseLayout>
 
 <script>
-  /* 复制当前文章链接（保留图标，仅临时替换文字） */
   const copyButton = document.querySelector<HTMLButtonElement>('[data-copy-link]');
   const copyButtonHtml = copyButton?.innerHTML ?? '';
   copyButton?.addEventListener('click', async () => {
@@ -184,7 +148,7 @@ const [{ newer, older }, related] = await Promise.all([
         if (copyButton) copyButton.innerHTML = copyButtonHtml;
       }, 1600);
     } catch {
-      /* 剪贴板不可用（非 HTTPS 或权限被拒）：用户可手动复制地址栏 */
+      /* 剪贴板不可用：用户可手动复制地址栏 */
     }
   });
 </script>

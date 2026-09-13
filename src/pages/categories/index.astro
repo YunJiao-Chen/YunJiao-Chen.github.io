@@ -1,35 +1,29 @@
 ---
 /**
- * 分类总览：/categories/
- * 布局族：Bento（5 格）+ 行列表（近期文章，≤ 5 条）
+ * 分类总览：/categories/（PaperMod 归档风格：一行一个分类 + 篇数）
  */
 import PageLayout from '../../layouts/PageLayout.astro';
-import TopicBento from '../../components/TopicBento.astro';
-import PostRows from '../../components/PostRows.astro';
-import { getAllPosts, getCategorySummaries } from '../../lib/posts.ts';
+import { getCategorySummaries } from '../../lib/posts.ts';
+import { withBase } from '../../../site.config.ts';
 
-const [categories, posts] = await Promise.all([getCategorySummaries(), getAllPosts()]);
-const recent = posts.slice(0, 5);
+const categories = await getCategorySummaries();
 ---
 
-<PageLayout
-  title="分类"
-  description="每篇文章只归属一个分类。分类是主干，标签负责横向串联。"
-  path="/categories/"
->
-  <TopicBento categories={categories} />
-
-  <section class="mt-9">
-    <div class="section-head">
-      <h2 class="section-head__title">最近更新</h2>
-      <p class="section-head__desc">全部 {posts.length} 篇里最新的 5 篇。</p>
-    </div>
-    <PostRows posts={recent} />
-  </section>
+<PageLayout title="分类" description="每篇文章只归属一个分类，分类是站点的主干。" path="/categories/">
+    {
+      categories.map((category) => (
+        <div class="entry">
+          <h2 class="entry__title">
+            <a href={withBase(`/categories/${category.slug}/`)}>{category.name}</a>
+          </h2>
+          <section class="entry__content">
+            <p class="entry__summary">{category.description}</p>
+          </section>
+          <footer class="entry__footer">
+            <span>{category.count} 篇</span>
+            {category.latest && <span>最近 {category.latest.data.title}</span>}
+          </footer>
+        </div>
+      ))
+    }
 </PageLayout>
-
-<style>
-  .mt-9 {
-    margin-top: var(--sp-9);
-  }
-</style>

@@ -1,7 +1,6 @@
 ---
 /**
  * 单分类归档：/categories/<slug>/
- * 布局族：卡片网格
  */
 import type { GetStaticPaths } from 'astro';
 
@@ -10,14 +9,13 @@ import ArchiveList from '../../components/ArchiveList.astro';
 import { getPostsByCategory, type Post } from '../../lib/posts.ts';
 import { siteConfig, type Category } from '../../../site.config.ts';
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  return Promise.all(
+export const getStaticPaths: GetStaticPaths = async () =>
+  Promise.all(
     siteConfig.categories.map(async (category) => ({
       params: { category: category.slug },
       props: { category, posts: await getPostsByCategory(category.slug) },
     })),
   );
-};
 
 interface Props {
   category: Category;
@@ -32,9 +30,5 @@ const { category, posts } = Astro.props;
   description={`${category.description}共 ${posts.length} 篇。`}
   path={`/categories/${category.slug}/`}
 >
-  <ArchiveList
-    posts={posts}
-    variant="cards"
-    emptyText={`「${category.name}」分类还没有文章。`}
-  />
+  <ArchiveList posts={posts} emptyText={`「${category.name}」分类还没有文章。`} />
 </PageLayout>

@@ -1,0 +1,47 @@
+---
+/**
+ * 条目卡片（PaperMod 的 post-entry）
+ * 结构：标题 + 摘要 + 元信息；frontmatter 写了 cover 时左侧出现方形配图
+ */
+import { postPath, postMeta, type Post } from '../lib/posts.ts';
+import { formatDate } from '../lib/utils.ts';
+import { coverUrl } from '../lib/images.ts';
+import { siteConfig, withBase } from '../../site.config.ts';
+
+interface Props {
+  post: Post;
+}
+
+const { post } = Astro.props;
+const meta = postMeta(post);
+const cover = coverUrl(post);
+const href = withBase(postPath(post));
+---
+
+<article class={`entry${cover ? ' entry--cover' : ''}`} data-reveal>
+  {
+    cover && (
+      <a class="entry__thumb" href={href} tabindex="-1" aria-hidden="true">
+        <img src={cover} alt="" width="480" height="480" loading="lazy" decoding="async" />
+      </a>
+    )
+  }
+
+  <div>
+    <header class="entry__header">
+      <h2 class="entry__title"><a href={href}>{post.data.title}</a></h2>
+    </header>
+
+    <section class="entry__content">
+      <p class="entry__summary">{post.data.description}</p>
+    </section>
+
+    <footer class="entry__footer">
+      <time datetime={new Date(post.data.pubDate).toISOString()}>
+        {formatDate(post.data.pubDate)}
+      </time>
+      {siteConfig.features.readingTime && <span>{meta.reading.label}</span>}
+      <a href={withBase(`/categories/${meta.category.slug}/`)}>{meta.category.name}</a>
+    </footer>
+  </div>
+</article>

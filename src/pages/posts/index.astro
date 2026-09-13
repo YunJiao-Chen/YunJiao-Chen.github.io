@@ -1,29 +1,20 @@
 ---
 /**
- * 文章列表（第 1 页）：/blog/
- * 布局族：卡片网格（带真实封面），与首页的索引列表区分
+ * 文章列表（第 1 页）：/posts/
  */
 import PageLayout from '../../layouts/PageLayout.astro';
 import BlogArchive from '../../components/BlogArchive.astro';
-import { getAllPosts, getCategorySummaries, paginate } from '../../lib/posts.ts';
+import { getAllPosts, paginate } from '../../lib/posts.ts';
 
 const posts = await getAllPosts();
 const page = await paginate(posts, 1);
-const categories = (await getCategorySummaries())
-  .filter((category) => category.count > 0)
-  .map((category) => ({ slug: category.slug, name: category.name, count: category.count }));
 ---
 
-<PageLayout
-  title="全部文章"
-  description={`共 ${posts.length} 篇。按分类筛选，或按时间顺序翻阅。`}
-  path="/posts/"
->
+<PageLayout title="文章" description={`共 ${posts.length} 篇，按发布时间倒序。`} path="/posts/">
   <BlogArchive
     items={page.items}
     current={page.current}
     totalPages={page.totalPages}
     total={page.total}
-    categories={categories}
   />
 </PageLayout>

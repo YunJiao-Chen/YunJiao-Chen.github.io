@@ -1,36 +1,32 @@
 ---
 /**
- * 文章列表分页：/blog/page/2/、/blog/page/3/ …
+ * 文章列表分页：/posts/page/2/、/posts/page/3/ …
  */
 import type { GetStaticPaths } from 'astro';
 
 import PageLayout from '../../../layouts/PageLayout.astro';
 import BlogArchive from '../../../components/BlogArchive.astro';
-import { getAllPosts, getCategorySummaries, paginate } from '../../../lib/posts.ts';
+import { getAllPosts, paginate } from '../../../lib/posts.ts';
 import { siteConfig } from '../../../../site.config.ts';
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const posts = await getAllPosts();
   const perPage = siteConfig.site.postsPerPage;
   const totalPages = Math.max(1, Math.ceil(posts.length / perPage));
-
-  return Array.from({ length: Math.max(0, totalPages - 1) }, (_, index) => {
-    const page = index + 2;
-    return { params: { page: String(page) }, props: { page } };
-  });
+  return Array.from({ length: Math.max(0, totalPages - 1) }, (_, index) => ({
+    params: { page: String(index + 2) },
+    props: { page: index + 2 },
+  }));
 };
 
 const { page: pageNumber } = Astro.props as { page: number };
 const posts = await getAllPosts();
 const page = await paginate(posts, pageNumber);
-const categories = (await getCategorySummaries())
-  .filter((category) => category.count > 0)
-  .map((category) => ({ slug: category.slug, name: category.name, count: category.count }));
 ---
 
 <PageLayout
-  title={`全部文章（第 ${page.current} 页）`}
-  description={`第 ${page.current} 页，共 ${page.total} 篇文章。`}
+  title={`文章（第 ${page.current} 页）`}
+  description={`第 ${page.current} 页，共 ${page.total} 篇。`}
   path={`/posts/page/${page.current}/`}
 >
   <BlogArchive
@@ -38,6 +34,5 @@ const categories = (await getCategorySummaries())
     current={page.current}
     totalPages={page.totalPages}
     total={page.total}
-    categories={categories}
   />
 </PageLayout>

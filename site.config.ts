@@ -114,8 +114,8 @@ export const siteConfig = {
      * 换成自己的图片：文件放进 public/images/，在文章 frontmatter 写 cover: /images/xxx.jpg
      * 如果部署环境访问不了外部图片服务，把下面两项设为 false，页面回落为纯排版。
      */
-    remoteCovers: true,
-    remotePortrait: true,
+    remoteCovers: false,   /* PaperMod 风格列表是文字优先，默认不给文章配随机图 */
+    remotePortrait: true,  /* 头像仍用远程占位照片（换成自己的：author.photo） */
     /** 占位照片服务前缀，可替换为自建图床 */
     coverBase: 'https://picsum.photos/seed',
     portraitSeed: 'portrait-of-the-author',

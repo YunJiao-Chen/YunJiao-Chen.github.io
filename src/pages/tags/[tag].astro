@@ -1,7 +1,6 @@
 ---
 /**
  * 单标签归档：/tags/<tag>/
- * 中文标签直接作为路径参数（浏览器会自动编码）
  */
 import type { GetStaticPaths } from 'astro';
 
@@ -34,18 +33,8 @@ const tags = await getTagSummaries();
   description={`共 ${posts.length} 篇文章。`}
   path={`/tags/${tag.slug}/`}
 >
-  <ArchiveList posts={posts} variant="cards" emptyText={`标签「${tag.name}」下还没有文章。`} />
+  <ArchiveList posts={posts} emptyText={`标签「${tag.name}」下还没有文章。`} />
 
-  <section class="mt-9">
-    <div class="section-head">
-      <h2 class="section-head__title">其他标签</h2>
-    </div>
-    <TagField tags={tags.filter((item) => item.name !== tag.name)} limit={24} />
-  </section>
+  <h2 class="subhead">其他标签</h2>
+  <TagField tags={tags.filter((item) => item.name !== tag.name)} limit={24} />
 </PageLayout>
-
-<style>
-  .mt-9 {
-    margin-top: var(--sp-9);
-  }
-</style>

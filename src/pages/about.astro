@@ -1,26 +1,20 @@
 ---
 /**
- * 关于我：图文分栏（照片 + 长文）+ 事实列表 + 最近更新行列表
- * 布局族：图文分栏（照片 + 长文）+ 事实列表 + 行列表
+ * 关于我（PaperMod 的内容页：窄栏 + 正文 + 事实列表）
  */
 import PageLayout from '../layouts/PageLayout.astro';
-import PostRows from '../components/PostRows.astro';
+import PostEntry from '../components/PostEntry.astro';
 import { getLatestPosts } from '../lib/posts.ts';
 import { portraitUrl } from '../lib/images.ts';
 import { siteConfig, withBase } from '../../site.config.ts';
 
 const { author } = siteConfig;
-const latest = await getLatestPosts(5);
+const latest = await getLatestPosts(3);
 const portrait = portraitUrl('portrait');
 ---
 
-<PageLayout
-  title={`关于 ${author.name}`}
-  description={author.tagline}
-  path="/about/"
-  width="prose"
->
-  <div class="about-split">
+<PageLayout title={`关于 ${author.name}`} description={author.tagline} path="/about/">
+  <div class="about">
     <div class="prose">
       <p>{author.bio[0]}</p>
       <p>{author.bio[1]}</p>
@@ -51,12 +45,7 @@ const portrait = portraitUrl('portrait');
         <li>写作原则：能跑通再说，给出取舍而不只是结论，标注不确定的地方。</li>
       </ul>
 
-      <blockquote>
-        <p>如果某篇文章帮你省下几个小时，那就已经值回我写它的时间。</p>
-      </blockquote>
-
       <h2>联系我</h2>
-      <p>欢迎交流技术问题、指出文章里的错误，或者只是打个招呼：</p>
       <ul>
         {
           author.socials.map((social) => (
@@ -71,11 +60,11 @@ const portrait = portraitUrl('portrait');
       </ul>
     </div>
 
-    <aside class="about-side">
+    <aside class="about__side">
       {
         portrait && (
           <img
-            class="about-portrait"
+            class="about__portrait"
             src={portrait}
             alt={`${author.name} 的照片`}
             width="1200"
@@ -98,55 +87,33 @@ const portrait = portraitUrl('portrait');
     </aside>
   </div>
 
-  <section class="mt-9">
-    <div class="section-head">
-      <h2 class="section-head__title">最近更新</h2>
-      <p class="section-head__desc">最新的 5 篇文章。</p>
-    </div>
-    <PostRows posts={latest} />
-  </section>
+  <h2 class="subhead">最近更新</h2>
+  {latest.map((post) => <PostEntry post={post} />)}
 </PageLayout>
 
 <style>
-  .about-split {
+  .about {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 18rem;
-    gap: var(--sp-9);
+    grid-template-columns: minmax(0, 1fr) 13rem;
+    gap: var(--gap);
     align-items: start;
   }
 
-  .about-side {
-    position: sticky;
-    top: 5rem;
+  .about__side {
     display: grid;
-    gap: var(--sp-5);
+    gap: var(--sp-4);
   }
 
-  .about-portrait {
+  .about__portrait {
     width: 100%;
     aspect-ratio: 4 / 5;
     object-fit: cover;
     border-radius: var(--radius-container);
-    background: var(--surface);
   }
 
-  .mt-9 {
-    margin-top: var(--sp-9);
-  }
-
-  @media (max-width: 1024px) {
-    .about-split {
+  @media (max-width: 768px) {
+    .about {
       grid-template-columns: minmax(0, 1fr);
-      gap: var(--sp-7);
-    }
-
-    .about-side {
-      position: static;
-      order: -1;
-    }
-
-    .about-portrait {
-      aspect-ratio: 16 / 9;
     }
   }
 </style>

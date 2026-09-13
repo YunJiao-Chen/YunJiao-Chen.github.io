@@ -1,10 +1,7 @@
 ---
 /**
  * 独立页面布局（关于 / 归档页 / 404）
- * ---------------------------------------------------------------------------
- * prose      → 套用正文排版（段落/标题/列表样式）
- * width      → 版心宽度：default（默认宽版心）| prose（窄版心，适合长文）
- * 两者相互独立：页面里既有长文又有列表/卡片时，请用 width="prose" 并只给长文加 .prose 类。
+ * PaperMod 风格：导航宽 1024px，内容列 720px，都居中
  */
 import BaseLayout from './BaseLayout.astro';
 import '../styles/prose.css';
@@ -14,33 +11,26 @@ interface Props {
   description?: string;
   path?: string;
   prose?: boolean;
-  width?: 'default' | 'prose';
-  /** 告诉搜索引擎不要索引本页（404 等） */
   noindex?: boolean;
 }
 
-const {
-  title,
-  description,
-  path,
-  prose = false,
-  width = prose ? 'prose' : 'default',
-  noindex = false,
-} = Astro.props;
-
-const containerClass = `container${width === 'prose' ? ' container--prose' : ''}`;
+const { title, description, path, prose = false, noindex = false } = Astro.props;
 ---
 
-<BaseLayout title={title} description={description} path={path} noindex={noindex}>
-  <div class={containerClass}>
-    <header class="page-head">
-      <h1 class="page-head__title">{title}</h1>
-      {description && <p class="page-head__desc">{description}</p>}
-      <slot name="head-extra" />
-    </header>
-  </div>
+<BaseLayout
+  title={title}
+  description={description}
+  path={path}
+  noindex={noindex}
+  containerClass="container container--main"
+>
+  <header class="page-head">
+    <h1 class="page-head__title">{title}</h1>
+    {description && <p class="page-head__desc">{description}</p>}
+    <slot name="head-extra" />
+  </header>
 
-  <div class={`${containerClass} page-body${prose ? ' prose' : ''}`}>
+  <div class={prose ? 'prose' : ''}>
     <slot />
   </div>
 </BaseLayout>

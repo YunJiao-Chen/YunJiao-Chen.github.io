@@ -1,139 +1,55 @@
 ---
 /**
- * 主页
- * 布局族（每族只用一次，避免重复布局，skill §4.7）：
- *   1 非对称 hero（图文分栏）
- *   2 精选头条（图文分栏，与 hero 方向相反）
- *   3 双栏索引列表
- *   4 分类 Bento（5 格）
- *   5 标签场
- *   6 页脚（3 行横向排列，见 Footer.astro）
+ * 主页（PaperMod 结构）
+ *   1 欢迎卡片（first-entry / home-info）：标题 + 简介 + 社交图标
+ *   2 最新文章条目卡片（post-entry）
+ *   3 「全部文章」链接
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Spotlight from '../components/Spotlight.astro';
-import PostIndex from '../components/PostIndex.astro';
-import TopicBento from '../components/TopicBento.astro';
-import TagField from '../components/TagField.astro';
+import PostEntry from '../components/PostEntry.astro';
+import Icon from '../components/Icon.astro';
 
-import {
-  getAllPosts,
-  getCategorySummaries,
-  getFeaturedPosts,
-  getLatestPosts,
-  getTagSummaries,
-} from '../lib/posts.ts';
-import { portraitUrl } from '../lib/images.ts';
+import { getAllPosts, getLatestPosts } from '../lib/posts.ts';
 import { siteConfig, withBase } from '../../site.config.ts';
 
 const posts = await getAllPosts();
-const [featured, categories, tags] = await Promise.all([
-  getFeaturedPosts(1),
-  getCategorySummaries(),
-  getTagSummaries(),
-]);
-
-const lead = featured[0];
-const latest = await getLatestPosts(siteConfig.site.latestCount, lead ? [lead.id] : []);
+const latest = await getLatestPosts(siteConfig.site.latestCount);
 const { author } = siteConfig;
-const portrait = portraitUrl('square');
 ---
 
 <BaseLayout description={siteConfig.site.description} path="/">
-  {/* 1. Hero：紧凑身份带（头像 + 身份 + 名称 | 引导语 + 按钮），首屏尽快进入内容 */}
-  <div class="container hero">
-    <div class="hero__band">
-      <div class="hero__identity">
+  {/* 1. 欢迎卡片 */}
+  <article class="entry entry--info" data-reveal>
+    <header class="entry__header">
+      <h1 class="entry__title">你好，我是 {author.name}</h1>
+    </header>
+    <section class="entry__content">
+      <p class="entry__summary">{author.lead}</p>
+    </section>
+    <footer class="entry__footer">
+      <div class="social-icons">
         {
-          portrait && (
-            <img
-              class="hero__avatar"
-              src={portrait}
-              alt={`${author.name} 的照片`}
-              width="480"
-              height="480"
-              loading="eager"
-              decoding="async"
-            />
-          )
-        }
-        <div>
-          {author.status && <p class="eyebrow hero__eyebrow">{author.status}</p>}
-          <h1 class="hero__title">{author.name}</h1>
-        </div>
-      </div>
-
-      <div>
-        <p class="hero__lead">{author.lead}</p>
-        <div class="hero__cta">
-          <a class="btn btn--primary" href={withBase('/posts/')}>看文章</a>
-          <a class="text-link" href={withBase('/about/')}>
-            关于我<span aria-hidden="true">→</span>
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  {/* 2. 精选头条 */}
-  {
-    lead && (
-      <section class="section" aria-label="精选文章">
-        <div class="container">
-          <div class="section-head">
-            <p class="eyebrow">精选</p>
-            <h2 class="section-head__title">先读这一篇</h2>
-            <p class="section-head__desc">如果只读一篇，从一个完整项目的取舍开始。</p>
-          </div>
-          <Spotlight post={lead} />
-        </div>
-      </section>
-    )
-  }
-
-  {/* 3. 双栏索引 */}
-  <section class="section" aria-label="最新文章">
-    <div class="container">
-      <div class="section-head">
-        <h2 class="section-head__title">最新文章</h2>
-        <p class="section-head__desc">按时间倒序排列。</p>
-      </div>
-      <PostIndex posts={latest} />
-      <div class="section-foot">
-        <a class="text-link" href={withBase('/posts/')}>
-          查看全部 {posts.length} 篇<span aria-hidden="true">→</span>
-        </a>
-      </div>
-    </div>
-  </section>
-
-  {/* 4. 分类 Bento（浅色区块，给连续白底页面制造节奏） */}
-  <section class="section section--tinted" aria-label="博客分类">
-    <div class="container">
-      <div class="section-head">
-        <h2 class="section-head__title">按分类浏览</h2>
-        <p class="section-head__desc">
-          每篇文章只归属一个分类，分类是站点的主干。
-        </p>
-      </div>
-      <TopicBento categories={categories} />
-    </div>
-  </section>
-
-  {/* 5. 标签：左标题右内容，填补横向空白 */}
-  <section class="section" aria-label="标签">
-    <div class="container">
-      <div class="split-head">
-        <div class="section-head">
-          <h2 class="section-head__title">标签</h2>
-          <p class="section-head__desc">同一主题散落在不同分类时，用标签串联。</p>
-          <p>
-            <a class="text-link" href={withBase('/tags/')}>
-              全部 {tags.length} 个标签<span aria-hidden="true">→</span>
+          author.socials.map((social) => (
+            <a
+              href={social.href.startsWith('/') ? withBase(social.href) : social.href}
+              rel="noopener"
+            >
+              <Icon name={social.icon} size={16} />
+              {social.label}
             </a>
-          </p>
-        </div>
-        <TagField tags={tags} limit={24} />
+          ))
+        }
       </div>
-    </div>
-  </section>
+    </footer>
+  </article>
+
+  {/* 2. 最新文章 */}
+  {latest.map((post) => <PostEntry post={post} />)}
+
+  {/* 3. 全部文章 */}
+  <p>
+    <a class="more-link" href={withBase('/posts/')}>
+      全部 {posts.length} 篇<span aria-hidden="true">→</span>
+    </a>
+  </p>
 </BaseLayout>

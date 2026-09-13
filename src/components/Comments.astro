@@ -8,7 +8,7 @@
  * 新增实现（Waline / Twikoo）时在这里加一个分支即可。
  */
 import GiscusComments from './GiscusComments.astro';
-import { siteConfig, withBase } from '../../site.config.ts';
+import { siteConfig } from '../../site.config.ts';
 
 const { provider, giscus } = siteConfig.comments;
 /** 两个 ID 都齐全才认为 giscus 就绪，避免渲染出坏掉的 iframe */
@@ -18,9 +18,9 @@ const github = author.socials.find((s) => s.icon === 'github');
 ---
 
 <section class="comments" id="comments" data-wechat-ignore>
-  <div class="section-head">
-    <h2 class="section-head__title">评论与讨论</h2>
-    <p class="section-head__desc">
+  <div>
+    <h2 class="comments__title">评论与讨论</h2>
+    <p class="comments__desc">
       {
         giscusReady
           ? '评论由 GitHub Discussions 托管，用 GitHub 账号即可参与，不需要注册新账号。'

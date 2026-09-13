@@ -251,22 +251,25 @@ function auditStructure() {
   add('C 结构', '页面出现真实图片', imgCount > 0, `共 ${imgCount} 个 img`);
   add('C 结构', '无 div 拼的假截图', fakeShot === 0, '');
 
-  // 首页 hero 必须有图片（§4.8：hero 需要真实视觉）
+  // 首屏视觉：PaperMod 结构把真实照片放在顶栏 logo，首页是欢迎卡片 + 条目卡片
   if (existsSync(join(distDir, 'index.html'))) {
     const home = readFileSync(join(distDir, 'index.html'), 'utf8');
-    // hero 区域 = 从 class="hero 到紧随其后的第一个 section 边界
-    const heroStart = home.indexOf('class="hero');
-    const heroEnd = home.indexOf('class="section"', heroStart);
-    const hero = home.slice(heroStart, heroEnd > heroStart ? heroEnd : heroStart + 6000);
-    add('C 结构', 'hero 含真实图片', /<img\s/.test(hero), '');
-    // §4.7 hero 文本元素 ≤ 4
+    const header = home.slice(home.indexOf('<header'), home.indexOf('</header>'));
+    add('C 结构', '顶栏含真实头像', /<img\s/.test(header), '');
+
+    const infoStart = home.indexOf('entry--info');
+    const infoEnd = home.indexOf('class="entry"', infoStart);
+    const info = home.slice(infoStart, infoEnd > infoStart ? infoEnd : infoStart + 3000);
     const textNodes = [
-      /class="eyebrow hero__eyebrow"/.test(hero),
-      /class="hero__title"/.test(hero),
-      /class="hero__lead"/.test(hero),
-      /class="hero__cta"/.test(hero),
+      /entry__title/.test(info),
+      /entry__summary/.test(info),
+      /social-icons/.test(info),
     ].filter(Boolean).length;
-    add('C 结构', 'hero 文本元素 ≤ 4', textNodes <= 4, `${textNodes} 个`);
+    add('C 结构', '欢迎卡片文本元素 ≤ 4', infoStart > 0 && textNodes <= 4, `${textNodes} 个`);
+
+    // 首页应有条目卡片（PaperMod 的 post-entry 列表）
+    const entries = (home.match(/class="entry"/g) ?? []).length;
+    add('C 结构', '首页有条目卡片列表', entries >= 3, `${entries} 条`);
   }
 
   // §4.4 形状一致性：只允许三档圆角 token

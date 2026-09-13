@@ -1,7 +1,6 @@
 ---
 /**
  * 标签总览：/tags/
- * 布局族：标签场 + 卡片网格
  */
 import PageLayout from '../../layouts/PageLayout.astro';
 import TagField from '../../components/TagField.astro';
@@ -18,17 +17,6 @@ const [tags, posts] = await Promise.all([getTagSummaries(), getAllPosts()]);
 >
   {tags.length > 0 ? <TagField tags={tags} /> : <div class="empty">还没有标签。</div>}
 
-  <section class="mt-9">
-    <div class="section-head">
-      <h2 class="section-head__title">全部文章</h2>
-      <p class="section-head__desc">共 {posts.length} 篇。</p>
-    </div>
-    <ArchiveList posts={posts} variant="cards" />
-  </section>
+  <h2 class="subhead">全部文章</h2>
+  <ArchiveList posts={posts} />
 </PageLayout>
-
-<style>
-  .mt-9 {
-    margin-top: var(--sp-9);
-  }
-</style>

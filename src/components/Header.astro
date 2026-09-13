@@ -1,10 +1,11 @@
 ---
 /**
- * 顶栏：品牌 / 导航（桌面单行）/ 订阅 / 搜索 / 主题切换
+ * 顶栏（PaperMod 的 nav）：左侧 logo（头像 + 站名 + 主题切换），右侧菜单
  */
 import Icon from './Icon.astro';
 import SearchDialog from './SearchDialog.astro';
 import { siteConfig, withBase } from '../../site.config.ts';
+import { portraitUrl } from '../lib/images.ts';
 
 const { pathname } = Astro.url;
 const base = siteConfig.site.base.replace(/\/$/, '');
@@ -21,18 +22,33 @@ const isActive = (href: string) => {
   return currentPath.startsWith(target) || currentPath === target.replace(/\/$/, '');
 };
 
-const initials = siteConfig.author.name.slice(0, 1).toUpperCase();
+const avatar = portraitUrl('square');
 ---
 
 <header class="header">
   <div class="container header__inner">
     <a class="brand" href={withBase('/')} aria-label={`${siteConfig.site.title} 首页`}>
-      <span class="brand__mark" aria-hidden="true">{initials}</span>
+      {
+        avatar ? (
+          <img class="brand__mark" src={avatar} alt="" width="56" height="56" loading="eager" decoding="async" />
+        ) : (
+          <span class="brand__mark" aria-hidden="true">{siteConfig.author.name.slice(0, 1).toUpperCase()}</span>
+        )
+      }
       <span class="brand__text">
         <span class="brand__title">{siteConfig.site.title}</span>
         <span class="brand__subtitle">{siteConfig.site.subtitle}</span>
       </span>
     </a>
+
+    {
+      siteConfig.features.darkMode && (
+        <button type="button" class="icon-btn" data-theme-toggle aria-label="切换深浅色主题">
+          <span class="theme-icon theme-icon--sun" aria-hidden="true"><Icon name="sun" size={17} /></span>
+          <span class="theme-icon theme-icon--moon" aria-hidden="true"><Icon name="moon" size={17} /></span>
+        </button>
+      )
+    }
 
     <nav class="nav" data-nav aria-label="主导航">
       {
@@ -46,29 +62,11 @@ const initials = siteConfig.author.name.slice(0, 1).toUpperCase();
           </a>
         ))
       }
-    </nav>
-
-    <div class="header__actions">
-      {
-        siteConfig.features.rss && (
-          <a class="icon-btn" href={withBase('/rss.xml')} aria-label="RSS 订阅" title="RSS 订阅">
-            <Icon name="rss" size={17} />
-          </a>
-        )
-      }
       {siteConfig.features.search && <SearchDialog />}
-      {
-        siteConfig.features.darkMode && (
-          <button type="button" class="icon-btn" data-theme-toggle aria-label="切换深浅色主题">
-            <span class="theme-icon theme-icon--sun" aria-hidden="true"><Icon name="sun" size={17} /></span>
-            <span class="theme-icon theme-icon--moon" aria-hidden="true"><Icon name="moon" size={17} /></span>
-          </button>
-        )
-      }
       <button type="button" class="icon-btn nav-toggle" data-nav-toggle aria-label="打开菜单" aria-expanded="false">
         <Icon name="menu" size={19} />
       </button>
-    </div>
+    </nav>
   </div>
 </header>
 
@@ -88,7 +86,6 @@ const initials = siteConfig.author.name.slice(0, 1).toUpperCase();
 </style>
 
 <script>
-  /* 主题切换：写入 localStorage，首屏由 <head> 内联脚本恢复，避免闪白 */
   const toggle = document.querySelector('[data-theme-toggle]');
   toggle?.addEventListener('click', () => {
     const root = document.documentElement;
@@ -102,7 +99,6 @@ const initials = siteConfig.author.name.slice(0, 1).toUpperCase();
     }
   });
 
-  /* 移动端菜单 */
   const navToggle = document.querySelector('[data-nav-toggle]');
   const nav = document.querySelector('[data-nav]');
   navToggle?.addEventListener('click', () => {
