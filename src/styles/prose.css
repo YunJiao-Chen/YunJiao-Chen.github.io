@@ -517,6 +517,12 @@ html.dark .prose pre code {
 }
 
 /* 评论区 */
+/* giscus 宿主容器：预留高度，避免评论加载时页面位移（CLS） */
+.giscus-host {
+  margin-top: var(--sp-5);
+  min-height: 6rem;
+}
+
 .comments {
   padding-top: var(--sp-5);
   border-top: var(--hairline);
