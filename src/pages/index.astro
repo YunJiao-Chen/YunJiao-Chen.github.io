@@ -7,8 +7,7 @@
  *   3 双栏索引列表
  *   4 分类 Bento（5 格）
  *   5 标签场
- *   6 统计数据（收尾横条，紧跟在正文之后）
- *   （订阅带与页脚由 Footer 提供，整站只出现一次）
+ *   6 页脚（3 行横向排列，见 Footer.astro）
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Spotlight from '../components/Spotlight.astro';
@@ -23,7 +22,6 @@ import {
   getLatestPosts,
   getTagSummaries,
 } from '../lib/posts.ts';
-import { siteStats } from '../lib/utils.ts';
 import { portraitUrl } from '../lib/images.ts';
 import { siteConfig, withBase } from '../../site.config.ts';
 
@@ -36,7 +34,6 @@ const [featured, categories, tags] = await Promise.all([
 
 const lead = featured[0];
 const latest = await getLatestPosts(siteConfig.site.latestCount, lead ? [lead.id] : []);
-const stats = siteStats(posts.map((p) => ({ pubDate: p.data.pubDate, tags: p.data.tags })));
 const { author } = siteConfig;
 const portrait = portraitUrl();
 ---
@@ -141,25 +138,4 @@ const portrait = portraitUrl();
   </section>
 
 
-  {/* 6. 统计数据：放在内容最后收尾 */}
-  <div class="container">
-    <section class="facts" aria-label="站点统计">
-      <div class="fact">
-        <div class="fact__value">{stats.posts}</div>
-        <div class="fact__label">篇文章</div>
-      </div>
-      <div class="fact">
-        <div class="fact__value">{stats.categories}</div>
-        <div class="fact__label">个分类</div>
-      </div>
-      <div class="fact">
-        <div class="fact__value">{stats.tags}</div>
-        <div class="fact__label">个标签</div>
-      </div>
-      <div class="fact">
-        <div class="fact__value">{stats.days}</div>
-        <div class="fact__label">天持续写作</div>
-      </div>
-    </section>
-  </div>
 </BaseLayout>

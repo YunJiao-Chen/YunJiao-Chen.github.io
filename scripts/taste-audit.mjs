@@ -294,18 +294,17 @@ function auditStructure() {
   }
   add('C 结构', '模板内联样式为 0', inlineNonCode === 0, `非代码高亮 ${inlineNonCode} 处`);
 
-  // 订阅区存在性：导航里的 #subscribe 锚点必须有落点
+  // 页内锚点一致性：每个 href="#x" 都要有对应的 id="x"（删区块后最容易留下悬空锚点）
   if (existsSync(distDir)) {
-    const homeHtml = readFileSync(join(distDir, 'index.html'), 'utf8');
-    const hasBand = /id="subscribe"/.test(homeHtml);
-    const anchorUsed = /href="[^"]*#subscribe"/.test(homeHtml);
-    add('C 结构', '订阅区存在且锚点有效', !anchorUsed || hasBand, anchorUsed && !hasBand ? '#subscribe 锚点悬空' : '');
-    // 统计数据必须出现在正文里
-    add('C 结构', '统计数据在主页出现', /class="facts/.test(homeHtml), '');
-    // 统计数据位于内容末尾（标签场之后）
-    const factsPos = homeHtml.search(/class="facts/);
-    const tagsPos = homeHtml.search(/class="tag-field"/);
-    add('C 结构', '统计数据位于内容之后', factsPos > tagsPos && tagsPos >= 0, '');
+    const dangling = [];
+    for (const rel of globSync('**/*.html', { cwd: distDir }).filter((f) => !f.startsWith('wechat/'))) {
+      const html = readFileSync(join(distDir, rel), 'utf8');
+      const ids = new Set([...html.matchAll(/\sid="([^"]+)"/g)].map((m) => m[1]));
+      for (const m of html.matchAll(/href="#([^"]+)"/g)) {
+        if (!ids.has(m[1])) dangling.push(`${rel}#${m[1]}`);
+      }
+    }
+    add('C 结构', '页内锚点都有落点', dangling.length === 0, [...new Set(dangling)].slice(0, 3).join(', '));
   }
 
   // 部署子路径一致性：base 不是 '/' 时，sitemap 与 RSS 的绝对地址都必须带 base

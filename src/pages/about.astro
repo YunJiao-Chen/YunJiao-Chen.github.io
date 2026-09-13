@@ -1,16 +1,16 @@
 ---
 /**
- * 关于我：编辑式长文 + 经历时间线 + 联系方式 + 最近更新 + 订阅
+ * 关于我：图文分栏（照片 + 长文）+ 事实列表 + 最近更新行列表
  * 布局族：图文分栏（照片 + 长文）+ 事实列表 + 行列表
  */
 import PageLayout from '../layouts/PageLayout.astro';
 import PostRows from '../components/PostRows.astro';
-import { getAllPosts, getLatestPosts } from '../lib/posts.ts';
+import { getLatestPosts } from '../lib/posts.ts';
 import { portraitUrl } from '../lib/images.ts';
 import { siteConfig, withBase } from '../../site.config.ts';
 
 const { author } = siteConfig;
-const [latest, posts] = await Promise.all([getLatestPosts(5), getAllPosts()]);
+const latest = await getLatestPosts(5);
 const portrait = portraitUrl();
 ---
 
@@ -55,17 +55,6 @@ const portrait = portraitUrl();
         <p>如果某篇文章帮你省下几个小时，那就已经值回我写它的时间。</p>
       </blockquote>
 
-      <h2>经历</h2>
-      <ul>
-        {
-          author.timeline.map((item) => (
-            <li>
-              <strong>{item.year}</strong>：{item.title}。{item.description}
-            </li>
-          ))
-        }
-      </ul>
-
       <h2>联系我</h2>
       <p>欢迎交流技术问题、指出文章里的错误，或者只是打个招呼：</p>
       <ul>
@@ -102,16 +91,8 @@ const portrait = portraitUrl();
           <dd>{author.jobTitle}</dd>
         </div>
         <div class="fact-list__row">
-          <dt>所在</dt>
-          <dd>{author.location}</dd>
-        </div>
-        <div class="fact-list__row">
-          <dt>文章</dt>
-          <dd>{posts.length} 篇</dd>
-        </div>
-        <div class="fact-list__row">
-          <dt>当前</dt>
-          <dd>{author.status}</dd>
+          <dt>方向</dt>
+          <dd>{author.focus.join('、')}</dd>
         </div>
       </dl>
     </aside>

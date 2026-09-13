@@ -51,10 +51,10 @@ export const siteConfig = {
   /* 站点基础信息                                                        */
   /* ------------------------------------------------------------------ */
   site: {
-    title: '你的名字',
-    subtitle: '写代码，也写思考',
+    title: 'yjchen',
+    subtitle: '算法工程师',
     description:
-      '一个关于前端工程、后端架构、AI 工具链与读书笔记的个人博客。用 Markdown 写作，同步发布到微信公众号。',
+      '一个算法工程师的个人博客：信贷模型、大数据、NLP 与推荐算法的实践笔记，也写读书笔记与生活随笔。用 Markdown 写作。',
     /** 生产地址（不带结尾斜杠）。GitHub Pages 项目站点填 https://<user>.github.io */
     url: env('SITE_URL', 'https://yunjiao-chen.github.io'),
     /**
@@ -76,46 +76,30 @@ export const siteConfig = {
   /* 作者                                                                */
   /* ------------------------------------------------------------------ */
   author: {
-    name: '你的名字',
+    name: 'yjchen',
     /** 真实照片放在 public/ 下，填写如 '/portrait.jpg'；留空则使用远程占位照片 */
     photo: '',
-    tagline: '把复杂的事说清楚',
+    tagline: '做信贷模型、大数据、NLP 和推荐算法',
     /** hero 引导语：一句话，40 字以内（skill §4.7 要求 hero 文案短） */
-    lead: '记录前端工程、后端架构与 AI 工具链上的实践。写清楚取舍，而不只是结论。',
-    /** 当前在做的事，显示为 hero 的状态行（不配彩色圆点） */
-    status: '正在写 Astro 实战系列',
+    lead: '做信贷模型、大数据、NLP 和推荐算法。这里记录模型与工程上的取舍，也写读书笔记。',
+    /** 身份标签，显示为 hero 的状态行（不配彩色圆点） */
+    status: '算法工程师',
     /** 关于页的自我介绍段落 */
     bio: [
-      '你好，我是你的名字，一名全栈工程师，目前在「某公司」做平台与基础设施。',
-      '这个博客记录我在前端工程、后端架构和 AI 工具链上的实践与踩坑，也写读书笔记和生活随笔。',
-      '我相信写作是最好的学习方式。如果某篇文章帮到了你，欢迎在评论区聊聊。',
+      '你好，我是 yjchen，一名算法工程师，主要做信贷模型。',
+      '日常工作在数据和模型之间：特征工程、大数据处理、NLP、推荐算法，以及把模型送到线上之后的那堆事。',
+      '这个博客记录我在这些方向上的实践与踩坑，也写读书笔记和生活随笔。如果某篇文章帮到了你，欢迎在评论区聊聊。',
     ],
-    jobTitle: '全栈工程师',
-    company: '某公司',
-    location: '中国 杭州',
-    email: 'you@example.com',
-    /** 关于页经历时间线 */
-    timeline: [
-      {
-        year: '2024',
-        title: '开始写博客',
-        description: '把散落各处的笔记整理成文章，逼自己把问题想透。',
-      },
-      {
-        year: '2022',
-        title: '转向平台与基础设施',
-        description: '从业务开发走向工程效率、构建体系与可观测性。',
-      },
-      {
-        year: '2019',
-        title: '入行做全栈',
-        description: '从前端起步，逐步接手服务端与数据链路。',
-      },
-    ],
+    jobTitle: '算法工程师',
+    /** 下面两项和照片一样是占位，请改成你自己的信息 */
+    company: '',
+    location: '',
+    email: 'yjchen@example.com',
+    /** 研究方向：关于页侧栏展示 */
+    focus: ['信贷模型', '大数据', 'NLP', '推荐算法'],
     socials: [
-      { label: 'GitHub', href: 'https://github.com/yourname', icon: 'github' },
-      { label: '微信公众号', href: '#subscribe', icon: 'wechat' },
-      { label: '邮箱', href: 'mailto:you@example.com', icon: 'mail' },
+      { label: 'GitHub', href: 'https://github.com/YunJiao-Chen', icon: 'github' },
+      { label: '邮箱', href: 'mailto:yjchen@example.com', icon: 'mail' },
       { label: 'RSS', href: '/rss.xml', icon: 'rss' },
     ] as SocialLink[],
   },
@@ -208,8 +192,8 @@ export const siteConfig = {
     /** 结尾署名行 */
     signature: '本文首发于我的博客，公众号同步更新。',
     /** 结尾引导关注（留空则不渲染） */
-    followText: '如果这篇文章对你有帮助，欢迎关注公众号「你的公众号」。',
-    accountName: '你的公众号',
+    followText: '如果这篇文章对你有帮助，欢迎关注公众号「yjchen」。',
+    accountName: 'yjchen',
     exportDir: 'wechat',
   },
 

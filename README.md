@@ -10,7 +10,7 @@
 
 | 能力 | 说明 |
 | --- | --- |
-| 主页 6 区块 | 非对称 Hero（真实照片）→ 精选头条 → 双栏索引 → 分类 Bento（5 格）→ 标签场 → 统计数据 → 订阅带与页脚 |
+| 主页 5 区块 | 非对称 Hero（真实照片）→ 精选头条 → 双栏索引 → 分类 Bento（5 格）→ 标签场；页脚为品牌行 + 3 行横向排列 |
 | 视觉系统 | 单色系（一个强调色 + 中性灰阶）、细线分隔、统一字号/间距令牌；模板内联样式为 0 |
 | 设计规范 | 按 [`design-taste-frontend`](https://github.com/Leonxlnx/taste-skill) 重做：真实图片、自托管 Geist 字体、Tabler 图标、入场动效、47 项可执行自检 |
 | Markdown 写作 | GFM 表格、任务列表、脚注、删除线、Shiki 代码高亮（明暗双主题）、标题锚点、自动目录（TOC）、阅读时长 |
@@ -92,7 +92,7 @@ wechat:                      # 可选：公众号侧覆盖字段
 
 ```ts
 site: { title, subtitle, description, url, base, lang, postsPerPage, latestCount }
-author: { name, avatar, tagline, bio[], status, jobTitle, company, location, email, timeline[], socials[] }
+author: { name, photo, tagline, lead, status, bio[], jobTitle, company, location, email, focus[], socials[] }
 nav: [...]                       // 导航
 categories: [...]                // 分类（slug / 名称 / 描述）
 comments: { provider, giscus }   // 评论
@@ -106,7 +106,7 @@ footer: { since, icp, note }
 - **换成 GitHub Pages 项目站点**：`site.url = 'https://<user>.github.io'`、`site.base = '/<repo>'`（用户站点或自定义域名填 `'/'`）。
 - **调整视觉风格**：颜色、字号阶、间距阶、版心全部是 `src/styles/global.css` 顶部的设计令牌；换配色只改 `--accent` 与中性灰阶即可，其余组件自动跟随。改完务必跑 `npm run audit` 确认对比度没掉。
 - **换成自己的图片**：人像写 `author.photo = '/portrait.jpg'`，文章封面在 frontmatter 写 `cover: /images/xxx.jpg`（文件放 `public/images/`）。默认用的是 Lorem Picsum 占位照片，把 `images.remoteCovers` 设为 `false` 可完全关闭远程图片。
-- **换头像 / 公众号二维码**：头像放进 `public/` 并设置 `author.avatar = '/avatar.jpg'`；二维码命名为 `public/qrcode.png`（或 `.jpg`/`.svg`/`.webp`）即会自动显示，无需改代码。
+- **换照片**：照片放进 `public/` 并设置 `author.photo = '/portrait.jpg'`（文章封面用 frontmatter 的 `cover`）。默认用的是 Lorem Picsum 远程占位照片。
 - **社交媒体分享图**：默认使用 `public/og-default.svg`。部分平台（微信/Twitter 等）对 SVG 支持有限，建议用 1200×630 的 PNG 替换，并在 `src/components/SEO.astro` 里把默认图路径改成该 PNG。
 - **增删分类**：改 `categories` 数组即可，路由、主页卡片、页脚、统计数字会自动跟着变。
 - **CI 覆盖地址**：设环境变量 `SITE_URL` / `BASE_PATH`，无需改代码（`deploy.yml` 已自动注入）。
