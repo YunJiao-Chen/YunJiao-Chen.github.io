@@ -10,7 +10,7 @@
 | `comments.giscus.repo` | `YunJiao-Chen/blog` | 已填 |
 | `comments.giscus.repoId` | `R_kgDOUY1RCA` | 已填（取自 GitHub API 的 `node_id`） |
 | `comments.giscus.category` | `Announcements` | 已填 |
-| `comments.giscus.categoryId` | 空 | **待补**，补上后评论区立即出现 |
+| `comments.giscus.categoryId` | `DIC_kwDOUY1RCM4DFgPJ` | 已填 |
 
 **配置已完成，评论已上线**（2026-09 状态）：
 
@@ -30,6 +30,11 @@ comments: {
   },
 }
 ```
+
+**仓库改名要同步这里**：giscus 的 `repo` 必须是当前的 `owner/name`。
+如果仓库从 `blog` 改成 `YunJiao-Chen.github.io`（为了把站点放到根地址），
+`repo` 要跟着改；`repoId` 是仓库的数字 ID，改名不变，所以已有的讨论和评论都不会丢。
+这也正是 giscus 要求同时填 `repo` 与 `repoId` 的原因。
 
 仓库侧需要（都已具备）：Discussions 已开启（`has_discussions: true`，默认分类含 Announcements）；
 giscus App 需安装在该仓库上，否则评论区会显示 "giscus is not installed on this repository"，

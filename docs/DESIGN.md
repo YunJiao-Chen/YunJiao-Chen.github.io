@@ -265,11 +265,24 @@ comments: {
 ## 9. GitHub Pages 部署
 
 1. 仓库 `yourname/my-blog`，Settings → Pages → Source 选 **GitHub Actions**。
-2. `.github/workflows/deploy.yml`：Node 20+ → `npm ci` → `npm run build` → `upload-pages-artifact`（含 `dist/wechat`）→ `deploy-pages`。
-3. **base 路径**：项目站点是 `https://yourname.github.io/my-blog/`，故 `site.config.ts` 的 `base = '/my-blog'`；所有内链走 `withBase()` 或 `import.meta.env.BASE_URL`。使用自定义域名或 `<user>.github.io` 仓库时把 `base` 改为 `'/'`。
-4. `public/.nojekyll` 防止下划线目录被 Jekyll 忽略；Astro 产物无需 Jekyll。
-5. 站点 `url`/`base` 支持环境变量覆盖（`SITE_URL`、`BASE_PATH`），CI 中可直接注入，无需改代码。
-6. 可选：自定义域名 `public/CNAME`；RSS 与 sitemap 使用绝对地址需与 `site` 一致。
+2. `.github/workflows/deploy.yml`：Node 22 → `npm ci` → `npm run build` → `npm run verify:theme && npm run audit && npm run test:wechat` → `upload-pages-artifact`（含 `dist/wechat`）→ `deploy-pages`。
+3. **站点地址由仓库名决定，代码改不了它**：
+
+   | 仓库名 | Pages 地址 | `site.base` |
+   | --- | --- | --- |
+   | `<user>.github.io`（用户站点） | `https://<user>.github.io/` | `'/'` |
+   | 普通名字（如 `blog`） | `https://<user>.github.io/<repo>/` | `'/<repo>'` |
+   | 任意仓库 + 自定义域名 | `https://你的域名/` | `'/'` |
+
+   本项目要的是 `https://yunjiao-chen.github.io/`，所以仓库需要命名为
+   `YunJiao-Chen.github.io`（或绑自定义域名）；在改名之前，实际地址一直是
+   `https://yunjiao-chen.github.io/blog/`。改名后要同步 `site.config.ts` 里 giscus 的
+   `repo`（`repoId` 是数字 ID，不变，历史评论不丢）。
+
+4. 所有内链走 `withBase()` 或 `import.meta.env.BASE_URL`，CI 里由 `actions/configure-pages` 注入真实的 `BASE_PATH`，换仓库 / 换域名 / 改名都自动适配。`site.config.ts` 的 `base` 默认值只是本地构建用的，目标状态是根地址因此默认 `'/'`；本地想复现线上项目站点就设 `BASE_PATH=/blog`。自检会从构建产物里反推 base，再断言 sitemap / RSS 的绝对地址与它一致（能抓住漏 base 与残留旧 base 两种情况）。
+5. `public/.nojekyll` 防止下划线目录被 Jekyll 忽略；Astro 产物无需 Jekyll。
+6. 站点 `url`/`base` 支持环境变量覆盖（`SITE_URL`、`BASE_PATH`），CI 中可直接注入，无需改代码。
+7. 可选：自定义域名 `public/CNAME`；RSS 与 sitemap 使用绝对地址需与 `site` 一致。
 
 ---
 
@@ -529,7 +542,7 @@ giscus 评论、深色模式、`body.list` 之外的页面一律窄栏。
 | 文章页多了「复制到公众号 / 复制链接」一行（`.post-actions`） | 主题没有，属于本站功能 |
 | 窄屏不做汉堡菜单 | 主题本身就是横向滚动菜单，照它来；上一版自建的抽屉按钮已删除 |
 | 首页欢迎卡片高度随内容（`.first-entry { min-height: 0 }`） | 主题把它做成 320px（窄屏 260px）的 hero，底下再留 48px。本站引导语只有一句，图标下面会空出一大块；改成内容自适应，边距收到 `--gap`，与卡片间距同一节奏 |
-| 顶栏欢迎语是「欢迎来到 yjchen」 | 主题的 `home-info` 标题本来就短；站点定位是博客入口，不是简历首屏 |
+| 首页欢迎语是「👏 来到yjchen's blog」 | 主题的 `home-info` 标题本来就短；文案放在 `site.config.ts` 的 `author.greeting`，不写死在模板里。这是**全站唯一允许带 emoji 的地方**，skill §3.D 的 emoji 禁令因此拆成两条自检：源码里 0 个、渲染结果里最多 1 个且只能在首页 |
 
 另外主题的标签总览用 `ul.terms-tags`，分类总览因为要放一句话说明，
 改用了 `article.post-entry` 卡片（仍是主题的类，不新增样式）。

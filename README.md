@@ -12,7 +12,7 @@
 | --- | --- |
 | 主页 | PaperMod 结构：欢迎卡片 + 文章条目卡片 + 全部文章链接（无落地页式分区） |
 | 视觉系统 | 直接移植 [PaperMod](https://github.com/adityatelange/hugo-PaperMod)（MIT）的样式表，逐字节与上游一致并用哈希校验；本站只加一层 `site.css` |
-| 设计规范 | 视觉 = PaperMod 原样，流程按 [`design-taste-frontend`](https://github.com/Leonxlnx/taste-skill)；48 项可执行自检 + 主题哈希校验，都进 CI |
+| 设计规范 | 视觉 = PaperMod 原样，流程按 [`design-taste-frontend`](https://github.com/Leonxlnx/taste-skill)；50 项可执行自检 + 主题哈希校验，都进 CI |
 | Markdown 写作 | GFM 表格、任务列表、脚注、删除线、Shiki 代码高亮（单一深色主题）、标题锚点、自动目录（TOC）、阅读时长 |
 | 分类 + 标签 | 分类是固定栏目（导航骨架），标签横向串联；分类页 / 标签页 / 分页 / 时间线全部构建期生成 |
 | 站内搜索 | 构建期生成 `search-index.json`，`⌘K` / `Ctrl+K` 打开，纯前端过滤，零服务端 |
@@ -43,14 +43,14 @@
 提交前跑一次门禁：
 
 ```bash
-npm run build && npm run audit   # 48 项断言，全部通过才允许发布
+npm run build && npm run audit   # 50 项断言，全部通过才允许发布
 ```
 
 ## 快速开始
 
 ```bash
 npm install
-npm run dev          # http://localhost:4321/my-blog/
+npm run dev          # http://localhost:4321/
 ```
 
 构建与本地预览生产产物：
@@ -107,7 +107,11 @@ footer: { since, icp, note }
 
 常见改动：
 
-- **换成 GitHub Pages 项目站点**：`site.url = 'https://<user>.github.io'`、`site.base = '/<repo>'`（用户站点或自定义域名填 `'/'`）。
+- **站点地址**：`site.url` 是 origin（`https://<user>.github.io`），`site.base` 是子路径。
+  目标是把主页放在站点根（`https://<user>.github.io/`），所以 `base` 默认 `'/'`；
+  如果仓库名是普通名字（如 `blog`），GitHub Pages 会把它挂在 `/<repo>/` 下，
+  这时把 `base` 设成 `'/blog'`（CI 里 `actions/configure-pages` 会自动注入正确的值，
+  本地构建想复现线上就设环境变量 `BASE_PATH=/blog`）。
 - **调整视觉风格**：颜色 / 字号 / 版心都是主题的令牌（`src/styles/papermod/core/theme-vars.css`，明暗两套）。要改观感就在 `src/styles/site.css` 里覆盖，别动主题文件；改完跑 `npm run audit` 确认对比度与结构约定没掉。
 - **换成自己的图片**：作者照片放进 `public/` 并写 `author.photo = '/portrait.jpg'`；文章封面在 frontmatter 写 `cover: /images/xxx.jpg`（文件同样放 `public/images/`）。当前 `images.remoteCovers` 为 `false`，列表与文章页默认没有封面图，与参考站一致。
 - **社交媒体分享图**：默认使用 `public/og-default.svg`。部分平台（微信/Twitter 等）对 SVG 支持有限，建议用 1200×630 的 PNG 替换，并在 `src/components/SEO.astro` 里把默认图路径改成该 PNG。
@@ -123,7 +127,7 @@ footer: { since, icp, note }
 ├─ astro.config.mjs          # 集成、Markdown 管线（Sätteri + 标题锚点插件）、base 路径
 ├─ src/
 │  ├─ content.config.ts      # 内容集合 schema（zod 校验，字段写错直接构建失败）
-│  ├─ content/blog/*.md      # 文章（文件名即 URL：/blog/<文件名>/）
+│  ├─ content/blog/*.md      # 文章（文件名即 URL：/posts/<文件名>/）
 │  ├─ layouts/               # BaseLayout / PostLayout / PageLayout
 │  ├─ components/            # 顶栏、页脚、条目卡片、TOC、搜索、评论、公众号导出按钮…
 │  ├─ lib/                   # posts.ts（查询层）、utils.ts（日期/阅读时长/文案）
@@ -131,7 +135,7 @@ footer: { since, icp, note }
 │  ├─ scripts/               # wechat-runtime.js（浏览器端公众号导出运行时）
 │  └─ styles/                # papermod/（上游原样）+ papermod.css + site.css + wechat.css
 ├─ scripts/
-│  ├─ taste-audit.mjs        # 设计规范自检（48 项：对比度 / 文案 / 结构）
+│  ├─ taste-audit.mjs        # 设计规范自检（50 项：对比度 / 文案 / 结构）
 │  ├─ verify-theme.mjs       # 主题完整性校验（SHA256 清单，防就地改动）
 │  ├─ export-wechat.mjs      # 构建期公众号导出（cheerio + juice）
 │  ├─ new-post.mjs           # 新建文章脚手架
@@ -186,8 +190,27 @@ comments: {
 
 1. 推送仓库到 GitHub（默认分支 `main`）。
 2. 仓库 **Settings → Pages → Source** 选择 **GitHub Actions**。
-3. 打开 `site.config.ts`，把 `site.url` / `site.base` 改成你的地址（或用 CI 环境变量覆盖，`deploy.yml` 已通过 `actions/configure-pages` 自动注入）。
-4. push 到 `main`，`Deploy to GitHub Pages` 工作流会构建并发布。
+3. push 到 `main`，`Deploy to GitHub Pages` 工作流会构建并发布。
+
+**线上地址由仓库名决定，改代码改不了它：**
+
+| 仓库名 | Pages 地址 | `site.base` |
+| --- | --- | --- |
+| `<user>.github.io`（用户站点） | `https://<user>.github.io/` | `'/'` |
+| 普通名字（如 `blog`） | `https://<user>.github.io/<repo>/` | `'/<repo>'` |
+| 任意仓库 + 自定义域名 | `https://你的域名/` | `'/'` |
+
+CI 里 `actions/configure-pages` 会把 Pages 实际使用的地址注入 `SITE_URL` 与 `BASE_PATH`，
+所以**代码不用跟着仓库名改**，换仓库、换域名、改仓库名都会自动适配。
+`site.config.ts` 里的值只是本地构建的默认值。
+
+本项目要的是 `https://yunjiao-chen.github.io/`，因此仓库需要命名为
+`YunJiao-Chen.github.io`（在 **Settings → Repository name** 里改），或者绑一个自定义域名。
+仓库改名后要同步改两处：
+
+- `docs/COMMENTS.md` 与 `site.config.ts` 里 giscus 的 `repo`（必须是当前的 `owner/name`；
+  `repoId` 是仓库的数字 ID，改名不变，所以历史评论不会丢）。
+- 旧地址 `https://yunjiao-chen.github.io/blog/` 不再由本仓库提供，别在外部引用它。
 
 产物包含 `.nojekyll`（避免 Jekyll 处理 `_astro` 目录）、`robots.txt`、`sitemap-index.xml`、`rss.xml`。
 
@@ -211,7 +234,7 @@ comments: {
 | `npm run new -- "标题"` | 新建文章 |
 | `npm run test:wechat` | 公众号导出运行时回归测试（18 项断言） |
 | `npm run check` | Astro/TS 类型检查 |
-| `npm run audit` | 设计规范自检（对比度 / 文案 / 结构共 48 项，接 CI 可当门禁） |
+| `npm run audit` | 设计规范自检（对比度 / 文案 / 结构共 50 项，接 CI 可当门禁） |
 | `npm run preview` | 预览 `dist/` |
 
 ---

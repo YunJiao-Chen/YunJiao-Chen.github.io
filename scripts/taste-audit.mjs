@@ -228,7 +228,10 @@ function auditCopy() {
   }
   add('B 文案', '无滚动提示文案', scrollTells.length === 0, scrollTells.slice(0, 3).join(', '));
 
-  // §3.D emoji 策略：UI 文案里不要 emoji（文章正文允许）
+  // §3.D emoji 策略：UI 代码里不要 emoji（文章正文允许）
+  // 例外：首页欢迎语带一个 👏（用户指定），文案在 site.config.ts 里，
+  // 所以这一条拆成两步：源码里 0 个，渲染结果里最多 1 个且只能在首页。
+  const EMOJI = /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu;
   const emojiHits = [];
   const stripComments = (text) =>
     text
@@ -239,10 +242,27 @@ function auditCopy() {
   for (const file of files) {
     // 只扫描可见文案：模板标记 + 配置文案，跳过注释与脚本
     const text = stripComments(readFileSync(file, 'utf8'));
-    const matches = text.match(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu) ?? [];
+    const matches = text.match(EMOJI) ?? [];
     if (matches.length) emojiHits.push(`${relative(root, file)}: ${matches.join('')}`);
   }
-  add('B 文案', 'UI 文案无 emoji', emojiHits.length === 0, emojiHits.slice(0, 3).join('; '));
+  add('B 文案', 'UI 代码里无 emoji', emojiHits.length === 0, emojiHits.slice(0, 3).join('; '));
+
+  const emojiRenderHits = [];
+  let emojiTotal = 0;
+  if (existsSync(distDir)) {
+    for (const file of globSync('**/*.html', { cwd: distDir }).filter((f) => !f.startsWith('wechat/'))) {
+      const matches = readFileSync(join(distDir, file), 'utf8').match(EMOJI) ?? [];
+      if (!matches.length) continue;
+      emojiTotal += matches.length;
+      if (file !== 'index.html') emojiRenderHits.push(`${file}: ${matches.join('')}`);
+    }
+  }
+  add(
+    'B 文案',
+    '页面 emoji ≤ 1 且只在首页欢迎语',
+    emojiTotal <= 1 && emojiRenderHits.length === 0,
+    `全站 ${emojiTotal} 个${emojiRenderHits.length ? `，越界：${emojiRenderHits.slice(0, 3).join('; ')}` : ''}`,
+  );
 
   // §9.F 装饰性状态圆点：只允许语义状态，这里检查是否成片出现
   const dotCount = uiFiles()
@@ -345,20 +365,37 @@ function auditStructure() {
     add('C 结构', '页内锚点都有落点', dangling.length === 0, [...new Set(dangling)].slice(0, 3).join(', '));
   }
 
-  // 部署子路径一致性：base 不是 '/' 时，sitemap 与 RSS 的绝对地址都必须带 base
+  // 部署路径一致性：资源的路径前缀（base）必须和 sitemap / RSS 的绝对地址一致
+  // base 从构建产物里的资源地址反推：'/blog/_astro/…' → '/blog'，'/_astro/…' → ''（根站点）
   if (existsSync(join(distDir, 'index.html'))) {
     const homeHtml = readFileSync(join(distDir, 'index.html'), 'utf8');
     const baseMatch = /href="([^"]*)\/_astro\//.exec(homeHtml);
-    const base = baseMatch ? baseMatch[1] : '';
-    if (base) {
+    if (baseMatch) {
+      // 归一化：'' 与 '/' 都表示根站点
+      const base = baseMatch[1].replace(/\/$/, '');
       const sitemap = existsSync(join(distDir, 'sitemap-0.xml'))
         ? readFileSync(join(distDir, 'sitemap-0.xml'), 'utf8')
         : '';
       const rss = existsSync(join(distDir, 'rss.xml')) ? readFileSync(join(distDir, 'rss.xml'), 'utf8') : '';
-      const badSitemap = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].filter((m) => !m[1].includes(base));
-      const badRss = [...rss.matchAll(/<link>([^<]+)<\/link>/g)].filter((m) => !m[1].includes(base));
-      add('C 结构', `sitemap 链接带 base（${base}）`, badSitemap.length === 0, badSitemap.slice(0, 2).map((m) => m[1]).join(', '));
-      add('C 结构', `RSS 链接带 base（${base}）`, badRss.length === 0, badRss.slice(0, 3).map((m) => m[1]).join(', '));
+      const locs = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
+      const links = [...rss.matchAll(/<link>([^<]+)<\/link>/g)].map((m) => m[1]);
+      const label = base || '根站点';
+
+      // 首页地址必须正好是 origin + base + '/'：这一条能同时抓住"漏了 base"和"多带了旧 base"
+      const origin = locs.length ? new URL(locs[0]).origin : '';
+      const expectedHome = `${origin}${base}/`;
+      add(
+        'C 结构',
+        `sitemap 首页地址正确（${label}）`,
+        locs.includes(expectedHome),
+        locs.length ? `期望 ${expectedHome}，实际 ${locs.slice(0, 2).join(', ')}` : 'sitemap 为空',
+      );
+
+      const wrongPrefix = (url) => !new URL(url).pathname.startsWith(`${base}/`);
+      const badSitemap = locs.filter(wrongPrefix);
+      const badRss = links.filter((url) => url.startsWith('http') && wrongPrefix(url));
+      add('C 结构', `sitemap 链接都在 ${label} 下`, badSitemap.length === 0, badSitemap.slice(0, 2).join(', '));
+      add('C 结构', `RSS 链接都在 ${label} 下`, badRss.length === 0, badRss.slice(0, 3).join(', '));
     }
   }
 

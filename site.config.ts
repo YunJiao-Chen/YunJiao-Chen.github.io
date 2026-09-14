@@ -55,15 +55,17 @@ export const siteConfig = {
     subtitle: '算法工程师',
     description:
       '一个算法工程师的个人博客：信贷模型、大数据、NLP 与推荐算法的实践笔记，也写读书笔记。用 Markdown 写作。',
-    /** 生产地址（不带结尾斜杠）。GitHub Pages 项目站点填 https://<user>.github.io */
+    /** 生产地址（不带结尾斜杠）。用户站点（仓库名 <user>.github.io）填 https://<user>.github.io */
     url: env('SITE_URL', 'https://yunjiao-chen.github.io'),
     /**
      * 部署子路径，决定所有内链与资源的路径前缀：
-     *   仓库名 blog → 项目站点 https://yunjiao-chen.github.io/blog/ → 填 '/blog'
-     *   仓库名 <user>.github.io（用户站点）或绑定自定义域名 → 填 '/'
+     *   仓库名 <user>.github.io（用户站点）或绑定自定义域名 → 填 '/'（目标状态）
+     *   仓库名是普通名字（如 blog）→ 项目站点 https://<user>.github.io/blog/ → 填 '/blog'
      * CI 里由 actions/configure-pages 注入 BASE_PATH 覆盖，这里只是本地默认值。
+     * 注意：主页要挂在站点根（https://<user>.github.io/），仓库必须是
+     * <user>.github.io 这种用户站点，或者绑了自定义域名；改这里不会改变线上地址。
      */
-    base: env('BASE_PATH', '/blog'),
+    base: env('BASE_PATH', '/'),
     lang: 'zh-CN',
     locale: 'zh_CN',
     timezone: 'Asia/Shanghai',
@@ -77,11 +79,16 @@ export const siteConfig = {
   /* ------------------------------------------------------------------ */
   author: {
     name: 'yjchen',
+    /**
+     * 首页欢迎语。这是整站唯一允许带 emoji 的地方，自检里有一条守着这个上限；
+     * 换文案改这里就行，不要在模板里写死。
+     */
+    greeting: "👏 来到yjchen's blog",
     /** 真实照片放在 public/ 下，填写如 '/portrait.jpg'；留空则使用远程占位照片 */
     photo: '',
     tagline: '做信贷模型、大数据、NLP 和推荐算法',
     /** hero 引导语：一句话，40 字以内（skill §4.7 要求 hero 文案短） */
-    lead: '做信贷模型、大数据、NLP 和推荐算法。这里记录模型与工程上的取舍，也写读书笔记。',
+    lead: '分享信贷模型、大数据、NLP、推荐算法，记录模型与工程上的取舍，也写读书笔记。',
     /** 身份标签，显示为 hero 的状态行（不配彩色圆点） */
     status: '算法工程师',
     /** 关于页的自我介绍段落 */

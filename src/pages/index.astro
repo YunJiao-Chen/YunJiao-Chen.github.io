@@ -22,7 +22,7 @@ const hasRssSocial = author.socials.some((social) => social.icon === 'rss');
 <BaseLayout description={siteConfig.site.description} path="/" listPage>
   <article class="first-entry home-info">
     <header class="entry-header">
-      <h1>欢迎来到 {author.name}</h1>
+      <h1>{author.greeting}</h1>
     </header>
     <div class="entry-content md-content">
       <p>{author.lead}</p>
