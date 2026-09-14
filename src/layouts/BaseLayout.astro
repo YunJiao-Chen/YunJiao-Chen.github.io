@@ -8,7 +8,8 @@
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import SEO from '../components/SEO.astro';
-import { siteConfig, withBase } from '../../site.config.ts';
+import favicon from '../assets/favicon.svg';
+import { siteConfig } from '../../site.config.ts';
 import '../styles/papermod.css';
 import '../styles/site.css';
 
@@ -49,9 +50,11 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
     {/* 站点图标：SVG 里用 ☕️ 文本，由浏览器用系统彩色 emoji 字体渲染。
-        iOS 的主屏图标只认 PNG，而把彩色 emoji 栅格化就意味着在仓库里分发
-        emoji 字体的字形数据，所以这里不提供 PNG，iOS 会退回站点截图。 */}
-    <link rel="icon" type="image/svg+xml" href={withBase('/favicon.svg')} />
+        走 import 而不是放 public/，是为了让 Astro 把文件名带上内容哈希：
+        /favicon.svg 这种固定路径会被浏览器长期缓存，改了图标也看不到。
+        iOS 的主屏图标只认 PNG，而栅格化彩色 emoji 意味着在仓库里分发字体字形数据，
+        所以不提供 PNG，iOS 会退回站点截图。 */}
+    <link rel="icon" type="image/svg+xml" href={favicon.src} />
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#1d1e20" media="(prefers-color-scheme: dark)" />
 

@@ -194,7 +194,8 @@ personal_web/
 ├─ scripts/                     # export-wechat.mjs（构建期导出）
 │                               # new-post.mjs（新建文章脚手架）
 │                               # wechat-smoke-test.mjs（导出运行时回归测试）
-├─ public/                      # favicon、静态资源、.nojekyll
+├─ src/assets/                 # 需要内容哈希的静态资源（favicon）
+├─ public/                      # 原样拷贝的静态资源、.nojekyll
 ├─ docs/                        # 本设计文档、公众号指南
 └─ .github/workflows/deploy.yml # GitHub Pages 自动部署
 ```
@@ -431,8 +432,8 @@ v3 的问题不是"乱"，而是"平"：纯白背景、饱和度 54% 的松绿�
 **技术侧的两处修正**：原来"饱和度 < 80%"用的是 HSV 算法，会误杀参考站那种合规的电蓝；
 已改为 CSS 标准的 HSL 定义（`#1d4ed8` = 76%）。favicon 与 OG 分享图同步换成新强调色。
 
-> 注：v5 取消了强调色，favicon 已改成 ☕️（见 §14.E）；`public/og-default.svg` 仍是
-> 这一版的蓝色渐变，尚未同步。
+> 注：v5 取消了强调色，favicon 已改成 ☕️，并挪到 `src/assets/` 走 import 以拿到内容哈希
+> （见 §14.E）；`public/og-default.svg` 仍是这一版的蓝色渐变，尚未同步。
 
 ### 13.C 没有跟着改的地方（以及原因）
 
@@ -561,7 +562,7 @@ giscus 评论、深色模式、`body.list` 之外的页面一律窄栏。
 | 新增 `/archive/` 与 `/faq/` 两个页面 | 菜单需要落点。归档页用主题的 `.archive-*` 类（原样来自 `archive.css`）；FAQ 是一页手写问答 |
 | 分类页与关于页不在顶栏里 | 菜单只放用户列的 5 项。两页都没丢，从 FAQ 正文可以点进去，也都在 sitemap 里 |
 | 当前页标记改用参考站的写法：`.menu .active { border-bottom: 2px solid }` | 参考站跑的是较早的 PaperMod，它的 active 是「贴在文字下方的 2px 实线」；我们移植的这版改成了 `text-decoration` 缩写 + 0.3rem 偏移，观感明显更轻。行内元素加 `border-bottom` 落在外框底部，不会撑高行盒，所以覆盖掉主题那两行即可 |
-| 站点图标改成 ☕️ | v4 那版是蓝色渐变圆角方块 + 字母 Y，属于已经被取消的强调色，在现在的单色主题里是唯一的彩色遗留。新图标是一张只含一个 emoji 文本的 SVG：浏览器用**用户自己的**彩色 emoji 字体渲染，所以仓库里不分发 emoji 字体数据（字体许可清爽），图标也能跟随系统外观。代价是 iOS 主屏图标只认 PNG，这一项没有提供，iOS 会退回站点截图 |
+| 站点图标改成 ☕️ | v4 那版是蓝色渐变圆角方块 + 字母 Y，属于已经被取消的强调色，在现在的单色主题里是唯一的彩色遗留。新图标是一张只含一个 emoji 文本的 SVG：浏览器用**用户自己的**彩色 emoji 字体渲染，所以仓库里不分发 emoji 字体数据（字体许可清爽），图标也能跟随系统外观。代价是 iOS 主屏图标只认 PNG，这一项没有提供，iOS 会退回站点截图。文件放在 `src/assets/` 而不是 `public/`：import 进来的资源会带上内容哈希，而 `/favicon.svg` 这种固定路径会被浏览器长期缓存，改了图标用户也看不到 |
 | 停在首页时标记 Posts | 参考站的 Posts 直接指向 `/`，首页即文章列表，所以它的 active 落在 Posts 上。本站首页也是文章列表（欢迎卡片 + 最新 6 篇 + 全部文章），因此照它标记 Posts，站名保持不加标记 |
 
 另外主题的标签总览用 `ul.terms-tags`，分类总览因为要放一句话说明，
