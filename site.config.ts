@@ -177,7 +177,11 @@ export const siteConfig = {
     /** 'none' 渲染占位说明；'giscus' 启用 GitHub Discussions 评论 */
     provider: 'giscus' as 'none' | 'giscus',
     giscus: {
-      repo: 'YunJiao-Chen/blog',
+      /**
+       * 当前仓库的 owner/name。改仓库名后必须同步这里。
+       * repoId 是仓库的数字 ID（改名不变），giscus 靠它认仓库，所以历史评论不会丢。
+       */
+      repo: 'YunJiao-Chen/YunJiao-Chen.github.io',
       /** 仓库 node_id，已从 GitHub API 取得 */
       repoId: 'R_kgDOUY1RCA',
       category: 'Announcements',

@@ -274,10 +274,10 @@ comments: {
    | 普通名字（如 `blog`） | `https://<user>.github.io/<repo>/` | `'/<repo>'` |
    | 任意仓库 + 自定义域名 | `https://你的域名/` | `'/'` |
 
-   本项目要的是 `https://yunjiao-chen.github.io/`，所以仓库需要命名为
-   `YunJiao-Chen.github.io`（或绑自定义域名）；在改名之前，实际地址一直是
-   `https://yunjiao-chen.github.io/blog/`。改名后要同步 `site.config.ts` 里 giscus 的
-   `repo`（`repoId` 是数字 ID，不变，历史评论不丢）。
+   本项目已按第一条落地：仓库从 `blog` 改名为 `YunJiao-Chen.github.io`，
+   主页因此挂在 `https://yunjiao-chen.github.io/`。改名时同步了 `site.config.ts` 里
+   giscus 的 `repo`（`repoId` 是数字 ID 不变，历史评论不丢）；旧的项目站点地址
+   `https://yunjiao-chen.github.io/blog/` 不再由本仓库提供。
 
 4. 所有内链走 `withBase()` 或 `import.meta.env.BASE_URL`，CI 里由 `actions/configure-pages` 注入真实的 `BASE_PATH`，换仓库 / 换域名 / 改名都自动适配。`site.config.ts` 的 `base` 默认值只是本地构建用的，目标状态是根地址因此默认 `'/'`；本地想复现线上项目站点就设 `BASE_PATH=/blog`。自检会从构建产物里反推 base，再断言 sitemap / RSS 的绝对地址与它一致（能抓住漏 base 与残留旧 base 两种情况）。
 5. `public/.nojekyll` 防止下划线目录被 Jekyll 忽略；Astro 产物无需 Jekyll。

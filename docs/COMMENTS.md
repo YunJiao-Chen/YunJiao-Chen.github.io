@@ -1,13 +1,13 @@
 # 评论系统接入指南
 
-## 当前状态（YunJiao-Chen/blog）
+## 当前状态（YunJiao-Chen/YunJiao-Chen.github.io）
 
 代码侧已全部就绪，`site.config.ts` 里的值：
 
 | 配置 | 值 | 状态 |
 | --- | --- | --- |
 | `comments.provider` | `giscus` | 已切好 |
-| `comments.giscus.repo` | `YunJiao-Chen/blog` | 已填 |
+| `comments.giscus.repo` | `YunJiao-Chen/YunJiao-Chen.github.io` | 已填（2026-09 仓库改名为用户站点后同步） |
 | `comments.giscus.repoId` | `R_kgDOUY1RCA` | 已填（取自 GitHub API 的 `node_id`） |
 | `comments.giscus.category` | `Announcements` | 已填 |
 | `comments.giscus.categoryId` | `DIC_kwDOUY1RCM4DFgPJ` | 已填 |
@@ -18,7 +18,7 @@
 comments: {
   provider: 'giscus',
   giscus: {
-    repo: 'YunJiao-Chen/blog',
+    repo: 'YunJiao-Chen/YunJiao-Chen.github.io',
     repoId: 'R_kgDOUY1RCA',            // 仓库 node_id
     category: 'Announcements',
     categoryId: 'DIC_kwDOUY1RCM4DFgPJ', // Announcements 分类 node id
@@ -32,9 +32,10 @@ comments: {
 ```
 
 **仓库改名要同步这里**：giscus 的 `repo` 必须是当前的 `owner/name`。
-如果仓库从 `blog` 改成 `YunJiao-Chen.github.io`（为了把站点放到根地址），
-`repo` 要跟着改；`repoId` 是仓库的数字 ID，改名不变，所以已有的讨论和评论都不会丢。
-这也正是 giscus 要求同时填 `repo` 与 `repoId` 的原因。
+2026-09 仓库已从 `blog` 改名为 `YunJiao-Chen.github.io`（为了把站点放到根地址
+`https://yunjiao-chen.github.io/`），`repo` 随之更新；`repoId` 是仓库的数字 ID，
+改名不变，所以已有的讨论和评论都不会丢。这也正是 giscus 要求同时填
+`repo` 与 `repoId` 的原因。以后若再次改名，只改 `repo` 即可。
 
 仓库侧需要（都已具备）：Discussions 已开启（`has_discussions: true`，默认分类含 Announcements）；
 giscus App 需安装在该仓库上，否则评论区会显示 "giscus is not installed on this repository"，

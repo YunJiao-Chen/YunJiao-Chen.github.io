@@ -204,13 +204,12 @@ CI 里 `actions/configure-pages` 会把 Pages 实际使用的地址注入 `SITE_
 所以**代码不用跟着仓库名改**，换仓库、换域名、改仓库名都会自动适配。
 `site.config.ts` 里的值只是本地构建的默认值。
 
-本项目要的是 `https://yunjiao-chen.github.io/`，因此仓库需要命名为
-`YunJiao-Chen.github.io`（在 **Settings → Repository name** 里改），或者绑一个自定义域名。
-仓库改名后要同步改两处：
-
-- `docs/COMMENTS.md` 与 `site.config.ts` 里 giscus 的 `repo`（必须是当前的 `owner/name`；
-  `repoId` 是仓库的数字 ID，改名不变，所以历史评论不会丢）。
-- 旧地址 `https://yunjiao-chen.github.io/blog/` 不再由本仓库提供，别在外部引用它。
+本项目的仓库已命名为 **`YunJiao-Chen.github.io`**（用户站点），所以主页就是
+`https://yunjiao-chen.github.io/`，`site.base` 为 `'/'`。
+仓库**改名**时除了改名字本身，只需要同步一处：`site.config.ts` 里 giscus 的 `repo`
+（必须是当前的 `owner/name`）。`repoId` 是仓库的数字 ID，改名不变，所以历史评论不会丢。
+另外旧的项目站点地址 `https://yunjiao-chen.github.io/blog/` 已不再由本仓库提供，
+不要在外部引用它。
 
 产物包含 `.nojekyll`（避免 Jekyll 处理 `_astro` 目录）、`robots.txt`、`sitemap-index.xml`、`rss.xml`。
 
