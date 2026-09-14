@@ -61,6 +61,33 @@ node scripts/verify-theme.mjs --upstream   # 额外抓上游文件逐个比对�
 4. `npm run build` 后跑 `npm run audit`（自检会检查圆角 token、代码块底色、
    系统字体栈、未定义类等与主题相关的约定），确认没有选择器在新版本里被改名。
 
+## 站点图标（Twemoji）
+
+| 项 | 值 |
+| --- | --- |
+| 项目 | [jdecked/twemoji](https://github.com/jdecked/twemoji)（Twitter Twemoji 的维护分支） |
+| 用途 | `src/assets/favicon.svg`：一杯咖啡（U+2615 HOT BEVERAGE） |
+| 许可 | CC-BY 4.0（[全文](https://creativecommons.org/licenses/by/4.0/)） |
+| 版本 | commit `b6b55fef1e8636b540a6d016a4729ca8cdf2e60b`，`assets/svg/2615.svg` |
+| 改动 | 仅删除 XML 声明，viewBox 与路径原样保留；文件头部加了来源注释 |
+
+为什么用一个现成的矢量图形，而不是像参考站那样把 emoji 字体栅格化：
+彩色 emoji 字体的字形数据不能随便再分发（Apple Color Emoji 尤其），
+而 Twemoji 是 CC-BY 4.0，署名即可用。
+
+### 光栅图标怎么来的
+
+`src/assets/` 下除了矢量还有一整套光栅图标，供只看光栅的场合使用
+（Windows 任务栏、iOS 主屏、部分老浏览器）。它们由矢量生成：
+
+```bash
+brew install librsvg          # 提供 rsvg-convert
+bash scripts/make-icons.sh    # 生成 favicon.ico(16/32/48) + 16 + 32 + apple-touch-icon(180)
+```
+
+**改了 `favicon.svg` 就要重跑这个脚本**，否则光栅版还是旧图形。
+两套文件的引用都在 `src/layouts/BaseLayout.astro`，走 `import` 拿到内容哈希。
+
 ## 图标
 
 | 项 | 值 |

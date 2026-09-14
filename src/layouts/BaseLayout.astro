@@ -8,7 +8,12 @@
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import SEO from '../components/SEO.astro';
-import favicon from '../assets/favicon.svg';
+// .ico 不像 png/svg 那样带图片元数据，Vite 直接返回 URL 字符串（没有 .src）
+import faviconIcoSrc from '../assets/favicon.ico';
+import favicon16 from '../assets/favicon-16x16.png';
+import favicon32 from '../assets/favicon-32x32.png';
+import appleTouchIcon from '../assets/apple-touch-icon.png';
+import faviconSvg from '../assets/favicon.svg';
 import { siteConfig } from '../../site.config.ts';
 import '../styles/papermod.css';
 import '../styles/site.css';
@@ -49,12 +54,19 @@ const {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
-    {/* 站点图标：SVG 里用 ☕️ 文本，由浏览器用系统彩色 emoji 字体渲染。
-        走 import 而不是放 public/，是为了让 Astro 把文件名带上内容哈希：
-        /favicon.svg 这种固定路径会被浏览器长期缓存，改了图标也看不到。
-        iOS 的主屏图标只认 PNG，而栅格化彩色 emoji 意味着在仓库里分发字体字形数据，
-        所以不提供 PNG，iOS 会退回站点截图。 */}
-    <link rel="icon" type="image/svg+xml" href={favicon.src} />
+    {/* 站点图标：一杯咖啡。整套光栅 + 矢量都出，顺序照参考站
+        （lilianweng.github.io）：ico → 16 → 32 → apple-touch → svg。
+        ico/png 是给只看光栅的场合（Windows 任务栏、iOS 主屏、部分老浏览器），
+        svg 给高分辨率屏。
+        全部走 import 而不是放 public/：Astro 会给文件名带上内容哈希，
+        而 /favicon.svg、/favicon.ico 这种固定路径会被浏览器长期缓存，
+        换了图标用户也看不到（这个坑踩过一次）。
+        改图形后跑 scripts/make-icons.sh 重新生成光栅那几份。 */}
+    <link rel="icon" href={faviconIcoSrc} sizes="any" />
+    <link rel="icon" type="image/png" sizes="16x16" href={favicon16.src} />
+    <link rel="icon" type="image/png" sizes="32x32" href={favicon32.src} />
+    <link rel="apple-touch-icon" sizes="180x180" href={appleTouchIcon.src} />
+    <link rel="icon" type="image/svg+xml" href={faviconSvg.src} />
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#1d1e20" media="(prefers-color-scheme: dark)" />
 

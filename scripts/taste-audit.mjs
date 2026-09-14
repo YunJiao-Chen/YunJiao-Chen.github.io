@@ -443,6 +443,29 @@ function auditStructure() {
       titleMismatch.slice(0, 3).join('; '),
     );
 
+    // 站点图标：每条声明都要有 href，而且目标文件得真的在产物里
+    // （踩过一次：.ico 用了 .src 拿到 undefined，渲染出没有 href 的 <link>，
+    //   浏览器于是继续用旧的缓存图标，看起来就像"图标没换成功"）
+    const iconTags = [...homeHtml.matchAll(/<link rel="(?:icon|apple-touch-icon)"[^>]*>/g)].map(
+      (m) => m[0],
+    );
+    const iconProblems = [];
+    for (const tag of iconTags) {
+      const href = /href="([^"]+)"/.exec(tag)?.[1];
+      if (!href) {
+        iconProblems.push(`没有 href：${tag}`);
+        continue;
+      }
+      const rel = (href.startsWith(base) ? href.slice(base.length) : href).replace(/^\//, '');
+      if (!existsSync(join(distDir, rel))) iconProblems.push(`文件不在产物里：${href}`);
+    }
+    add(
+      'C 结构',
+      `站点图标声明完整（${iconTags.length} 条）`,
+      iconTags.length >= 4 && iconProblems.length === 0,
+      iconProblems.slice(0, 3).join('; '),
+    );
+
     // 当前页标记：落到菜单覆盖范围内的页面必须正好有一个 active（下划线），首页落在站名上
     const navPaths = hrefs.map((href) =>
       (href.startsWith(base) ? href.slice(base.length) : href).replace(/\/$/, ''),
