@@ -66,16 +66,15 @@ node scripts/verify-theme.mjs --upstream   # 额外抓上游文件逐个比对�
 | 项 | 值 |
 | --- | --- |
 | 项目 | [microsoft/fluentui-emoji](https://github.com/microsoft/fluentui-emoji) |
-| 用途 | `src/assets/favicon.svg`：一杯咖啡（U+2615 HOT BEVERAGE，俯视视角） |
+| 用途 | `src/assets/favicon.svg`：狗脸（U+1F436 DOG FACE） |
 | 许可 | MIT，Copyright (c) Microsoft Corporation |
-| 版本 | `assets/Hot beverage/Flat/hot_beverage_flat.svg`（Flat 版，纯色块无渐变） |
+| 版本 | `assets/Dog face/Flat/dog_face_flat.svg`（Flat 版，纯色块无渐变） |
 | 改动 | 换行整理成单行 + 加来源注释，图形路径原样保留 |
 
-为什么用它：这套是 MIT（署名即可用，限制最少），Flat 版是纯色块没有渐变，
-在 16px 标签页里最不容易糊；俯视的圆杯 + 棕色咖啡 + 右侧把手，轮廓也最清楚。
-参考站那杯红酒其实是 Twemoji 的 U+1F377，本站在 2026-09 试过 Twemoji 的
-U+2615，观感偏弱（灰色碟子 + 白杯 + 细热气在 16px 下糊成一团），所以换掉了。
-当时比对过的候选与实测数据留在 `icon-preview.html`（本机生成，未入库）。
+为什么用 Fluent Emoji：这套是 MIT（署名即可用，限制最少），Flat 版是纯色块没有渐变，
+在 16px 标签页里最不容易糊。本站的图标选型过程（咖啡 → 狗脸）与实测数据留在
+`icon-preview.html`（本机生成，未入库）：六个候选按 16/32/48/128 渲染，
+并模拟深色标签栏，用来看小尺寸下的可读性。
 
 ### 光栅图标怎么来的
 

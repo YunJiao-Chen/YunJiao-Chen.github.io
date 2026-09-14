@@ -62,10 +62,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-3. Microsoft Fluent Emoji（站点图标：一杯咖啡）
+3. Microsoft Fluent Emoji（站点图标：狗脸）
 --------------------------------------------------------------------------------
 项目：https://github.com/microsoft/fluentui-emoji
-文件：assets/Hot beverage/Flat/hot_beverage_flat.svg（U+2615 HOT BEVERAGE）
+文件：assets/Dog face/Flat/dog_face_flat.svg（U+1F436 DOG FACE）
 许可：MIT
 改动：仅删除换行整理为单行并加来源注释，图形路径原样保留；
       另按此图形渲染出 favicon.ico / 16 / 32 / apple-touch-icon 四份光栅图标。
