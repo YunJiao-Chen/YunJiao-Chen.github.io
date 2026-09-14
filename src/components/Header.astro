@@ -24,31 +24,26 @@ const normalize = (value: string) => {
 };
 
 const currentPath = normalize(pathname);
-const isActive = (href: string) => {
-  const target = normalize(href);
-  if (target === '/') return currentPath === '/';
-  return currentPath === target || currentPath.startsWith(target);
-};
+const isHome = currentPath === '/';
 
 /**
- * 菜单里没有 Home 项，站名本身就是回首页的链接，
- * 所以「当前在首页」这个状态落在站名上，样式与 .menu .active 一致。
+ * 当前页标记：
+ *   - 站名是回首页的链接，但首页展示的就是文章列表，所以停在首页时标记 Posts
+ *     （参考站 Lil'Log 的 Posts 就直接指向 /，首页即文章列表，标记的也是 Posts）
+ *   - 其余按前缀匹配，所以 /posts/<slug>/ 也算 Posts
  */
-const isHome = currentPath === '/';
+const isActive = (href: string) => {
+  const target = normalize(href);
+  if (target === '/') return isHome;
+  if (isHome && target === '/posts/') return true;
+  return currentPath === target || currentPath.startsWith(target);
+};
 ---
 
 <header class="header">
   <nav class="header-nav">
     <div class="logo">
-      <a
-        href={withBase('/')}
-        accesskey="h"
-        title={`${label} (Alt + H)`}
-        aria-current={isHome ? 'page' : undefined}
-      >
-        {/* active 落在 span 上，与菜单里的 .menu .active 同一套写法 */}
-        <span class={isHome ? 'active' : undefined}>{label}</span>
-      </a>
+      <a href={withBase('/')} accesskey="h" title={`${label} (Alt + H)`}>{label}</a>
       {
         siteConfig.features.darkMode && (
           <div class="logo-switches">

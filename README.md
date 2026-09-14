@@ -11,7 +11,7 @@
 | 能力 | 说明 |
 | --- | --- |
 | 主页 | PaperMod 结构：欢迎卡片 + 文章条目卡片 + 全部文章链接（无落地页式分区） |
-| 顶栏 | 左「yjchen's blog」+ 主题切换 + 分隔线，右侧菜单 Posts / Archive / Search / Tags / FAQ（顺序由 `site.config.ts` 决定，搜索是弹层不是页面）；当前页在菜单里带 2px 下划线，首页时下划线落在站名上 |
+| 顶栏 | 左「yjchen's blog」+ 主题切换 + 分隔线，右侧菜单 Posts / Archive / Search / Tags / FAQ（顺序由 `site.config.ts` 决定，搜索是弹层不是页面）；当前页用参考站那种 2px 实线下划线标记（首页算 Posts，因为首页展示的就是文章列表） |
 | 归档 | `/archive/` 按年 + 月分组，用主题的 `.archive-*` 类，年份与月份可锚点跳转 |
 | 视觉系统 | 直接移植 [PaperMod](https://github.com/adityatelange/hugo-PaperMod)（MIT）的样式表，逐字节与上游一致并用哈希校验；本站只加一层 `site.css` |
 | 设计规范 | 视觉 = PaperMod 原样，流程按 [`design-taste-frontend`](https://github.com/Leonxlnx/taste-skill)；52 项可执行自检 + 主题哈希校验，都进 CI |

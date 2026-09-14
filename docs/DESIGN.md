@@ -557,7 +557,8 @@ giscus 评论、深色模式、`body.list` 之外的页面一律窄栏。
 | 顶栏菜单用英文（Posts / Archive / Search / Tags / FAQ），站名写作 yjchen's blog | 用户指定，与参考站 Lil'Log 的菜单一致；页面正文仍是中文 |
 | 新增 `/archive/` 与 `/faq/` 两个页面 | 菜单需要落点。归档页用主题的 `.archive-*` 类（原样来自 `archive.css`）；FAQ 是一页手写问答 |
 | 分类页与关于页不在顶栏里 | 菜单只放用户列的 5 项。两页都没丢，从 FAQ 正文可以点进去，也都在 sitemap 里 |
-| 在首页时给站名加下划线（`.logo .active`） | 菜单里没有 Home 项，PaperMod 又不会给 logo 加当前页标记，于是首页会完全没有「你在这里」的提示。下划线沿用 `.menu .active` 的写法（2px + 0.3rem 偏移），只是不加粗 |
+| 当前页标记改用参考站的写法：`.menu .active { border-bottom: 2px solid }` | 参考站跑的是较早的 PaperMod，它的 active 是「贴在文字下方的 2px 实线」；我们移植的这版改成了 `text-decoration` 缩写 + 0.3rem 偏移，观感明显更轻。行内元素加 `border-bottom` 落在外框底部，不会撑高行盒，所以覆盖掉主题那两行即可 |
+| 停在首页时标记 Posts | 参考站的 Posts 直接指向 `/`，首页即文章列表，所以它的 active 落在 Posts 上。本站首页也是文章列表（欢迎卡片 + 最新 6 篇 + 全部文章），因此照它标记 Posts，站名保持不加标记 |
 
 另外主题的标签总览用 `ul.terms-tags`，分类总览因为要放一句话说明，
 改用了 `article.post-entry` 卡片（仍是主题的类，不新增样式）。

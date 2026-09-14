@@ -49,13 +49,12 @@ body {
 /* --------------------------------------------------------------------------
    2. 功能件
    -------------------------------------------------------------------------- */
-/* 站名的「当前在首页」状态：与主题 .menu .active 用同一套写法
-   （2px 下划线 + 0.3rem 偏移），因为菜单里没有 Home 项，主页需要另外的落点。
-   加粗交给 .logo a 自己的 700，这里只管下划线。 */
-.logo .active {
-  text-decoration: underline;
-  text-decoration-thickness: 2px;
-  text-underline-offset: 0.3rem;
+/* 当前页标记：参考站（较早的 PaperMod）用的是「贴在文字下方的 2px 实线」，
+   而我们移植的这版用 text-decoration 缩写 + 0.3rem 下划线偏移，观感明显更轻。
+   这里按参考站的写法覆盖（行内元素加 border-bottom 落在外框底部，不会撑高行盒）。 */
+.menu .active {
+  text-decoration: none;
+  border-bottom: 2px solid;
 }
 
 /* 顶栏里的搜索入口：外观与主题的 .menu a 一致，只是换成 button 元素 */
