@@ -62,15 +62,32 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
+3. Microsoft Fluent Emoji（站点图标：一杯咖啡）
 --------------------------------------------------------------------------------
-3. Twemoji（站点图标：一杯咖啡）
---------------------------------------------------------------------------------
-项目：https://github.com/jdecked/twemoji
-版本：commit b6b55fef1e8636b540a6d016a4729ca8cdf2e60b
-文件：assets/svg/2615.svg（U+2615 HOT BEVERAGE）
-许可：CC-BY 4.0，https://creativecommons.org/licenses/by/4.0/
-改动：仅删除 XML 声明，viewBox 与图形路径原样保留；
+项目：https://github.com/microsoft/fluentui-emoji
+文件：assets/Hot beverage/Flat/hot_beverage_flat.svg（U+2615 HOT BEVERAGE）
+许可：MIT
+改动：仅删除换行整理为单行并加来源注释，图形路径原样保留；
       另按此图形渲染出 favicon.ico / 16 / 32 / apple-touch-icon 四份光栅图标。
 
-Copyright (c) Twitter, Inc and other contributors.
-Licensed under the Creative Commons Attribution 4.0 International License.
+MIT License
+
+Copyright (c) Microsoft Corporation.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

@@ -61,19 +61,21 @@ node scripts/verify-theme.mjs --upstream   # 额外抓上游文件逐个比对�
 4. `npm run build` 后跑 `npm run audit`（自检会检查圆角 token、代码块底色、
    系统字体栈、未定义类等与主题相关的约定），确认没有选择器在新版本里被改名。
 
-## 站点图标（Twemoji）
+## 站点图标（Microsoft Fluent Emoji）
 
 | 项 | 值 |
 | --- | --- |
-| 项目 | [jdecked/twemoji](https://github.com/jdecked/twemoji)（Twitter Twemoji 的维护分支） |
-| 用途 | `src/assets/favicon.svg`：一杯咖啡（U+2615 HOT BEVERAGE） |
-| 许可 | CC-BY 4.0（[全文](https://creativecommons.org/licenses/by/4.0/)） |
-| 版本 | commit `b6b55fef1e8636b540a6d016a4729ca8cdf2e60b`，`assets/svg/2615.svg` |
-| 改动 | 仅删除 XML 声明，viewBox 与路径原样保留；文件头部加了来源注释 |
+| 项目 | [microsoft/fluentui-emoji](https://github.com/microsoft/fluentui-emoji) |
+| 用途 | `src/assets/favicon.svg`：一杯咖啡（U+2615 HOT BEVERAGE，俯视视角） |
+| 许可 | MIT，Copyright (c) Microsoft Corporation |
+| 版本 | `assets/Hot beverage/Flat/hot_beverage_flat.svg`（Flat 版，纯色块无渐变） |
+| 改动 | 换行整理成单行 + 加来源注释，图形路径原样保留 |
 
-为什么用一个现成的矢量图形，而不是像参考站那样把 emoji 字体栅格化：
-彩色 emoji 字体的字形数据不能随便再分发（Apple Color Emoji 尤其），
-而 Twemoji 是 CC-BY 4.0，署名即可用。
+为什么用它：这套是 MIT（署名即可用，限制最少），Flat 版是纯色块没有渐变，
+在 16px 标签页里最不容易糊；俯视的圆杯 + 棕色咖啡 + 右侧把手，轮廓也最清楚。
+参考站那杯红酒其实是 Twemoji 的 U+1F377，本站在 2026-09 试过 Twemoji 的
+U+2615，观感偏弱（灰色碟子 + 白杯 + 细热气在 16px 下糊成一团），所以换掉了。
+当时比对过的候选与实测数据留在 `icon-preview.html`（本机生成，未入库）。
 
 ### 光栅图标怎么来的
 

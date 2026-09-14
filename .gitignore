@@ -9,3 +9,6 @@ dist/
 .env.*
 .DS_Store
 *.log
+
+# 本地图标候选对比页（scripts 生成，不入库）
+icon-preview.html

@@ -33,14 +33,6 @@ cp "$tmp/16.png" "$out/favicon-16x16.png"
 cp "$tmp/32.png" "$out/favicon-32x32.png"
 cp "$tmp/180.png" "$out/apple-touch-icon.png"
 
-# 根路径副本：浏览器、书签栏、iOS、RSS 阅读器里有不少地方不看你页面里的
-# <link>，而是按约定直接取 /favicon.ico、/apple-touch-icon.png。
-# 页面里指向的仍是带内容哈希的那份，这两份只是给"按约定取图"的场合兜底。
-root="$(cd "$out/../.." && pwd)"
-cp "$out/favicon.ico"                  "$root/public/favicon.ico"
-cp "$out/favicon.svg"                  "$root/public/favicon.svg"
-cp "$out/apple-touch-icon.png"         "$root/public/apple-touch-icon.png"
-
 # ICO 里塞 16/32/48 三个尺寸，用 512 的渲染结果做兰索斯下采样
 python3 - "$tmp" "$out" <<'PY'
 import sys
@@ -53,6 +45,15 @@ Image.open(f"{tmp}/512.png").convert("RGBA").save(
 ico = Image.open(f"{out}/favicon.ico")
 print("favicon.ico 内含尺寸:", sorted(ico.info.get("sizes", [])))
 PY
+
+# 根路径副本：浏览器、书签栏、iOS、RSS 阅读器里有不少地方不看你页面里的
+# <link>，而是按约定直接取 /favicon.ico、/apple-touch-icon.png。
+# 页面里指向的仍是带内容哈希的那份，这几份只是给"按约定取图"的场合兜底。
+# 必须在 ICO 生成之后拷贝，否则拷过去的是上一次的旧 ico。
+root="$(cd "$out/../.." && pwd)"
+cp "$out/favicon.ico"          "$root/public/favicon.ico"
+cp "$out/favicon.svg"          "$root/public/favicon.svg"
+cp "$out/apple-touch-icon.png" "$root/public/apple-touch-icon.png"
 
 echo "已生成（带哈希的源文件 + 根路径兜底副本）："
 ls -la "$out"/favicon.ico "$out"/favicon-16x16.png "$out"/favicon-32x32.png "$out"/apple-touch-icon.png
