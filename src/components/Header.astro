@@ -2,9 +2,12 @@
 /**
  * 顶栏：与 PaperMod 的 _partials/header.html 结构一致
  *   header.header > nav.header-nav
- *     div.logo > a + div.logo-switches > button#theme-toggle.theme-toggle (svg.moon / svg.sun)
- *     ul#menu.menu > li > a > span[.active]
- * 说明：主题靠 .menu 的横向滚动适配窄屏，不加汉堡按钮，保持与参考站一致。
+ *     div.logo > a（站名）+ div.logo-switches > button#theme-toggle（月亮 / 太阳）+ span.nav-sep（|）
+ *     ul#menu.menu > li > a > span[.active]（或 li > button.menu-search）
+ * 说明：
+ *   - 站名取 site.label，与 <title> 用的 site.title 分开（主题本来就这么分）
+ *   - 菜单顺序完全由 site.config.ts 的 nav 决定，搜索是 type: 'search' 的条目
+ *   - 主题靠 .menu 的横向滚动适配窄屏，不加汉堡按钮
  */
 import Icon from './Icon.astro';
 import SearchDialog from './SearchDialog.astro';
@@ -12,7 +15,7 @@ import { siteConfig, withBase } from '../../site.config.ts';
 
 const { pathname } = Astro.url;
 const base = siteConfig.site.base.replace(/\/$/, '');
-const label = siteConfig.site.title;
+const label = siteConfig.site.label || siteConfig.site.title;
 
 /** 去掉 base 与末尾斜杠，便于比较当前路由 */
 const normalize = (value: string) => {
@@ -45,6 +48,10 @@ const isActive = (href: string) => {
               <Icon name="moon" size={17} class="moon" />
               <Icon name="sun" size={17} class="sun" />
             </button>
+            {/* 主题的 .nav-sep：分隔品牌区与右侧菜单，与参考站一致 */}
+            <span class="nav-sep" aria-hidden="true">
+              |
+            </span>
           </div>
         )
       }
@@ -52,27 +59,26 @@ const isActive = (href: string) => {
 
     <ul id="menu" class="menu">
       {
-        siteConfig.nav.map((item) => (
-          <li>
-            <a href={withBase(item.href)} title={item.label}>
-              <span class={isActive(item.href) ? 'active' : undefined}>{item.label}</span>
-            </a>
-          </li>
-        ))
-      }
-      {
-        siteConfig.features.search && (
-          <li>
-            <button
-              type="button"
-              class="menu-search"
-              data-search-open
-              accesskey="/"
-              title="搜索 (Alt + /)"
-            >
-              <span>搜索</span>
-            </button>
-          </li>
+        siteConfig.nav.map((item) =>
+          item.type === 'search' ? (
+            <li>
+              <button
+                type="button"
+                class="menu-search"
+                data-search-open
+                accesskey="/"
+                title={`${item.label} (Alt + /)`}
+              >
+                <span>{item.label}</span>
+              </button>
+            </li>
+          ) : (
+            <li>
+              <a href={withBase(item.href!)} title={item.label}>
+                <span class={isActive(item.href!) ? 'active' : undefined}>{item.label}</span>
+              </a>
+            </li>
+          ),
         )
       }
     </ul>

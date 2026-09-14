@@ -1,0 +1,96 @@
+---
+/**
+ * 归档页 /archive/：与 PaperMod 的 layouts/archives.html 结构一致
+ *   header.page-header（标题 + 说明）
+ *   div.archive-year > h2.archive-year-header > a.archive-header-link + sup.archive-count
+ *     div.archive-month > h3.archive-month-header > a + sup
+ *       div.archive-posts > div.archive-entry（标题 + 元信息 + a.entry-link 遮罩）
+ * 日期与阅读时的分组顺序都按发布时间倒序。
+ */
+import PageLayout from '../layouts/PageLayout.astro';
+import { getAllPosts, postMeta, postPath, type Post } from '../lib/posts.ts';
+import { formatDate } from '../lib/utils.ts';
+import { siteConfig, withBase } from '../../site.config.ts';
+
+const posts = await getAllPosts();
+
+interface MonthGroup {
+  /** URL 锚点用，如 2026-09 */
+  id: string;
+  label: string;
+  posts: Post[];
+}
+interface YearGroup {
+  year: string;
+  count: number;
+  months: MonthGroup[];
+}
+
+const years: YearGroup[] = [];
+for (const post of posts) {
+  const date = new Date(post.data.pubDate);
+  const year = `${date.getFullYear()}`;
+  const month = `${date.getMonth() + 1}`.padStart(2, '0');
+  let yearGroup = years.find((item) => item.year === year);
+  if (!yearGroup) {
+    yearGroup = { year, count: 0, months: [] };
+    years.push(yearGroup);
+  }
+  yearGroup.count += 1;
+  let monthGroup = yearGroup.months.find((item) => item.id === `${year}-${month}`);
+  if (!monthGroup) {
+    monthGroup = { id: `${year}-${month}`, label: `${Number(month)} 月`, posts: [] };
+    yearGroup.months.push(monthGroup);
+  }
+  monthGroup.posts.push(post);
+}
+---
+
+<PageLayout
+  title="Archive"
+  description={`共 ${posts.length} 篇，按年份与月份归档。`}
+  path="/archive/"
+>
+  {
+    years.map((yearGroup) => (
+      <div class="archive-year">
+        <h2 class="archive-year-header" id={yearGroup.year}>
+          <a class="archive-header-link" href={`#${yearGroup.year}`}>
+            {yearGroup.year}
+          </a>
+          <sup class="archive-count">&nbsp;{yearGroup.count}</sup>
+        </h2>
+
+        {yearGroup.months.map((monthGroup) => (
+          <div class="archive-month">
+            <h3 class="archive-month-header" id={monthGroup.id}>
+              <a class="archive-header-link" href={`#${monthGroup.id}`}>
+                {monthGroup.label}
+              </a>
+              <sup class="archive-count">&nbsp;{monthGroup.posts.length}</sup>
+            </h3>
+
+            <div class="archive-posts">
+              {monthGroup.posts.map((post) => {
+                const meta = postMeta(post);
+                const info = [formatDate(post.data.pubDate), meta.category.name];
+                if (siteConfig.features.readingTime) info.push(meta.reading.label);
+                return (
+                  <div class="archive-entry">
+                    <h3 class="archive-entry-title entry-hint-parent">{post.data.title}</h3>
+                    <div class="archive-meta" set:html={info.join('&nbsp;&middot;&nbsp;')} />
+                    <a
+                      class="entry-link"
+                      aria-label={`文章：${post.data.title}`}
+                      href={withBase(postPath(post))}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        ))}
+      </div>
+    ))
+  }
+</PageLayout>

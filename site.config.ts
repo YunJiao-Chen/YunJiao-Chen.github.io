@@ -40,7 +40,10 @@ export interface Category {
 
 export interface NavItem {
   label: string;
-  href: string;
+  /** 链接目标；type 为 'search' 时不需要（搜索是弹层，不是页面） */
+  href?: string;
+  /** 'link'（默认，渲染成 <a>）或 'search'（渲染成打开搜索弹层的按钮） */
+  type?: 'link' | 'search';
 }
 
 const env = (key: string, fallback: string): string =>
@@ -52,6 +55,12 @@ export const siteConfig = {
   /* ------------------------------------------------------------------ */
   site: {
     title: 'yjchen',
+    /**
+     * 顶栏品牌位显示的站名。和 site.title 分开是 PaperMod 本来的做法
+     * （上游是 site.Params.label.text | default site.Title）：
+     * title 用于 <title> 后缀与版权行，label 用于顶栏。
+     */
+    label: "yjchen's blog",
     subtitle: '算法工程师',
     description:
       '一个算法工程师的个人博客：信贷模型、大数据、NLP 与推荐算法的实践笔记，也写读书笔记。用 Markdown 写作。',
@@ -130,13 +139,14 @@ export const siteConfig = {
 
   /* ------------------------------------------------------------------ */
   /* 导航                                                                */
+  /* 顺序即显示顺序；搜索是弹层，所以用 type: 'search' 而不是 href        */
   /* ------------------------------------------------------------------ */
   nav: [
-    { label: '首页', href: '/' },
-    { label: '文章', href: '/posts/' },
-    { label: '分类', href: '/categories/' },
-    { label: '标签', href: '/tags/' },
-    { label: '关于', href: '/about/' },
+    { label: 'Posts', href: '/posts/' },
+    { label: 'Archive', href: '/archive/' },
+    { label: 'Search', type: 'search' },
+    { label: 'Tags', href: '/tags/' },
+    { label: 'FAQ', href: '/faq/' },
   ] as NavItem[],
 
   /* ------------------------------------------------------------------ */

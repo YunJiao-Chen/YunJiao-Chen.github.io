@@ -1,9 +1,11 @@
 ---
 /**
- * 页面布局：与 PaperMod 的 list.html 头部一致
- *   header.page-header > h1 + div.post-description
- *   prose = true 时把内容包进 div.post-content.md-content（关于页、404 这类文本页）
- *   listPage = true 时给 body 加 .list（列表页底色，卡片才浮起来）
+ * 页面布局，对齐 PaperMod 的两种页面：
+ *   kind = 'list'（默认）：列表与归档类页面，body.list + header.page-header > h1
+ *   kind = 'page'：内容页（关于 / FAQ / 404），article.post-single + h1.post-title
+ * prose = true 时把内容包进 div.post-content.md-content（正文型页面）；
+ *   about 这种自带两栏布局的页面传 false，自己在内部包 md-content。
+ * 两个分支各自直接输出，不额外套包装 div，产物结构与主题模板一一对应。
  */
 import BaseLayout from './BaseLayout.astro';
 
@@ -11,8 +13,8 @@ interface Props {
   title: string;
   description?: string;
   path?: string;
+  kind?: 'list' | 'page';
   prose?: boolean;
-  listPage?: boolean;
   noindex?: boolean;
 }
 
@@ -20,18 +22,46 @@ const {
   title,
   description,
   path,
+  kind = 'list',
   prose = false,
-  listPage = false,
   noindex = false,
 } = Astro.props;
+
+const isPage = kind === 'page';
 ---
 
-<BaseLayout title={title} description={description} path={path} noindex={noindex} listPage={listPage}>
-  <header class="page-header">
-    <h1>{title}</h1>
-    {description && <div class="post-description">{description}</div>}
-    <slot name="head-extra" />
-  </header>
-
-  {prose ? <div class="post-content md-content"><slot /></div> : <slot />}
+<BaseLayout title={title} description={description} path={path} noindex={noindex} listPage={!isPage}>
+  {
+    isPage ? (
+      <article class="post-single">
+        <header class="post-header">
+          <h1 class="post-title entry-hint-parent">{title}</h1>
+          {description && <div class="post-description">{description}</div>}
+          <slot name="head-extra" />
+        </header>
+        {prose ? (
+          <div class="post-content md-content">
+            <slot />
+          </div>
+        ) : (
+          <slot />
+        )}
+      </article>
+    ) : (
+      <>
+        <header class="page-header">
+          <h1>{title}</h1>
+          {description && <div class="post-description">{description}</div>}
+          <slot name="head-extra" />
+        </header>
+        {prose ? (
+          <div class="post-content md-content">
+            <slot />
+          </div>
+        ) : (
+          <slot />
+        )}
+      </>
+    )
+  }
 </BaseLayout>

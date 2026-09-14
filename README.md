@@ -11,10 +11,12 @@
 | 能力 | 说明 |
 | --- | --- |
 | 主页 | PaperMod 结构：欢迎卡片 + 文章条目卡片 + 全部文章链接（无落地页式分区） |
+| 顶栏 | 左「yjchen's blog」+ 主题切换 + 分隔线，右侧菜单 Posts / Archive / Search / Tags / FAQ（顺序由 `site.config.ts` 决定，搜索是弹层不是页面） |
+| 归档 | `/archive/` 按年 + 月分组，用主题的 `.archive-*` 类，年份与月份可锚点跳转 |
 | 视觉系统 | 直接移植 [PaperMod](https://github.com/adityatelange/hugo-PaperMod)（MIT）的样式表，逐字节与上游一致并用哈希校验；本站只加一层 `site.css` |
-| 设计规范 | 视觉 = PaperMod 原样，流程按 [`design-taste-frontend`](https://github.com/Leonxlnx/taste-skill)；50 项可执行自检 + 主题哈希校验，都进 CI |
+| 设计规范 | 视觉 = PaperMod 原样，流程按 [`design-taste-frontend`](https://github.com/Leonxlnx/taste-skill)；51 项可执行自检 + 主题哈希校验，都进 CI |
 | Markdown 写作 | GFM 表格、任务列表、脚注、删除线、Shiki 代码高亮（单一深色主题）、标题锚点、自动目录（TOC）、阅读时长 |
-| 分类 + 标签 | 分类是固定栏目（导航骨架），标签横向串联；分类页 / 标签页 / 分页 / 时间线全部构建期生成 |
+| 分类 + 标签 | 分类是固定栏目（5 个），标签横向串联；分类页 / 标签页 / 分页全部构建期生成。两者不在顶栏菜单里，从 FAQ 或归档页进入 |
 | 站内搜索 | 构建期生成 `search-index.json`，`⌘K` / `Ctrl+K` 打开，纯前端过滤，零服务端 |
 | 公众号双路导出 | 文章页「复制到公众号」一键把排版内联后写进剪贴板；构建后另产出 `dist/wechat/<slug>.html` 独立预览页 |
 | 评论 | Provider 抽象层：默认占位，配置 4 个字段即可启用 giscus（GitHub Discussions） |
@@ -43,7 +45,7 @@
 提交前跑一次门禁：
 
 ```bash
-npm run build && npm run audit   # 50 项断言，全部通过才允许发布
+npm run build && npm run audit   # 51 项断言，全部通过才允许发布
 ```
 
 ## 快速开始
@@ -131,11 +133,11 @@ footer: { since, icp, note }
 │  ├─ layouts/               # BaseLayout / PostLayout / PageLayout
 │  ├─ components/            # 顶栏、页脚、条目卡片、TOC、搜索、评论、公众号导出按钮…
 │  ├─ lib/                   # posts.ts（查询层）、utils.ts（日期/阅读时长/文案）
-│  ├─ pages/                 # 路由：主页、博客、分类、标签、关于、RSS、搜索索引、404
+│  ├─ pages/                 # 路由：主页、文章列表、归档、分类、标签、FAQ、关于、RSS、搜索索引、404
 │  ├─ scripts/               # wechat-runtime.js（浏览器端公众号导出运行时）
 │  └─ styles/                # papermod/（上游原样）+ papermod.css + site.css + wechat.css
 ├─ scripts/
-│  ├─ taste-audit.mjs        # 设计规范自检（50 项：对比度 / 文案 / 结构）
+│  ├─ taste-audit.mjs        # 设计规范自检（51 项：对比度 / 文案 / 结构）
 │  ├─ verify-theme.mjs       # 主题完整性校验（SHA256 清单，防就地改动）
 │  ├─ export-wechat.mjs      # 构建期公众号导出（cheerio + juice）
 │  ├─ new-post.mjs           # 新建文章脚手架
@@ -233,7 +235,7 @@ CI 里 `actions/configure-pages` 会把 Pages 实际使用的地址注入 `SITE_
 | `npm run new -- "标题"` | 新建文章 |
 | `npm run test:wechat` | 公众号导出运行时回归测试（18 项断言） |
 | `npm run check` | Astro/TS 类型检查 |
-| `npm run audit` | 设计规范自检（对比度 / 文案 / 结构共 50 项，接 CI 可当门禁） |
+| `npm run audit` | 设计规范自检（对比度 / 文案 / 结构共 51 项，接 CI 可当门禁） |
 | `npm run preview` | 预览 `dist/` |
 
 ---

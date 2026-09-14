@@ -399,6 +399,25 @@ function auditStructure() {
     }
   }
 
+  // 导航可达性：顶栏每一项都必须有对应页面（新增/改名页面时最容易漏）
+  if (existsSync(join(distDir, 'index.html'))) {
+    const homeHtml = readFileSync(join(distDir, 'index.html'), 'utf8');
+    const baseMatch = /href="([^"]*)\/_astro\//.exec(homeHtml);
+    const base = baseMatch ? baseMatch[1].replace(/\/$/, '') : '';
+    const menuHtml = /<ul id="menu" class="menu">([\s\S]*?)<\/ul>/.exec(homeHtml)?.[1] ?? '';
+    const hrefs = [...menuHtml.matchAll(/href="([^"]+)"/g)].map((m) => m[1]);
+    const missingNav = hrefs.filter((href) => {
+      const rel = (href.startsWith(base) ? href.slice(base.length) : href).replace(/^\//, '');
+      return !['', 'index.html'].includes(rel) && !existsSync(join(distDir, rel.replace(/\/$/, ''), 'index.html'));
+    });
+    add(
+      'C 结构',
+      `顶栏 ${hrefs.length} 个链接都有页面`,
+      hrefs.length > 0 && missingNav.length === 0,
+      missingNav.join(', '),
+    );
+  }
+
   // §9.E 手绘 SVG：图标必须来自图标库
   const icon = readFileSync(join(root, 'src/components/Icon.astro'), 'utf8');
   const fromLibrary = icon.includes("@tabler/icons/outline/");
@@ -474,6 +493,8 @@ function auditStructure() {
       'moon', 'sun', 'icon',
       // 主题模板里的结构性钩子，主题自己不给样式（PaperMod 原样如此）
       'page-footer', 'prev', 'astro-code',
+      // 归档页的结构性钩子，archive.css 里只有 .archive-year / .archive-count 等
+      'archive-year-header', 'archive-header-link',
     ]);
     const unknown = new Set();
     for (const file of globSync('**/*.html', { cwd: distDir }).filter((f) => !f.startsWith('wechat/'))) {

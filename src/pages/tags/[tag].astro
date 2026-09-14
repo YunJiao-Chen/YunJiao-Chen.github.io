@@ -32,7 +32,6 @@ const tags = await getTagSummaries();
   title={`标签 ${tag.name}`}
   description={`共 ${posts.length} 篇文章。`}
   path={`/tags/${tag.slug}/`}
-  listPage
 >
   <ArchiveList posts={posts} emptyText={`标签「${tag.name}」下还没有文章。`} />
 

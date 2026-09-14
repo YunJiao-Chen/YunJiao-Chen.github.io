@@ -23,6 +23,10 @@
 
 ## 2. 主页内容设计
 
+> 注：本节是 v1 的主页规划，**已被 §14 取代**。现在的主页是 PaperMod 的
+> 「一张欢迎卡片 + 若干条目卡片」，顶栏菜单是 Posts / Archive / Search / Tags / FAQ。
+> 保留原文以便对照演进过程。
+
 主页是"三秒钟让人知道你是谁、你在写什么、下一步点哪里"。从上到下 7 个区块，每个区块都有明确任务：
 
 ```
@@ -375,11 +379,14 @@ hero 标题从 40 到 60px 收到 36 到 48px，其余间距阶同比例下调�
 
 ### 12.D 交付前自检（已脚本化）
 
-`npm run audit` 把 skill §14 的 Pre-Flight Check 变成 50 项可执行断言：
+> 注：本节记录 v3 当时的口径。v5 移植 PaperMod 后规则已重写，当前是 **51 项**
+> （见 §14.D 的说明）。下面保留原文以便看清演进过程。
 
-- **A 对比度**（25 项）：逐 token 计算 WCAG，浅色与深色各 12 对，外加纯黑禁令与饱和度上限
-- **B 文案**（7 项）：破折号零容忍、中点配额、CTA 意图唯一、版本号页脚、地区时间条、滚动提示、emoji
-- **C 结构**（20 项）：真实图片、hero 元素数、圆角档位、z-index 集中、内联样式、手绘 SVG、reduced motion、scroll 监听、字体自托管、页内锚点有效性、base 与 sitemap/RSS 一致性
+`npm run audit` 把 skill §14 的 Pre-Flight Check 变成可执行断言：
+
+- **A 对比度**：逐 token 计算 WCAG，浅色与深色各若干对，外加纯黑禁令
+- **B 文案**：破折号零容忍、中点配额、CTA 意图唯一、版本号页脚、地区时间条、滚动提示、emoji
+- **C 结构**：真实图片、hero 元素数、圆角来源、z-index、内联样式、手绘 SVG、reduced motion、scroll 监听、字体栈、页内锚点有效性、base 与 sitemap/RSS 一致性、顶栏可达性
 
 当前状态：**54 / 54 通过**。任何一项失败脚本都会以非零码退出，可以直接接进 CI 当门禁。
 
@@ -476,7 +483,10 @@ v3 的问题不是"乱"，而是"平"：纯白背景、饱和度 54% 的松绿�
 | 主题切换 | `.logo-switches > button#theme-toggle.theme-toggle > svg.moon / svg.sun`，状态在 `html[data-theme]` + `localStorage["pref-theme"]` |
 | 首页 | `article.first-entry.home-info`（`h1` + `.entry-content.md-content` + `.entry-footer > .social-icons`） |
 | 条目卡片 | `article.post-entry`（`.entry-cover` + `.entry-header > h2` + `.entry-content > p` + `.entry-footer` + `a.entry-link` 遮罩） |
-| 列表头 | `header.page-header > h1 + .post-description` |
+| 顶栏 | `.logo > a`（站名取 `site.label`）+ `.logo-switches > #theme-toggle + span.nav-sep`（`|`）+ `ul#menu > li > a > span[.active]`，搜索项是 `li > button.menu-search` |
+| 列表头 | `header.page-header > h1 + .post-description`（`body.list`） |
+| 内容页 | 关于 / FAQ / 404 走 `article.post-single > header.post-header > h1.post-title`，`body` 不带 `.list` |
+| 归档页 | `.archive-year > h2.archive-year-header > a.archive-header-link + sup.archive-count`，月分组 `.archive-month > h3.archive-month-header + .archive-posts > .archive-entry` |
 | 文章页 | `article.post-single`（`header.post-header` + `h1.post-title` + `.post-meta` + `details.toc` + `.post-content.md-content` + `footer.post-footer`） |
 | 目录 | `details.toc > summary > span.title` + `.inner > ul` |
 | 标签 | `ul.post-tags > li > a`；标签总览用 `ul.terms-tags` |
@@ -521,7 +531,7 @@ v3 的问题不是"乱"，而是"平"：纯白背景、饱和度 54% 的松绿�
 | 文章页目录 | 右侧粘性栏 | 正文上方**可折叠 `<details>`** |
 | 文章封面 | 每篇随机占位图 | 默认无图（`images.remoteCovers: false`） |
 | 卡片点击 | 标题链接 | 整卡遮罩 `a.entry-link` |
-| 自检项 | 55 项（含强调色饱和度、圆角 / z-index token 等） | **48 项**，规则改为面向真主题 |
+| 自检项 | 55 项（含强调色饱和度、圆角 / z-index token 等） | **51 项**，规则改为面向真主题 |
 
 自检项从 55 降到 47 是**规则重写**而不是删检查：删掉的三类是"手写设计系统"才需要的
 约束（强调色饱和度、自建圆角 token 档位、自建 z-index 层级），它们对一份 MIT 主题
@@ -533,7 +543,7 @@ v3 的问题不是"乱"，而是"平"：纯白背景、饱和度 54% 的松绿�
 保留的（都是功能需求，不是装饰）：分类 / 标签页、站内搜索、公众号导出按钮、
 giscus 评论、深色模式、`body.list` 之外的页面一律窄栏。
 
-主动偏离的六处：
+主动偏离的九处：
 
 | 偏离 | 原因 |
 | --- | --- |
@@ -543,6 +553,10 @@ giscus 评论、深色模式、`body.list` 之外的页面一律窄栏。
 | 窄屏不做汉堡菜单 | 主题本身就是横向滚动菜单，照它来；上一版自建的抽屉按钮已删除 |
 | 首页欢迎卡片高度随内容（`.first-entry { min-height: 0 }`） | 主题把它做成 320px（窄屏 260px）的 hero，底下再留 48px。本站引导语只有一句，图标下面会空出一大块；改成内容自适应，边距收到 `--gap`，与卡片间距同一节奏 |
 | 首页欢迎语是「👏 来到yjchen's blog」 | 主题的 `home-info` 标题本来就短；文案放在 `site.config.ts` 的 `author.greeting`，不写死在模板里。这是**全站唯一允许带 emoji 的地方**，skill §3.D 的 emoji 禁令因此拆成两条自检：源码里 0 个、渲染结果里最多 1 个且只能在首页 |
+
+| 顶栏菜单用英文（Posts / Archive / Search / Tags / FAQ），站名写作 yjchen's blog | 用户指定，与参考站 Lil'Log 的菜单一致；页面正文仍是中文 |
+| 新增 `/archive/` 与 `/faq/` 两个页面 | 菜单需要落点。归档页用主题的 `.archive-*` 类（原样来自 `archive.css`）；FAQ 是一页手写问答 |
+| 分类页与关于页不在顶栏里 | 菜单只放用户列的 5 项。两页都没丢，从 FAQ 正文可以点进去，也都在 sitemap 里 |
 
 另外主题的标签总览用 `ul.terms-tags`，分类总览因为要放一句话说明，
 改用了 `article.post-entry` 卡片（仍是主题的类，不新增样式）。

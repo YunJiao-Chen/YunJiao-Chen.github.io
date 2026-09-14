@@ -14,7 +14,6 @@ const [tags, posts] = await Promise.all([getTagSummaries(), getAllPosts()]);
   title="标签"
   description={`共 ${tags.length} 个标签，按出现次数排序。`}
   path="/tags/"
-  listPage
 >
   {tags.length > 0 ? <TagField tags={tags} /> : <p>还没有标签。</p>}
 

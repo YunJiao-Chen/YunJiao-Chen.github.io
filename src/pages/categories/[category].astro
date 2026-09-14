@@ -29,7 +29,6 @@ const { category, posts } = Astro.props;
   title={category.name}
   description={`${category.description}共 ${posts.length} 篇。`}
   path={`/categories/${category.slug}/`}
-  listPage
 >
   <ArchiveList posts={posts} emptyText={`「${category.name}」分类还没有文章。`} />
 </PageLayout>

@@ -1,0 +1,68 @@
+---
+/**
+ * FAQ 页 /faq/：内容页（PaperMod 的 post-single 结构）
+ * 顶部导航里的 FAQ 指向这里。文案是可编辑的草稿，改这里就行。
+ */
+import PageLayout from '../layouts/PageLayout.astro';
+import { siteConfig, withBase } from '../../site.config.ts';
+
+const { author } = siteConfig;
+const github = author.socials.find((social) => social.icon === 'github');
+---
+
+<PageLayout
+  title="FAQ"
+  description="关于这个博客的常见问题：写什么、多久更新、能不能转载、评论怎么参与。"
+  path="/faq/"
+  kind="page"
+  prose
+>
+  <h2>这个博客写什么？</h2>
+  <p>
+    写四个方向上的实践笔记：信贷模型、大数据、NLP、推荐算法，另有一栏读书笔记，
+    以技术书为主。所有文章都归在这几个固定分类里，可以从
+    <a href={withBase('/categories/')}>分类页</a>按栏目翻。
+  </p>
+
+  <h2>多久更新一次？</h2>
+  <p>
+    没有固定节奏。通常是某个问题在项目里真的绕过一圈、值得记下来才会写，
+    所以可能一个月几篇，也可能两个月一篇没有。想第一时间看到，建议订阅
+    <a href={withBase('/rss.xml')}>RSS</a>。
+  </p>
+
+  <h2>可以转载吗？</h2>
+  <p>
+    可以。{siteConfig.footer.note}转载时请注明作者并链回原文。
+    如果是商业用途，或者要把整站搬走，先跟我说一声。
+  </p>
+
+  <h2>文章里的代码能直接用到生产吗？</h2>
+  <p>
+    不建议直接复制。文章里的代码是为了把思路讲清楚才写成那样，省略了错误处理、
+    边界条件和参数校验。放到生产前请自己验证一遍，尤其是涉及金额计算、
+    风控规则和线上特征的部分。
+  </p>
+
+  <h2>评论怎么参与？</h2>
+  <p>
+    评论托管在 GitHub Discussions 上，用 GitHub 账号登录就能发，不需要另外注册。
+    不想登录 GitHub 的话，把问题发到
+    <a href={`mailto:${author.email}`}>{author.email}</a>
+    也可以，我都会看。
+  </p>
+
+  <h2>怎么订阅新文章？</h2>
+  <p>
+    用 <a href={withBase('/rss.xml')}>RSS</a> 订阅。也可以直接收藏本站，
+    新文章会出现在<a href={withBase('/posts/')}>文章列表</a>里，
+    按时间翻则看<a href={withBase('/archive/')}>归档</a>。
+  </p>
+
+  <h2>你是谁？怎么联系？</h2>
+  <p>
+    做过什么、现在在做什么，写在<a href={withBase('/about/')}>关于页</a>。
+    其他想聊的，发邮件或者到
+    {github && <a href={github.href} rel="noopener">GitHub</a>}找我都可以。
+  </p>
+</PageLayout>
