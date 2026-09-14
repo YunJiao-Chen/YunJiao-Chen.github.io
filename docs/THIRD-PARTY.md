@@ -86,7 +86,15 @@ bash scripts/make-icons.sh    # 生成 favicon.ico(16/32/48) + 16 + 32 + apple-t
 ```
 
 **改了 `favicon.svg` 就要重跑这个脚本**，否则光栅版还是旧图形。
-两套文件的引用都在 `src/layouts/BaseLayout.astro`，走 `import` 拿到内容哈希。
+
+生成结果落在两处，用途不同：
+
+| 位置 | 用途 |
+| --- | --- |
+| `src/assets/favicon*` | 页面 `<link>` 指向的就是这几份，走 `import` 拿到内容哈希，换图形自动换 URL |
+| `public/favicon.ico`、`favicon.svg`、`apple-touch-icon.png` | 根路径兜底：书签栏、iOS、RSS 阅读器这类地方不看 `<link>`，按约定直接取这些路径 |
+
+两处必须一致，自检里有一条会逐字节比对（改了图形忘了重跑脚本就会报红）。
 
 ## 图标
 

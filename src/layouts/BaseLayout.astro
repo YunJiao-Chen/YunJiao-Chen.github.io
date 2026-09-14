@@ -58,11 +58,13 @@ const {
         （lilianweng.github.io）：ico → 16 → 32 → apple-touch → svg。
         ico/png 是给只看光栅的场合（Windows 任务栏、iOS 主屏、部分老浏览器），
         svg 给高分辨率屏。
-        全部走 import 而不是放 public/：Astro 会给文件名带上内容哈希，
-        而 /favicon.svg、/favicon.ico 这种固定路径会被浏览器长期缓存，
-        换了图标用户也看不到（这个坑踩过一次）。
+        这里指向的是带内容哈希的那份（走 import，Astro 自动加哈希）：
+        固定路径会被浏览器长期缓存，换了图标用户也看不到（这个坑踩过一次）。
+        public/ 下另有 /favicon.ico、/favicon.svg、/apple-touch-icon.png 三份同内容副本，
+        给不看 <link>、直接按约定取图的地方（书签栏、iOS、RSS 阅读器）兜底；
+        三份必须一致，自检里有一条会比对。
         改图形后跑 scripts/make-icons.sh 重新生成光栅那几份。 */}
-    <link rel="icon" href={faviconIcoSrc} sizes="any" />
+    <link rel="icon" href={faviconIcoSrc} />
     <link rel="icon" type="image/png" sizes="16x16" href={favicon16.src} />
     <link rel="icon" type="image/png" sizes="32x32" href={favicon32.src} />
     <link rel="apple-touch-icon" sizes="180x180" href={appleTouchIcon.src} />

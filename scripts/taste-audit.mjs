@@ -466,6 +466,36 @@ function auditStructure() {
       iconProblems.slice(0, 3).join('; '),
     );
 
+    // 根路径兜底副本必须和 src/assets 的源文件一致
+    // （书签栏 / iOS / RSS 阅读器会直接取 /favicon.ico 这类约定路径；
+    //   改了图形忘了重跑 scripts/make-icons.sh 时，这里会报出来）
+    const rootIcons = [
+      ['favicon.ico', /^favicon\.[\w-]+\.ico$/, 'favicon.ico'],
+      ['favicon.svg', /^favicon\.[\w-]+\.svg$/, 'favicon.svg'],
+      ['apple-touch-icon.png', /^apple-touch-icon\.[\w-]+\.png$/, 'apple-touch-icon.png'],
+    ];
+    const iconDrift = [];
+    const astroAssets = readdirSync(join(distDir, '_astro'));
+    for (const [rootName, pattern, sourceName] of rootIcons) {
+      const rootFile = join(distDir, rootName);
+      if (!existsSync(rootFile)) {
+        iconDrift.push(`${rootName} 不存在`);
+        continue;
+      }
+      const hashed = astroAssets.find((f) => pattern.test(f));
+      const sourceFile = join(root, 'src/assets', sourceName);
+      if (!hashed) {
+        iconDrift.push(`${rootName} 没有对应的带哈希产物`);
+        continue;
+      }
+      const same = readFileSync(rootFile).equals(readFileSync(join(distDir, '_astro', hashed)));
+      const sameAsSource = existsSync(sourceFile)
+        ? readFileSync(rootFile).equals(readFileSync(sourceFile))
+        : false;
+      if (!same || !sameAsSource) iconDrift.push(`${rootName} 与源文件不一致`);
+    }
+    add('C 结构', '根路径图标与源文件一致', iconDrift.length === 0, iconDrift.join(', '));
+
     // 当前页标记：落到菜单覆盖范围内的页面必须正好有一个 active（下划线），首页落在站名上
     const navPaths = hrefs.map((href) =>
       (href.startsWith(base) ? href.slice(base.length) : href).replace(/\/$/, ''),
