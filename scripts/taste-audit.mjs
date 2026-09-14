@@ -229,8 +229,9 @@ function auditCopy() {
   add('B 文案', '无滚动提示文案', scrollTells.length === 0, scrollTells.slice(0, 3).join(', '));
 
   // §3.D emoji 策略：UI 代码里不要 emoji（文章正文允许）
-  // 例外：首页欢迎语带一个 👏（用户指定），文案在 site.config.ts 里，
-  // 所以这一条拆成两步：源码里 0 个，渲染结果里最多 1 个且只能在首页。
+  // 例外只有首页欢迎语那一个 👏（用户指定），文案在 site.config.ts 里。
+  // 所以这条拆成两步：源码里 0 个，渲染结果里最多 1 个且只能在首页。
+  // 站点图标 public/favicon.svg 里的 ☕️ 是资源不是页面文案，不在这条规则的范围内。
   const EMOJI = /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu;
   const emojiHits = [];
   const stripComments = (text) =>
@@ -259,7 +260,7 @@ function auditCopy() {
   }
   add(
     'B 文案',
-    '页面 emoji ≤ 1 且只在首页欢迎语',
+    '页面正文 emoji ≤ 1 且只在首页欢迎语',
     emojiTotal <= 1 && emojiRenderHits.length === 0,
     `全站 ${emojiTotal} 个${emojiRenderHits.length ? `，越界：${emojiRenderHits.slice(0, 3).join('; ')}` : ''}`,
   );

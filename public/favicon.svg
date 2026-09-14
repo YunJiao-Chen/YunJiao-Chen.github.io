@@ -1,11 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="yjchen">
-  <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#4f7cf5" />
-      <stop offset="100%" stop-color="#1d4ed8" />
-    </linearGradient>
-  </defs>
-  <rect width="64" height="64" rx="15" fill="url(#g)" />
-  <path d="M18.5 18 L32 33.5 L45.5 18 M32 33.5 L32 47.5" fill="none" stroke="#ffffff"
-        stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="yjchen&#39;s blog">
+  <!-- 站点标志：咖啡杯。用文本而不是路径画，让浏览器用用户自己的彩色 emoji 字体渲染，
+       既不会在仓库里再分发 emoji 字体数据，也能跟系统主题一致。 -->
+  <text x="50" y="54" font-size="88" text-anchor="middle" dominant-baseline="central"
+        font-family="Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, Twemoji Mozilla, sans-serif">☕️</text>
 </svg>

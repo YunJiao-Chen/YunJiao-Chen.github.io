@@ -48,8 +48,10 @@ const {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
+    {/* 站点图标：SVG 里用 ☕️ 文本，由浏览器用系统彩色 emoji 字体渲染。
+        iOS 的主屏图标只认 PNG，而把彩色 emoji 栅格化就意味着在仓库里分发
+        emoji 字体的字形数据，所以这里不提供 PNG，iOS 会退回站点截图。 */}
     <link rel="icon" type="image/svg+xml" href={withBase('/favicon.svg')} />
-    <link rel="apple-touch-icon" href={withBase('/favicon.svg')} />
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#1d1e20" media="(prefers-color-scheme: dark)" />
 
