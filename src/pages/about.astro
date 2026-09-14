@@ -13,7 +13,7 @@ const latest = await getLatestPosts(3);
 const portrait = portraitUrl('portrait');
 ---
 
-<PageLayout title={`关于 ${author.name}`} description={author.tagline} path="/about/" kind="page">
+<PageLayout title="About" description={author.tagline} path="/about/" kind="page">
   <div class="about">
     <div class="post-content md-content">
       <p>{author.bio[0]}</p>

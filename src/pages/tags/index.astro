@@ -11,7 +11,7 @@ const [tags, posts] = await Promise.all([getTagSummaries(), getAllPosts()]);
 ---
 
 <PageLayout
-  title="标签"
+  title="Tags"
   description={`共 ${tags.length} 个标签，按出现次数排序。`}
   path="/tags/"
 >

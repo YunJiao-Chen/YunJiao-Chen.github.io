@@ -294,6 +294,8 @@ comments: {
 ## 10. SEO / 性能 / 可访问性
 
 - **SEO**：每页独立 `<title>`/`description`/canonical/OG/Twitter 卡片；文章输出 `BlogPosting` JSON-LD（含 `datePublished`、`author`、`keywords`）；RSS + sitemap 自动生成。
+- **标签页标题**：格式统一为 `<页面标签> | yjchen`（竖线分隔，与参考站一致），而且页面标签必须与顶栏菜单写法相同（Posts / Archive / Tags / FAQ …）。自检里有一条会从产物里读出菜单项逐个核对 <title>，防止再出现「菜单写 Posts、标签页写文章」这种不一致。
+- **H1 与标题同源**：`PageLayout` 的 `title` 同时驱动 H1 与 <title>，所以导航页的大标题也是 Posts / Tags / Categories / About，正文说明仍是中文。
 - **性能**：零框架 JS（仅搜索、主题切换、复制按钮为极小脚本）；图片懒加载；CSS 单文件内联关键部分；字体使用系统栈（中文站点避免 Web Font 体积）。
 - **可访问性**：语义标签（`header/main/article/nav/footer`）、跳转到正文链接、键盘可达、`prefers-color-scheme` 与手动切换兼顾、对比度 ≥ 4.5:1。
 - **搜索**：构建期生成 `search-index.json`（标题/摘要/分类/标签/纯文本前 N 字），客户端输入即过滤，避免引入全文搜索库。
@@ -535,7 +537,7 @@ v3 的问题不是"乱"，而是"平"：纯白背景、饱和度 54% 的松绿�
 | 文章页目录 | 右侧粘性栏 | 正文上方**可折叠 `<details>`** |
 | 文章封面 | 每篇随机占位图 | 默认无图（`images.remoteCovers: false`） |
 | 卡片点击 | 标题链接 | 整卡遮罩 `a.entry-link` |
-| 自检项 | 55 项（含强调色饱和度、圆角 / z-index token 等） | **52 项**，规则改为面向真主题 |
+| 自检项 | 55 项（含强调色饱和度、圆角 / z-index token 等） | **53 项**，规则改为面向真主题 |
 
 自检项从 55 降到 47 是**规则重写**而不是删检查：删掉的三类是"手写设计系统"才需要的
 约束（强调色饱和度、自建圆角 token 档位、自建 z-index 层级），它们对一份 MIT 主题

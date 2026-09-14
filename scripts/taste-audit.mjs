@@ -418,6 +418,31 @@ function auditStructure() {
       missingNav.join(', '),
     );
 
+    // 标签页标题与顶栏标签一致：菜单里叫什么，落到那一页 <title> 就要以它开头
+    // （曾经出现菜单写 Posts、标签页写「文章 · yjchen」的不一致）
+    const titleMismatch = [];
+    const navItems = [...menuHtml.matchAll(/<a\b([^>]*)>/g)]
+      .map((m) => ({
+        href: /href="([^"]*)"/.exec(m[1])?.[1],
+        label: /title="([^"]*)"/.exec(m[1])?.[1],
+      }))
+      .filter((item) => item.href && item.label);
+    for (const item of navItems) {
+      const rel = (item.href.startsWith(base) ? item.href.slice(base.length) : item.href).replace(/^\//, '');
+      const file = join(distDir, rel.replace(/\/$/, ''), 'index.html');
+      if (!existsSync(file)) continue;
+      const docTitle = /<title>([^<]*)<\/title>/.exec(readFileSync(file, 'utf8'))?.[1] ?? '';
+      if (!docTitle.startsWith(item.label)) {
+        titleMismatch.push(`${item.href} 标签页是「${docTitle}」，菜单是「${item.label}」`);
+      }
+    }
+    add(
+      'C 结构',
+      '标签页标题与顶栏标签一致',
+      titleMismatch.length === 0,
+      titleMismatch.slice(0, 3).join('; '),
+    );
+
     // 当前页标记：落到菜单覆盖范围内的页面必须正好有一个 active（下划线），首页落在站名上
     const navPaths = hrefs.map((href) =>
       (href.startsWith(base) ? href.slice(base.length) : href).replace(/\/$/, ''),

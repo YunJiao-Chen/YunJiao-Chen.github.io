@@ -33,10 +33,16 @@ const {
   jsonLd,
 } = Astro.props;
 
+/**
+ * 浏览器标签页标题：`<页面标签> | yjchen`
+ * 分隔符用竖线（与参考站一致）；页面标签要和顶栏菜单里的写法一致
+ * （Posts / Archive / Tags / FAQ …），自检里有一条会逐个核对导航页的标题。
+ * 标题里已经含站点名时不再追加后缀，避免出现「关于 yjchen | yjchen」。
+ */
 const pageTitle = title
   ? title.includes(siteConfig.site.title)
     ? title
-    : `${title} · ${siteConfig.site.title}`
+    : `${title} | ${siteConfig.site.title}`
   : siteConfig.site.title;
 
 const canonical = absoluteUrl(path);

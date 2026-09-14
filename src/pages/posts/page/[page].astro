@@ -25,7 +25,7 @@ const page = await paginate(posts, pageNumber);
 ---
 
 <PageLayout
-  title={`文章（第 ${page.current} 页）`}
+  title={`Posts（第 ${page.current} 页）`}
   description={`第 ${page.current} 页，共 ${page.total} 篇。`}
   path={`/posts/page/${page.current}/`}
 >

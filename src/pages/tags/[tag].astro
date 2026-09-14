@@ -29,7 +29,7 @@ const tags = await getTagSummaries();
 ---
 
 <PageLayout
-  title={`标签 ${tag.name}`}
+  title={tag.name}
   description={`共 ${posts.length} 篇文章。`}
   path={`/tags/${tag.slug}/`}
 >
