@@ -11,10 +11,10 @@
 | 能力 | 说明 |
 | --- | --- |
 | 主页 | PaperMod 结构：欢迎卡片 + 文章条目卡片 + 全部文章链接（无落地页式分区） |
-| 顶栏 | 左「yjchen's blog」+ 主题切换 + 分隔线，右侧菜单 Posts / Archive / Search / Tags / FAQ（顺序由 `site.config.ts` 决定，搜索是弹层不是页面） |
+| 顶栏 | 左「yjchen's blog」+ 主题切换 + 分隔线，右侧菜单 Posts / Archive / Search / Tags / FAQ（顺序由 `site.config.ts` 决定，搜索是弹层不是页面）；当前页在菜单里带 2px 下划线，首页时下划线落在站名上 |
 | 归档 | `/archive/` 按年 + 月分组，用主题的 `.archive-*` 类，年份与月份可锚点跳转 |
 | 视觉系统 | 直接移植 [PaperMod](https://github.com/adityatelange/hugo-PaperMod)（MIT）的样式表，逐字节与上游一致并用哈希校验；本站只加一层 `site.css` |
-| 设计规范 | 视觉 = PaperMod 原样，流程按 [`design-taste-frontend`](https://github.com/Leonxlnx/taste-skill)；51 项可执行自检 + 主题哈希校验，都进 CI |
+| 设计规范 | 视觉 = PaperMod 原样，流程按 [`design-taste-frontend`](https://github.com/Leonxlnx/taste-skill)；52 项可执行自检 + 主题哈希校验，都进 CI |
 | Markdown 写作 | GFM 表格、任务列表、脚注、删除线、Shiki 代码高亮（单一深色主题）、标题锚点、自动目录（TOC）、阅读时长 |
 | 分类 + 标签 | 分类是固定栏目（5 个），标签横向串联；分类页 / 标签页 / 分页全部构建期生成。两者不在顶栏菜单里，从 FAQ 或归档页进入 |
 | 站内搜索 | 构建期生成 `search-index.json`，`⌘K` / `Ctrl+K` 打开，纯前端过滤，零服务端 |
@@ -45,7 +45,7 @@
 提交前跑一次门禁：
 
 ```bash
-npm run build && npm run audit   # 51 项断言，全部通过才允许发布
+npm run build && npm run audit   # 52 项断言，全部通过才允许发布
 ```
 
 ## 快速开始
@@ -137,7 +137,7 @@ footer: { since, icp, note }
 │  ├─ scripts/               # wechat-runtime.js（浏览器端公众号导出运行时）
 │  └─ styles/                # papermod/（上游原样）+ papermod.css + site.css + wechat.css
 ├─ scripts/
-│  ├─ taste-audit.mjs        # 设计规范自检（51 项：对比度 / 文案 / 结构）
+│  ├─ taste-audit.mjs        # 设计规范自检（52 项：对比度 / 文案 / 结构）
 │  ├─ verify-theme.mjs       # 主题完整性校验（SHA256 清单，防就地改动）
 │  ├─ export-wechat.mjs      # 构建期公众号导出（cheerio + juice）
 │  ├─ new-post.mjs           # 新建文章脚手架
@@ -235,7 +235,7 @@ CI 里 `actions/configure-pages` 会把 Pages 实际使用的地址注入 `SITE_
 | `npm run new -- "标题"` | 新建文章 |
 | `npm run test:wechat` | 公众号导出运行时回归测试（18 项断言） |
 | `npm run check` | Astro/TS 类型检查 |
-| `npm run audit` | 设计规范自检（对比度 / 文案 / 结构共 51 项，接 CI 可当门禁） |
+| `npm run audit` | 设计规范自检（对比度 / 文案 / 结构共 52 项，接 CI 可当门禁） |
 | `npm run preview` | 预览 `dist/` |
 
 ---

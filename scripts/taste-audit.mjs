@@ -416,6 +416,27 @@ function auditStructure() {
       hrefs.length > 0 && missingNav.length === 0,
       missingNav.join(', '),
     );
+
+    // 当前页标记：落到菜单覆盖范围内的页面必须正好有一个 active（下划线），首页落在站名上
+    const navPaths = hrefs.map((href) =>
+      (href.startsWith(base) ? href.slice(base.length) : href).replace(/\/$/, ''),
+    );
+    const noMark = [];
+    for (const file of globSync('**/*.html', { cwd: distDir }).filter((f) => !f.startsWith('wechat/'))) {
+      const html = readFileSync(join(distDir, file), 'utf8');
+      const header = /<header class="header">[\s\S]*?<\/header>/.exec(html)?.[0] ?? '';
+      const marks = (header.match(/class="active"/g) ?? []).length;
+      const pagePath = `/${dirname(file)}`.replace(/\/\.$/, '').replace(/^\/$/, '') || '';
+      const isHome = file === 'index.html';
+      const underNav = isHome || navPaths.some((p) => p && (pagePath === p || pagePath.startsWith(`${p}/`)));
+      if (underNav && marks !== 1) noMark.push(`${file || '/'}（${marks} 个标记）`);
+    }
+    add(
+      'C 结构',
+      '当前页在顶栏有且只有一个标记',
+      noMark.length === 0,
+      noMark.slice(0, 3).join(', '),
+    );
   }
 
   // §9.E 手绘 SVG：图标必须来自图标库

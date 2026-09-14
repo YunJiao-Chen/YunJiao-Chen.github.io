@@ -49,6 +49,15 @@ body {
 /* --------------------------------------------------------------------------
    2. 功能件
    -------------------------------------------------------------------------- */
+/* 站名的「当前在首页」状态：与主题 .menu .active 用同一套写法
+   （2px 下划线 + 0.3rem 偏移），因为菜单里没有 Home 项，主页需要另外的落点。
+   加粗交给 .logo a 自己的 700，这里只管下划线。 */
+.logo .active {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.3rem;
+}
+
 /* 顶栏里的搜索入口：外观与主题的 .menu a 一致，只是换成 button 元素 */
 .menu-search {
   padding: 0;
