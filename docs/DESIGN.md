@@ -553,7 +553,7 @@ giscus 评论、深色模式、`body.list` 之外的页面一律窄栏。
 
 | 偏离 | 原因 |
 | --- | --- |
-| 页脚写「由 Astro 构建，主题 PaperMod」而不是「Powered by Hugo & PaperMod」 | 本站是 Astro，写 Hugo 是假话；PaperMod 的 MIT 要求保留署名，所以照留并给出链接 |
+| 页脚写「Powered by Astro & PaperMod」而不是「Powered by Hugo & PaperMod」 | 参考站是 `© 2026 Lil'Log Powered by Hugo & PaperMod`，两段之间没有分隔符（模板里的「 · 」在她那版没有输出），这里照抄结构、只把 Hugo 换成 Astro：本站确实用 Astro 构建，写 Hugo 是假话；PaperMod 的 MIT 要求保留署名，所以照留并给出链接 |
 | 搜索入口做成菜单里的一项（`button.menu-search`） | 主题没有站内搜索，但搜索是需求；放进菜单而不是顶栏新增按钮，位置最不突兀 |
 | 文章页多了「复制到公众号 / 复制链接」一行（`.post-actions`） | 主题没有，属于本站功能 |
 | 窄屏不做汉堡菜单 | 主题本身就是横向滚动菜单，照它来；上一版自建的抽屉按钮已删除 |

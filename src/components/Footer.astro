@@ -1,9 +1,10 @@
 ---
 /**
  * 页脚：与 PaperMod 的 _partials/footer.html 一致
- *   单行居中，版权 + 一行来源说明，另加一个回到顶部按钮
- * 与主题的差异：主题写 "Powered by Hugo & PaperMod"，本站用 Astro 构建，
- * 只移植了 PaperMod 的样式（MIT），所以这里如实写成 Astro 与 PaperMod 主题。
+ *   两段居中单行：版权 + 来源说明，另加一个回到顶部按钮
+ *   参考站渲染出来是「© 2026 Lil'Log Powered by Hugo & PaperMod」，
+ *   两段之间没有分隔符（模板里的「 · 」在她那版里没有输出），这里照做。
+ *   来源写 Astro & PaperMod 是实话：本站用 Astro 构建，只移植了 PaperMod 的样式。
  * 许可协议等长文案放在关于页，页脚保持主题那样的短行。
  */
 import { siteConfig, withBase } from '../../site.config.ts';
@@ -12,9 +13,9 @@ const year = new Date().getFullYear();
 ---
 
 <footer class="footer">
-  <span>&copy; {year} <a href={withBase('/')}>{siteConfig.site.title}</a></span>
+  <span>&copy; {year} <a href={withBase('/')}>{siteConfig.site.title}</a></span>{' '}
   <span>
-    {' · '}由 <a href="https://astro.build" rel="noopener" target="_blank">Astro</a> 构建，主题
+    Powered by <a href="https://astro.build" rel="noopener" target="_blank">Astro</a> &amp;{' '}
     <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank"
       >PaperMod</a
     >

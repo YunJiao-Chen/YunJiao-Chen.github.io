@@ -37,7 +37,7 @@
 - **代码块**：恒为深底浅字（`--code-block-bg`），公众号导出同步
 - **配色与版式参考**：Lilian Weng 的 Lil'Log（Hugo PaperMod，变量表见 `docs/DESIGN.md` §14）；上一轮还比对过 Eugene Yan、Chip Huyen、Vicki Boykis、Simon Willison、Craig Mod、Robin Rendle、Julia Evans（§13）
 - **形状一致性**：全站只有一个 `--radius: 8px`（主题给的），站内不新增圆角 token
-- **页脚**：居中单行（版权 + 来源说明），导航只在顶栏
+- **页脚**：居中单行，与参考站同构 —— `© 2026 yjchen Powered by Astro & PaperMod`（两段之间不放分隔符），导航只在顶栏
 - **真实图片**：作者照片放在关于页；文章默认无封面，frontmatter 写 `cover` 才显示
 - **文案红线**：禁止破折号（`——` 与 `–`）、每行最多一个中点、hero 最多 4 个文本元素、不写空泛动词
 - **动效**：只用 `opacity` 与 `transform`，全部尊重 `prefers-reduced-motion`，禁止监听 scroll 事件
