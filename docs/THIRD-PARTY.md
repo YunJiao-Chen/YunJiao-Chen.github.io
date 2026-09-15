@@ -66,15 +66,17 @@ node scripts/verify-theme.mjs --upstream   # 额外抓上游文件逐个比对�
 | 项 | 值 |
 | --- | --- |
 | 项目 | [microsoft/fluentui-emoji](https://github.com/microsoft/fluentui-emoji) |
-| 用途 | `src/assets/favicon.svg`：狗脸（U+1F436 DOG FACE） |
+| 用途 | `src/assets/favicon.png`：一杯咖啡（U+2615 HOT BEVERAGE，3D 版，256×256） |
 | 许可 | MIT，Copyright (c) Microsoft Corporation |
-| 版本 | `assets/Dog face/Flat/dog_face_flat.svg`（Flat 版，纯色块无渐变） |
-| 改动 | 换行整理成单行 + 加来源注释，图形路径原样保留 |
+| 版本 | `assets/Hot beverage/3D/hot_beverage_3d.png` |
+| 改动 | 无，直接用上游 PNG；下游只是缩放 |
 
-为什么用 Fluent Emoji：这套是 MIT（署名即可用，限制最少），Flat 版是纯色块没有渐变，
-在 16px 标签页里最不容易糊。本站的图标选型过程（咖啡 → 狗脸）与实测数据留在
-`icon-preview.html`（本机生成，未入库）：六个候选按 16/32/48/128 渲染，
-并模拟深色标签栏，用来看小尺寸下的可读性。
+为什么用 Fluent Emoji 的 3D 版：这套的亮面观感与 Icons8「Windows 11 Color /
+fluency」是同一种，而 Icons8 免费版是 linkware（要在使用页面加 icons8.com 链接），
+SVG 还要付费；Microsoft 这份是 MIT，署名即可，也不限制矢量以外的用途。
+上游只给 3D 版 PNG（256×256），没有矢量，所以本站的图标是一套光栅，
+没有 `favicon.svg`。选型与各候选在 16px 下的实测数据见 `icon-preview.html`
+（本机生成，未入库）。
 
 ### 光栅图标怎么来的
 
@@ -82,9 +84,10 @@ node scripts/verify-theme.mjs --upstream   # 额外抓上游文件逐个比对�
 （Windows 任务栏、iOS 主屏、部分老浏览器）。它们由矢量生成：
 
 ```bash
-brew install librsvg          # 提供 rsvg-convert
-bash scripts/make-icons.sh    # 生成 favicon.ico(16/32/48) + 16 + 32 + apple-touch-icon(180)
+bash scripts/make-icons.sh    # 生成 favicon.ico(16/32/48/64) + 16 + 32 + apple-touch-icon(180)
 ```
+
+只依赖 python3 + Pillow（源文件是光栅，不需要 rsvg-convert）。
 
 **改了 `favicon.svg` 就要重跑这个脚本**，否则光栅版还是旧图形。
 
@@ -93,7 +96,7 @@ bash scripts/make-icons.sh    # 生成 favicon.ico(16/32/48) + 16 + 32 + apple-t
 | 位置 | 用途 |
 | --- | --- |
 | `src/assets/favicon*` | 页面 `<link>` 指向的就是这几份，走 `import` 拿到内容哈希，换图形自动换 URL |
-| `public/favicon.ico`、`favicon.svg`、`apple-touch-icon.png` | 根路径兜底：书签栏、iOS、RSS 阅读器这类地方不看 `<link>`，按约定直接取这些路径 |
+| `public/favicon.ico`、`apple-touch-icon.png` | 根路径兜底：书签栏、iOS、RSS 阅读器这类地方不看 `<link>`，按约定直接取这些路径 |
 
 两处必须一致，自检里有一条会逐字节比对（改了图形忘了重跑脚本就会报红）。
 

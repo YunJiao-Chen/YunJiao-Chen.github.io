@@ -469,11 +469,14 @@ function auditStructure() {
     // 根路径兜底副本必须和 src/assets 的源文件一致
     // （书签栏 / iOS / RSS 阅读器会直接取 /favicon.ico 这类约定路径；
     //   改了图形忘了重跑 scripts/make-icons.sh 时，这里会报出来）
+    // 只检查 public/ 下真实存在的那几份（源文件是光栅时没有 favicon.svg）
     const rootIcons = [
       ['favicon.ico', /^favicon\.[\w-]+\.ico$/, 'favicon.ico'],
-      ['favicon.svg', /^favicon\.[\w-]+\.svg$/, 'favicon.svg'],
       ['apple-touch-icon.png', /^apple-touch-icon\.[\w-]+\.png$/, 'apple-touch-icon.png'],
-    ];
+    ].filter(([, , sourceName]) => existsSync(join(root, 'src/assets', sourceName)));
+    if (existsSync(join(root, 'public/favicon.svg'))) {
+      rootIcons.push(['favicon.svg', /^favicon\.[\w-]+\.svg$/, 'favicon.svg']);
+    }
     const iconDrift = [];
     const astroAssets = readdirSync(join(distDir, '_astro'));
     for (const [rootName, pattern, sourceName] of rootIcons) {
