@@ -28,7 +28,8 @@
     "cheerio": "^1.2.0",
     "github-slugger": "^2.0.0",
     "gray-matter": "^4.0.3",
-    "juice": "^11.0.1"
+    "juice": "^11.0.1",
+    "temml": "^0.13.5"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",

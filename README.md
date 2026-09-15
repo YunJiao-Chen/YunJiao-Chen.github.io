@@ -15,7 +15,7 @@
 | 归档 | `/archive/` 按年 + 月分组，用主题的 `.archive-*` 类，年份与月份可锚点跳转 |
 | 视觉系统 | 直接移植 [PaperMod](https://github.com/adityatelange/hugo-PaperMod)（MIT）的样式表，逐字节与上游一致并用哈希校验；本站只加一层 `site.css` |
 | 设计规范 | 视觉 = PaperMod 原样，流程按 [`design-taste-frontend`](https://github.com/Leonxlnx/taste-skill)；55 项可执行自检 + 主题哈希校验，都进 CI |
-| Markdown 写作 | GFM 表格、任务列表、脚注、删除线、Shiki 代码高亮（单一深色主题）、标题锚点、自动目录（TOC）、阅读时长 |
+| Markdown 写作 | GFM 表格、任务列表、脚注、删除线、数学公式（`$x$` 与 `$$…$$`，构建期编译成 MathML）、Shiki 代码高亮（单一深色主题）、标题锚点、自动目录（TOC）、阅读时长 |
 | 分类 + 标签 | 分类是固定栏目（5 个），标签横向串联；分类页 / 标签页 / 分页全部构建期生成。两者不在顶栏菜单里，从 FAQ 或归档页进入 |
 | 站内搜索 | 构建期生成 `search-index.json`，`⌘K` / `Ctrl+K` 打开，纯前端过滤，零服务端 |
 | 公众号双路导出 | 文章页「复制到公众号」一键把排版内联后写进剪贴板；构建后另产出 `dist/wechat/<slug>.html` 独立预览页 |
@@ -89,6 +89,8 @@ wechat:                      # 可选：公众号侧覆盖字段
   enable: true               # false 表示这篇不需要公众号导出
 ---
 ```
+
+**数学公式**：行内写 `$IV = \sum_i (a_i - b_i)$`，块级公式必须让 `$$` 各占一行（写成 `$$x$$` 会被当成行内公式）。构建期由 Temml 编译成 MathML，浏览器原生渲染，不需要 KaTeX 的样式表与字体；TeX 写错会直接让构建失败。代价是公众号侧不保证渲染，导出到公众号建议改成图片。
 
 ---
 
