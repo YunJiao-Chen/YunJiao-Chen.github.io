@@ -35,59 +35,13 @@ SOFTWARE.
 
 --------------------------------------------------------------------------------
 2. Tabler Icons（界面图标）
+3. Icons8（站点图标：一杯咖啡）
 --------------------------------------------------------------------------------
-项目：https://github.com/tabler/tabler-icons
-版本：3.46.0
-用途：界面上所有图标的 SVG 源文件（构建期内联）
-
-MIT License
-
-Copyright (c) 2020-2026 Paweł Kuna
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-3. Microsoft Fluent Emoji（站点图标：一杯咖啡）
---------------------------------------------------------------------------------
-项目：https://github.com/microsoft/fluentui-emoji
-文件：assets/Hot beverage/3D/hot_beverage_3d.png（U+2615 HOT BEVERAGE，256×256）
-许可：MIT
-改动：无（直接使用上游 PNG）；另按此图形缩放生成 favicon.ico / 16 / 32 /
+项目：https://icons8.com
+图标：kawaii coffee，https://icons8.com/icon/KU9YxLHkVe7m/kawaii-coffee
+取得：https://img.icons8.com/?size=1024&id=KU9YxLHkVe7m&format=png
+许可：Icons8 免费许可（linkware）。使用其素材的页面需放置一条指向 icons8.com 的链接，
+      本站用在页脚（见 src/components/Footer.astro 的「图标 Icons8」）。
+      矢量（SVG）格式属于付费内容，本站使用的是免费提供的 PNG。
+改动：无，直接使用上游 PNG；下游只是缩放生成 favicon.ico / 16 / 32 / 256 /
       apple-touch-icon 几份尺寸。
-
-MIT License
-
-Copyright (c) Microsoft Corporation.
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.

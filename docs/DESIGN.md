@@ -564,7 +564,7 @@ giscus 评论、深色模式、`body.list` 之外的页面一律窄栏。
 | 新增 `/archive/` 与 `/faq/` 两个页面 | 菜单需要落点。归档页用主题的 `.archive-*` 类（原样来自 `archive.css`）；FAQ 是一页手写问答 |
 | 分类页与关于页不在顶栏里 | 菜单只放用户列的 5 项。两页都没丢，从 FAQ 正文可以点进去，也都在 sitemap 里 |
 | 当前页标记改用参考站的写法：`.menu .active { border-bottom: 2px solid }` | 参考站跑的是较早的 PaperMod，它的 active 是「贴在文字下方的 2px 实线」；我们移植的这版改成了 `text-decoration` 缩写 + 0.3rem 偏移，观感明显更轻。行内元素加 `border-bottom` 落在外框底部，不会撑高行盒，所以覆盖掉主题那两行即可 |
-| 站点图标是一杯咖啡（Fluent Emoji 的 **3D** 版） | 选型反复过几轮：Twemoji 的 ☕ 太糊、Fluent 的 Flat 版偏平、狗脸被否。最后定亮面 3D：同一路数在 Icons8 上叫 「Windows 11 Color / fluency」，但 Icons8 免费版是 linkware（要加 icons8.com 链接）、SVG 还要付费；Microsoft 的 Fluent Emoji 是 MIT，观感一样而且没有附加义务。上游 3D 版只给 256×256 PNG，所以整套图标是光栅，没有 favicon.svg |
+| 站点图标是一杯咖啡（Icons8 的 kawaii coffee） | 选型反复过几轮：Twemoji 的 ☕ 太糊、Fluent 的 Flat 版偏平、狗脸被否、Fluent 的 3D 亮面版仍不满意，最后按用户指定用 Icons8 的 kawaii coffee。**这是全站唯一的许可义务**：Icons8 免费版是 linkware，要求在用到它的页面放一条 icons8.com 链接，全站都用到所以放页脚（第三段「图标 Icons8」）；换成 MIT 图标即可删掉。上游免费只给 PNG（SVG 付费），所以没有 favicon.svg |
 | 停在首页时标记 Posts | 参考站的 Posts 直接指向 `/`，首页即文章列表，所以它的 active 落在 Posts 上。本站首页也是文章列表（欢迎卡片 + 最新 6 篇 + 全部文章），因此照它标记 Posts，站名保持不加标记 |
 
 另外主题的标签总览用 `ul.terms-tags`，分类总览因为要放一句话说明，

@@ -61,35 +61,44 @@ node scripts/verify-theme.mjs --upstream   # 额外抓上游文件逐个比对�
 4. `npm run build` 后跑 `npm run audit`（自检会检查圆角 token、代码块底色、
    系统字体栈、未定义类等与主题相关的约定），确认没有选择器在新版本里被改名。
 
-## 站点图标（Microsoft Fluent Emoji）
+## 站点图标（Icons8 · kawaii coffee）
 
 | 项 | 值 |
 | --- | --- |
-| 项目 | [microsoft/fluentui-emoji](https://github.com/microsoft/fluentui-emoji) |
-| 用途 | `src/assets/favicon.png`：一杯咖啡（U+2615 HOT BEVERAGE，3D 版，256×256） |
-| 许可 | MIT，Copyright (c) Microsoft Corporation |
-| 版本 | `assets/Hot beverage/3D/hot_beverage_3d.png` |
+| 项目 | [Icons8](https://icons8.com)，图标页 <https://icons8.com/icon/KU9YxLHkVe7m/kawaii-coffee> |
+| 用途 | `src/assets/favicon.png`：一杯咖啡（kawaii 风格，1024×1024 PNG） |
+| 取得方式 | `https://img.icons8.com/?size=1024&id=KU9YxLHkVe7m&format=png` |
+| 许可 | **Icons8 免费许可（linkware）** |
 | 改动 | 无，直接用上游 PNG；下游只是缩放 |
 
-为什么用 Fluent Emoji 的 3D 版：这套的亮面观感与 Icons8「Windows 11 Color /
-fluency」是同一种，而 Icons8 免费版是 linkware（要在使用页面加 icons8.com 链接），
-SVG 还要付费；Microsoft 这份是 MIT，署名即可，也不限制矢量以外的用途。
-上游只给 3D 版 PNG（256×256），没有矢量，所以本站的图标是一套光栅，
-没有 `favicon.svg`。选型与各候选在 16px 下的实测数据见 `icon-preview.html`
-（本机生成，未入库）。
+### 这条许可要求什么
+
+Icons8 免费版的原话：**「凡是用到我们内容的页面，请添加链接 icons8.com。
+如果您的大多数页面都用了，则在页脚加链接即可。」**
+站点图标出现在每一页，所以本站把这条链接放在**页脚**：
+
+```
+图标 Icons8      →  https://icons8.com
+```
+
+另外：**SVG 属于付费格式**，免费只能拿到 PNG（接口会返回
+`{"error":"paid format requested"}`），所以本站的图标是一套光栅，没有 `favicon.svg`。
+
+### 想脱离这条义务时的办法
+
+换成 MIT 授权的图标即可删掉页脚那条链接。同一"亮面"观感在
+[Microsoft Fluent Emoji](https://github.com/microsoft/fluentui-emoji) 里有 3D 版
+（`assets/<名字>/3D/<名字>_3d.png`，256×256，MIT）——本项目在选型时比对过，
+观感属同一路数，且没有署名以外的附加条件。
 
 ### 光栅图标怎么来的
 
-`src/assets/` 下除了矢量还有一整套光栅图标，供只看光栅的场合使用
-（Windows 任务栏、iOS 主屏、部分老浏览器）。它们由矢量生成：
-
 ```bash
-bash scripts/make-icons.sh    # 生成 favicon.ico(16/32/48/64) + 16 + 32 + apple-touch-icon(180)
+bash scripts/make-icons.sh    # favicon.ico(16/32/48/64) + 16 + 32 + 256 + apple-touch-icon(180)
 ```
 
 只依赖 python3 + Pillow（源文件是光栅，不需要 rsvg-convert）。
-
-**改了 `favicon.svg` 就要重跑这个脚本**，否则光栅版还是旧图形。
+**改了 `src/assets/favicon.png` 就要重跑这个脚本**，否则光栅版还是旧图形。
 
 生成结果落在两处，用途不同：
 

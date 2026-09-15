@@ -5,6 +5,9 @@
  *   参考站渲染出来是「© 2026 Lil'Log Powered by Hugo & PaperMod」，
  *   两段之间没有分隔符（模板里的「 · 」在她那版里没有输出），这里照做。
  *   来源写 Astro & PaperMod 是实话：本站用 Astro 构建，只移植了 PaperMod 的样式。
+ * 第三段是 Icons8 的署名：站点图标用了 Icons8 的免费素材，其免费许可（linkware）
+ *   要求在使用它的页面放一条 icons8.com 的链接，用了全站就在页脚放一条。
+ *   换成 MIT 授权的图标（如 Microsoft Fluent Emoji）就可以删掉这一段。
  * 许可协议等长文案放在关于页，页脚保持主题那样的短行。
  */
 import { siteConfig, withBase } from '../../site.config.ts';
@@ -19,6 +22,9 @@ const year = new Date().getFullYear();
     <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank"
       >PaperMod</a
     >
+  </span>{' '}
+  <span>
+    图标 <a href="https://icons8.com" rel="noopener" target="_blank">Icons8</a>
   </span>
 </footer>
 
